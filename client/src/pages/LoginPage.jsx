@@ -1,104 +1,75 @@
-import React, { useState } from 'react';
-
+import { Mail, Lock } from "lucide-react";
+import i2it_logo from "../assets/images/i2it logo.png";
 const LoginPage = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    rememberMe: false
-  });
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Form submitted:', formData);
-  };
-
   return (
-    <div className="min-h-screen bg-[#6C5CE7] p-4 flex items-center justify-center">
-      <div className="w-full max-w-[1000px] bg-white rounded-lg shadow-lg overflow-hidden flex flex-col md:flex-row">
+    <div className="flex h-screen items-center justify-center bg-gray-200">
+      <div className="bg-white w-3/4 max-w-4xl flex rounded-lg shadow-lg overflow-hidden">
         {/* Left Section */}
-        <div className="md:w-1/2 bg-gradient-to-b from-[#45aaf2] to-[#2d98da] p-8 text-white flex flex-col">
-          <div className="font-bold text-xl mb-12">COMPANY LOGO</div>
-          <div className="my-auto">
-            <h1 className="text-4xl font-bold mb-4">Welcome to...</h1>
-            <p className="text-white/90 mb-4">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </p>
+        <div className="w-1/2 p-8 flex flex-col items-center justify-center text-center">
+          <div className="mb-6">
+            <a
+              href="https://www.isquareit.edu.in/"
+              className="flex items-center mb-6 text-2xl font-semibold text-black"
+            >
+              <img
+                className="flex items-center w-20 h-20 mr-2"
+                src={i2it_logo}
+                alt="i2it Logo"
+              />
+            </a>
+            {/* <div className="text-blue-600 text-3xl font-bold">I²IT</div>
+            <p className="text-gray-700 text-sm">Innovation & Leadership</p> */}
           </div>
-          <p className="mt-auto text-white/80">Lorem ipsum dolor sit amet</p>
+          <h2 className="text-lg font-semibold">Welcome To</h2>
+          <h1 className="text-blue-600 font-bold text-xl">Hope Foundation's</h1>
+          <h2 className="text-gray-800 font-bold text-lg">
+            INTERNATIONAL INSTITUTE OF INFORMATION TECHNOLOGY
+          </h2>
+          <p className="text-gray-700 mt-2">HINJAWADI, PUNE</p>
+          <a
+            href="https://www.isquareit.edu.in"
+            className="text-blue-500 underline mt-2"
+          >
+            www.isquareit.edu.in
+          </a>
         </div>
 
         {/* Right Section */}
-        <div className="md:w-1/2 p-8 bg-white">
-          <div className="max-w-[400px] mx-auto">
-            <h2 className="text-3xl font-semibold text-[#45aaf2] mb-2">Login</h2>
-            {/* <p className="text-gray-500 mb-8">
-              Welcome! Login to get amazing discounts and offers only for you.
-            </p> */}
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="email" className="block mt-5 text-gray-500 mb-1">User Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border  border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#45aaf2]"
-                  placeholder="Enter your email"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="password" className="block text-gray-500 mb-1">User Password</label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#45aaf2]"
-                  placeholder="Enter your password"
-                />
-              </div>
-{/* 
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="rememberMe"
-                  name="rememberMe"
-                  checked={formData.rememberMe}
-                  onChange={handleChange}
-                  className="mr-2"
-                />
-                <label htmlFor="rememberMe" className="text-gray-500 text-sm">Remember me</label>
-              </div> */}
-
-              <button
-                type="submit"
-                className="w-full bg-[#45aaf2] text-white py-2 rounded-md hover:bg-[#2d98da] transition-colors duration-300"
-              >
-                LOGIN
-              </button>
-
-              <div className="flex justify-between text-sm">
-                {/* <p className="text-gray-500">
-                  New User? <a href="/signup" className="text-[#45aaf2] hover:underline">Signup</a>
-                </p> */}
-                <a href="/forgot-password" className="text-gray-400 hover:text-gray-500">
-                  Forgot your password?
-                </a>
-              </div>
-            </form>
+        <div className="w-1/2 bg-gray-100 p-8 flex flex-col justify-center">
+          <h2 className="text-gray-800 text-xl font-semibold mb-4 text-center">
+            Sign In as
+          </h2>
+          <div className="mb-4 relative">
+            <input
+              type="text"
+              placeholder="UserName"
+              className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
+            />
+            <Mail className="absolute right-3 top-3 text-gray-500" />
           </div>
+          <div className="mb-4 relative">
+            <input
+              type="password"
+              placeholder="Password"
+              className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
+            />
+            <Lock className="absolute right-3 top-3 text-gray-500" />
+          </div>
+          {/* <div className="mb-4 flex items-center justify-center bg-white border rounded-lg p-2">
+            <input type="checkbox" className="mr-2" /> I'm not a robot
+          </div> */}
+          <button className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">
+            🔒 Login
+          </button>
+          {/* <div className="mt-4 text-center">
+            <a href="#" className="text-blue-500 text-sm">
+              Forgot Password?
+            </a>
+            <br />
+            <a href="#" className="text-red-500 text-sm">
+              Book Search & Reserve
+            </a>
+          </div> */}
         </div>
       </div>
     </div>
@@ -106,4 +77,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-
