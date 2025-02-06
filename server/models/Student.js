@@ -33,6 +33,12 @@ class Student {
         const [result] = await db.query(query, [hashedStudents]);
         return result.affectedRows;
     }
+
+    // New method: Find a student by email
+    static async findByEmail(email) {
+        const [rows] = await db.query('SELECT * FROM Student WHERE email = ?', [email]);
+        return rows[0]; // Return the first matching student
+    }
 }
 
 module.exports = Student;

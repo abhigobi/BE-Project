@@ -1,6 +1,6 @@
 const express = require('express');
 const adminRoutes = require('./routes/adminRoutes');
-
+const studentRoutes = require('./routes/studentRoutes');
 
 require('dotenv').config();
 
@@ -11,6 +11,9 @@ app.use(express.json());
 
 // Admin Routes
 app.use('/api/admin', adminRoutes);
+
+// Student Routes
+app.use('/api/student', studentRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
