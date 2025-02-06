@@ -2,7 +2,8 @@ const express = require('express');
 const cors = require("cors");
 const adminRoutes = require('./routes/adminRoutes');
 const studentRoutes = require('./routes/studentRoutes');
-
+const userRoutes = require('./routes/loginRoutes');
+const wardenRoutes = require('./routes/wardenRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -22,6 +23,12 @@ app.use('/api/admin', adminRoutes);
 
 // Student Routes
 app.use('/api/student', studentRoutes);
+
+// User Routes
+app.use('/api/user', userRoutes);
+
+// Warden Routes
+app.use('/api/warden', wardenRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

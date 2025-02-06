@@ -1,7 +1,8 @@
 const express = require('express');
-const { getAllFiles } = require('../controllers/studentController');
+const { loginUser } = require('../controllers/loginRoutes');
 const router = express.Router();
 
 // Student login route
-router.get('/getAllFiles', getAllFiles);
+router.post('/login', loginUser);
+
 module.exports = router;
