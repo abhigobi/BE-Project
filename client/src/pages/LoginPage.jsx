@@ -37,6 +37,9 @@ const LoginPage = () => {
           case "Admin":
             navigate("/admin-dashboard");
             break;
+          case "Teacher":
+            navigate("/teacher-dashboard");
+            break;
           default:
             setError("Invalid role. Contact admin.");
         }
