@@ -1,5 +1,5 @@
-/* eslint-disable react/no-unescaped-entities */
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import for navigation
 import { Mail, Lock } from "lucide-react";
 import i2it_logo from "../assets/images/i2it logo.png";
 
@@ -7,9 +7,10 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate(); // Hook for navigation
 
   const handleLogin = async (e) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
 
     try {
       const response = await fetch("http://localhost:3000/api/user/login", {
@@ -17,21 +18,29 @@ const LoginPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // Handle successful login (e.g., redirect or store token)
-        console.log("Login successful:", data);
-        alert("Login successful!");
+        // alert("Login successful!");
 
+        // Redirect based on role
+        switch (data.table) {
+          case "Student":
+            navigate("/student-dashboard");
+            break;
+          case "Warden":
+            navigate("/warden-dashboard");
+            break;
+          case "Admin":
+            navigate("/admin-dashboard");
+            break;
+          default:
+            setError("Invalid role. Contact admin.");
+        }
       } else {
-        // Handle login error
         setError(data.message || "Login failed. Please try again.");
       }
     } catch (err) {
