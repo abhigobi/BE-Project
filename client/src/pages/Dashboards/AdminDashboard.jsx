@@ -189,9 +189,17 @@
 // export default AdminDashboard;
 
 import { useState } from "react";
-import { Bell, Users, ClipboardCheck, Upload, X } from "lucide-react";
+import {
+  Bell,
+  Users,
+  ClipboardCheck,
+  AlertTriangle,
+  Upload,
+  X,
+} from "lucide-react";
 import axios from "axios";
-
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
@@ -236,12 +244,24 @@ const AdminDashboard = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      alert(response.data.message || "File uploaded successfully!");
+      // alert(response.data.message || "File uploaded successfully!");
+      toast.success("✅ File uploaded successfully!", {
+        position: "top-right",
+        autoClose: 3000, // 3 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
       setUploadModalOpen(false);
       setSelectedFile(null);
     } catch (error) {
       console.error("Error uploading file:", error);
-      alert("Failed to upload file.");
+      // alert("Failed to upload file.");
+      toast.error("❌ File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     } finally {
       setIsUploading(false);
     }
@@ -257,18 +277,28 @@ const AdminDashboard = () => {
       >
         <h2 className="text-xl font-semibold">Admin Dashboard</h2>
         <nav className="space-y-4">
-          <a
-            href="#"
+          {/* Teacher Compliance Link */}
+          <Link
+            to="/admin-dashboard/teacher-compliance"
             className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded"
           >
-            <Users className="w-5 h-5" /> User Management
-          </a>
-          <a
-            href="#"
+            <ClipboardCheck className="w-5 h-5" /> Teachers Compliances
+          </Link>
+
+          {/* Wardern Compliance Link */}
+          <Link
+            to="/admin-dashboard/warden-compliances"
             className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded"
           >
-            <ClipboardCheck className="w-5 h-5" /> Compliance Reports
-          </a>
+            <ClipboardCheck className="w-5 h-5" /> Wardens Compliances
+          </Link>
+          {/* Students Compliances Link */}
+          <Link
+            to="/admin-dashboard/student-compliances"
+            className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded"
+          >
+            <AlertTriangle className="w-5 h-5" /> Students Compliances
+          </Link>
         </nav>
       </aside>
 
