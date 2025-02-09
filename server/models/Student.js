@@ -39,6 +39,10 @@ class Student {
         const [rows] = await db.query('SELECT * FROM Student WHERE email = ?', [email]);
         return rows[0]; // Return the first matching student
     }
+
+    static async getAllStudents() {
+        return await db.query('SELECT * FROM Student');
+    }
 }
 
 module.exports = Student;

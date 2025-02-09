@@ -48,4 +48,14 @@ const toggleFileStatus = async (req, res) => {
         res.status(500).json({ success: false, message: "Failed to toggle file status" });
     }
 };
-module.exports = { getAllFiles, toggleFileStatus };
+
+const getStudent = async (req, res) => {
+    try {
+        const [students] = await Student.getAllStudents();
+        res.status(200).json({ success: true, students });
+    } catch (error) {
+        console.error("Error fetching students:", error);
+        res.status(500).json({ error: "Failed to fetch students" });
+    }
+}
+module.exports = { getAllFiles, toggleFileStatus,getStudent };
