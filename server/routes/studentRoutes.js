@@ -1,7 +1,9 @@
 const express = require('express');
-const { getAllFiles } = require('../controllers/studentController');
+const { getAllFiles,toggleFileStatus } = require('../controllers/studentController');
 const router = express.Router();
 
-// Student login route
+
 router.get('/getAllFiles', getAllFiles);
+router.put('/toggleFileStatus/:id', toggleFileStatus);
+
 module.exports = router;

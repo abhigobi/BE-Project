@@ -7,7 +7,7 @@ const uploadFile = async (req, res) => {
         if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
         const filePath = path.join(__dirname, '..', req.file.path);
-        
+
         // Upload PDF to Cloudinary
         const result = await cloudinary.uploader.upload(filePath, {
             resource_type: "raw",
@@ -50,7 +50,7 @@ const deleteFile = async (req, res) => {
 
         // Extract public ID by removing the extension (.pdf)
         let publicId = `pdf_uploads/${fileNameWithExt.replace(/\.pdf$/, '')}`; // Ensure the .pdf extension is removed
-        publicId =  `${publicId}.pdf`;
+        publicId = `${publicId}.pdf`;
         // Delete from Cloudinary
         const cloudinaryResponse = await cloudinary.uploader.destroy(publicId, { resource_type: "raw", type: "upload" });
 
@@ -60,7 +60,7 @@ const deleteFile = async (req, res) => {
 
         // Delete from Database
         await CommonCompliancePdfForStudent.deleteFile(id);
-        
+
         res.status(200).json({ success: true, message: "File deleted successfully" });
 
     } catch (error) {
@@ -69,6 +69,32 @@ const deleteFile = async (req, res) => {
     }
 };
 
+const updateFileStatus = async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
 
+    // Validate the status
+    const allowedStatuses = ['Pending', 'Completed', 'Waiting For Approve', 'Rejected'];
+    if (!allowedStatuses.includes(status)) {
+        return res.status(400).json({ success: false, message: "Invalid status provided" });
+    }
 
-module.exports = { uploadFile,deleteFile };
+    try {
+        // Fetch the file to ensure it exists
+        const [file] = await CommonCompliancePdfForStudent.getFileById(id);
+
+        if (file.length === 0) {
+            return res.status(404).json({ success: false, message: "File not found" });
+        }
+
+        // Update the status in the database
+        await CommonCompliancePdfForStudent.updateFileStatus(id, status);
+
+        res.status(200).json({ success: true, message: "Status updated successfully", newStatus: status });
+    } catch (error) {
+        console.error("Error updating file status:", error);
+        res.status(500).json({ success: false, message: "Failed to update file status" });
+    }
+};
+
+module.exports = { uploadFile, deleteFile, updateFileStatus };
