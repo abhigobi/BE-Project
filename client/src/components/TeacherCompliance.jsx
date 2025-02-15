@@ -68,7 +68,7 @@ const TeacherCompliance = () => {
     <div className="flex">
       {/* Sidebar */}
       <aside
-        className={`bg-gray-900 text-white w-64 p-4 space-y-6 transition-transform duration-300 md:relative z-20 ${
+        className={`bg-[#1A2A4F] text-white w-64 p-4 space-y-6 transition-transform duration-300 md:relative z-20 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-64"
         } md:translate-x-0 fixed inset-y-0 left-0 md:static`}
       >

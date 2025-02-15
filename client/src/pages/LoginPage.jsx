@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import for navigation
 import { Mail, Lock } from "lucide-react";
 import i2it_logo from "../assets/images/i2it logo.png";
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -24,7 +25,16 @@ const LoginPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // alert("Login successful!");
+        toast.success("✅ Login successfully!", {
+          position: "top-right",
+          autoClose: 3000, // 3 seconds
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        console.log(data);
+        localStorage.setItem("token", data.token);
 
         // Redirect based on role
         switch (data.table) {
@@ -47,7 +57,15 @@ const LoginPage = () => {
         setError(data.message || "Login failed. Please try again.");
       }
     } catch (err) {
-      setError("An error occurred. Please try again.");
+      // setError("An error occurred. Please try again.");
+      toast.error("Login Unsuccessfull!! , Please try again", {
+        position: "top-right",
+        autoClose: 3000, // 3 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
       console.error("Login error:", err);
     }
   };

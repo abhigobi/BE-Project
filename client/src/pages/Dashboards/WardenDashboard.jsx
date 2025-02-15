@@ -273,6 +273,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
+  Mail,
   Bell,
   User,
   ClipboardCheck,
@@ -324,94 +325,94 @@ const WardenDashboard = () => {
     return matchesSearch && matchesStatus;
   });
 
-  const handleFileChange = async (event) => {
-    event.preventDefault(); // Prevent form reload if inside a form
-    const file = event.target.files[0];
-    if (!file) return;
+  // const handleFileChange = async (event) => {
+  //   event.preventDefault(); // Prevent form reload if inside a form
+  //   const file = event.target.files[0];
+  //   if (!file) return;
 
-    setIsLoading(true);
-    setSelectedFile(file);
+  //   setIsLoading(true);
+  //   setSelectedFile(file);
 
-    const formData = new FormData();
-    formData.append("pdf", file);
+  //   const formData = new FormData();
+  //   formData.append("pdf", file);
 
-    try {
-      const response = await fetch(
-        "http://localhost:3000/api/warden/upload/pdf",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+  //   try {
+  //     const response = await fetch(
+  //       "http://localhost:3000/api/warden/upload/pdf",
+  //       {
+  //         method: "POST",
+  //         body: formData,
+  //       }
+  //     );
 
-      if (!response.ok) {
-        throw new Error("Failed to upload file");
-      }
+  //     if (!response.ok) {
+  //       throw new Error("Failed to upload file");
+  //     }
 
-      const data = await response.json();
-      console.log("File uploaded:", data);
+  //     const data = await response.json();
+  //     console.log("File uploaded:", data);
 
-      const pdfUrl = data.url;
+  //     const pdfUrl = data.url;
 
-      // setCompliances((prevCompliances) =>
-      //   prevCompliances.map((comp) =>
-      //     comp.id === selectedFile.id ? { ...comp, pdfUrl: pdfUrl } : comp
-      //   )
-      // );
+  //     // setCompliances((prevCompliances) =>
+  //     //   prevCompliances.map((comp) =>
+  //     //     comp.id === selectedFile.id ? { ...comp, pdfUrl: pdfUrl } : comp
+  //     //   )
+  //     // );
 
-      toast.success("✅ File uploaded successfully!", {
-        position: "top-right",
-        autoClose: 3000, // 3 seconds
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
+  //     toast.success("✅ File uploaded successfully!", {
+  //       position: "top-right",
+  //       autoClose: 3000, // 3 seconds
+  //       hideProgressBar: false,
+  //       closeOnClick: true,
+  //       pauseOnHover: true,
+  //       draggable: true,
+  //     });
 
-      setSelectedFile(null);
-    } catch (error) {
-      console.error("Upload error:", error);
-      toast.error("❌ File upload failed. Please try again.", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  const handleDeletePdf = async (complianceId) => {
-    const isConfirmed = window.confirm(
-      "Are you sure you want to delete this PDF?"
-    );
-    if (!isConfirmed) return;
+  //     setSelectedFile(null);
+  //   } catch (error) {
+  //     console.error("Upload error:", error);
+  //     toast.error("❌ File upload failed. Please try again.", {
+  //       position: "top-right",
+  //       autoClose: 3000,
+  //     });
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+  // const handleDeletePdf = async (complianceId) => {
+  //   const isConfirmed = window.confirm(
+  //     "Are you sure you want to delete this PDF?"
+  //   );
+  //   if (!isConfirmed) return;
 
-    try {
-      const response = await fetch(
-        `http://localhost:3000/api/warden/delete/pdf/${complianceId}`,
-        {
-          method: "DELETE",
-        }
-      );
+  //   try {
+  //     const response = await fetch(
+  //       `http://localhost:3000/api/warden/delete/pdf/${complianceId}`,
+  //       {
+  //         method: "DELETE",
+  //       }
+  //     );
 
-      if (!response.ok) {
-        throw new Error("Failed to delete file");
-      }
+  //     if (!response.ok) {
+  //       throw new Error("Failed to delete file");
+  //     }
 
-      const data = await response.json();
+  //     const data = await response.json();
 
-      if (data.success) {
-        setCompliances((prevCompliances) =>
-          prevCompliances.map((comp) =>
-            comp.id === complianceId ? { ...comp, pdfUrl: "" } : comp
-          )
-        );
-        alert(data.message);
-      }
-    } catch (error) {
-      console.error("Delete error:", error);
-      alert("File deletion failed. Please try again.");
-    }
-  };
+  //     if (data.success) {
+  //       setCompliances((prevCompliances) =>
+  //         prevCompliances.map((comp) =>
+  //           comp.id === complianceId ? { ...comp, pdfUrl: "" } : comp
+  //         )
+  //       );
+  //       alert(data.message);
+  //     }
+  //   } catch (error) {
+  //     console.error("Delete error:", error);
+  //     alert("File deletion failed. Please try again.");
+  //   }
+  // };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -419,7 +420,7 @@ const WardenDashboard = () => {
       <aside
         className={`${
           sidebarOpen ? "w-64" : "w-20"
-        } bg-gray-900 text-white  transition-all duration-300 flex flex-col`}
+        } bg-[#1A2A4F] text-white  transition-all duration-300 flex flex-col`}
       >
         {/* Sidebar Header */}
         <div className="flex items-center justify-between p-4">
@@ -449,7 +450,7 @@ const WardenDashboard = () => {
       </aside>
 
       {/* Main Content */}
-      <div className="flex flex-col flex-grow bg-gray-100 min-h-screen">
+      <div className="flex flex-col flex-grow bg-gray-100 min-h-screen overflow-auto">
         <nav className="bg-white shadow px-6 py-4 flex justify-between items-center">
           <button
             className="md:hidden p-2"
@@ -459,10 +460,36 @@ const WardenDashboard = () => {
           </button>
           <h1 className="text-lg font-semibold">Warden Compliance Overview</h1>
           <div className="flex items-center gap-4">
+            <Mail
+              className="w-6 h-6 text-gray-600"
+              onClick={() => {
+                alert("Mail");
+              }}
+            />
             <Bell className="w-6 h-6 text-gray-600" />
             <User className="w-6 h-6 text-gray-600" />
           </div>
         </nav>
+        <div className="flex flex-wrap gap-10 mt-5 justify-center">
+          {/* Total Compliances Card */}
+          <div className="bg-blue-500 p-6 rounded-lg shadow-md text-white text-2xl flex-1 min-w-[150px] max-w-[350px] text-center hover:shadow-lg transition-shadow">
+            <h1 className="text-lg font-semibold">Total Compliances</h1>
+            <h2 className="text-2xl font-bold mt-2">10</h2>
+          </div>
+
+          {/* Completed Card */}
+          <div className="bg-green-500 p-6 rounded-lg shadow-md text-white flex-1 min-w-[150px] max-w-[350px] text-center hover:shadow-lg transition-shadow">
+            <h1 className="text-lg font-semibold">Completed Compliances</h1>
+            <h2 className="text-2xl font-bold mt-2">6</h2>
+          </div>
+
+          {/* Pending Card */}
+          <div className="bg-red-500 p-6 rounded-lg shadow-md text-white flex-1 min-w-[150px] max-w-[350px] text-center hover:shadow-lg transition-shadow">
+            <h1 className="text-lg font-semibold">Pending Compliances</h1>
+            <h2 className="text-2xl font-bold mt-2">4</h2>
+          </div>
+        </div>
+        <br />
 
         <div className="p-6">
           <h2 className="text-lg font-semibold mb-4">My Compliances</h2>
@@ -524,7 +551,7 @@ const WardenDashboard = () => {
               </button>
             </div>
           )}
-          <div className="mt-6 flex flex-col items-center">
+          {/* <div className="mt-6 flex flex-col items-center">
             <input
               type="file"
               accept="application/pdf"
@@ -549,7 +576,7 @@ const WardenDashboard = () => {
             >
               Delete Compliance PDF
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

@@ -7,6 +7,7 @@ import {
   AlertTriangle,
   FileText,
   Menu,
+  Mail,
 } from "lucide-react";
 
 const TeacherDashboard = () => {
@@ -16,14 +17,24 @@ const TeacherDashboard = () => {
   const [statusFilter, setStatusFilter] = useState("All");
 
   const compliances = [
-    { id: 1, name: "Review Hostel Applications", status: "Pending", pdfUrl: "" },
+    {
+      id: 1,
+      name: "Review Hostel Applications",
+      status: "Pending",
+      pdfUrl: "",
+    },
     { id: 2, name: "Approve Leave Requests", status: "Completed", pdfUrl: "" },
     { id: 3, name: "Inspect Hostel Facilities", status: "Pending", pdfUrl: "" },
     { id: 4, name: "Submit Monthly Report", status: "Pending", pdfUrl: "" },
     { id: 5, name: "Conduct Safety Drills", status: "Completed", pdfUrl: "" },
     { id: 6, name: "Verify Student Documents", status: "Pending", pdfUrl: "" },
     { id: 7, name: "Organize Hostel Events", status: "Pending", pdfUrl: "" },
-    { id: 8, name: "Monitor Student Attendance", status: "Completed", pdfUrl: "" },
+    {
+      id: 8,
+      name: "Monitor Student Attendance",
+      status: "Completed",
+      pdfUrl: "",
+    },
     { id: 9, name: "Address Complaints", status: "Pending", pdfUrl: "" },
     { id: 10, name: "Renew Contracts", status: "Pending", pdfUrl: "" },
   ];
@@ -48,7 +59,7 @@ const TeacherDashboard = () => {
       <aside
         className={`${
           isSidebarOpen ? "w-64" : "w-20"
-        } bg-gray-900 text-white transition-all duration-300 flex flex-col`}
+        } bg-[#1A2A4F] text-white transition-all duration-300 flex flex-col`}
       >
         <div className="flex items-center justify-between p-4">
           {isSidebarOpen && (
@@ -80,14 +91,34 @@ const TeacherDashboard = () => {
       {/* Main Content */}
       <div className="flex flex-col flex-grow overflow-y-auto">
         {/* Navbar */}
-        <nav className="bg-white px-6 py-4 shadow-md flex justify-between items-center">
+        <nav className="bg-[#FAFAFA] px-6 py-4 shadow-md flex justify-between items-center">
           <h1 className="text-xl font-semibold">Teacher Compliance Overview</h1>
           <div className="flex items-center gap-4">
+            <Mail className="w-6 h-6 text-gray-600 " />
             <Bell className="w-6 h-6 text-gray-600" />
             <User className="w-6 h-6 text-gray-600" />
           </div>
         </nav>
+        <div className="flex flex-wrap gap-10 mt-5 justify-center">
+          {/* Total Compliances Card */}
+          <div className="bg-blue-500 p-6 rounded-lg shadow-md text-white text-2xl flex-1 min-w-[150px] max-w-[350px] text-center hover:shadow-lg transition-shadow">
+            <h1 className="text-lg font-semibold">Total Compliances</h1>
+            <h2 className="text-2xl font-bold mt-2">10</h2>
+          </div>
 
+          {/* Completed Card */}
+          <div className="bg-green-500 p-6 rounded-lg shadow-md text-white flex-1 min-w-[150px] max-w-[350px] text-center hover:shadow-lg transition-shadow">
+            <h1 className="text-lg font-semibold">Completed Compliances</h1>
+            <h2 className="text-2xl font-bold mt-2">6</h2>
+          </div>
+
+          {/* Pending Card */}
+          <div className="bg-red-500 p-6 rounded-lg shadow-md text-white flex-1 min-w-[150px] max-w-[350px] text-center hover:shadow-lg transition-shadow">
+            <h1 className="text-lg font-semibold">Pending Compliances</h1>
+            <h2 className="text-2xl font-bold mt-2">4</h2>
+          </div>
+        </div>
+        <br />
         {/* Compliance PDFs Section */}
         <div className="p-6">
           <h2 className="text-lg font-semibold mb-4">My Compliances</h2>
@@ -122,7 +153,9 @@ const TeacherDashboard = () => {
                 <div className="h-40 bg-gray-100 flex items-center justify-center rounded-lg">
                   <FileText className="w-12 h-12 text-gray-400" />
                 </div>
-                <p className="mt-2 text-center font-medium">{compliance.name}</p>
+                <p className="mt-2 text-center font-medium">
+                  {compliance.name}
+                </p>
                 <p className="text-center text-sm text-gray-600">
                   Status: {compliance.status}
                 </p>
@@ -134,7 +167,7 @@ const TeacherDashboard = () => {
                       rel="noopener noreferrer"
                       className="text-blue-500 underline"
                     >
-                      Download PDF
+                      View PDF
                     </a>
                   </div>
                 )}

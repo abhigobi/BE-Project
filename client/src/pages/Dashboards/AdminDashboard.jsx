@@ -1,54 +1,34 @@
-// import { useState, useEffect } from "react";
+// import { useState } from "react";
 // import {
 //   Bell,
 //   Users,
 //   ClipboardCheck,
 //   AlertTriangle,
-//   FileText,
-//   Send,
-//   Settings,
 //   Upload,
 //   X,
 // } from "lucide-react";
 // import axios from "axios";
-
+// import { Link } from "react-router-dom";
+// import { toast } from "react-toastify";
 // const AdminDashboard = () => {
 //   const [sidebarOpen, setSidebarOpen] = useState(false);
-//   const [department, setDepartment] = useState("");
-//   const [message, setMessage] = useState("");
-//   const [notifications, setNotifications] = useState([]);
 //   const [uploadModalOpen, setUploadModalOpen] = useState(false);
 //   const [selectedFile, setSelectedFile] = useState(null);
+//   const [selectedCategory, setSelectedCategory] = useState("students");
+//   const [isUploading, setIsUploading] = useState(false);
 
-//   // Dummy department list
-//   const departments = [
-//     { id: "dept1", name: "Hostel Management" },
-//     { id: "dept2", name: "Academic Compliance" },
-//     { id: "dept3", name: "Financial Compliance" },
+//   const categories = [
+//     { value: "students", label: "Students" },
+//     { value: "teachers", label: "Teachers" },
+//     { value: "wardens", label: "Wardens" },
 //   ];
 
-//   useEffect(() => {
-//     // Assume socket connection for notifications
-//   }, []);
-
-//   // const sendMessage = () => {
-//   //   if (department && message) {
-//   //     const notification = {
-//   //       department,
-//   //       message,
-//   //       timestamp: new Date().toLocaleString(),
-//   //     };
-//   //     // Assume socket.emit() function for real-time notification
-//   //     setMessage("");
-//   //   }
-//   // };
-
-//   // Function to handle file selection
+//   // Handle file selection
 //   const handleFileChange = (event) => {
 //     setSelectedFile(event.target.files[0]);
 //   };
 
-//   // Function to handle file upload
+//   // Handle file upload
 //   const handleUpload = async () => {
 //     if (!selectedFile) {
 //       alert("Please select an Excel file.");
@@ -58,21 +38,42 @@
 //     const formData = new FormData();
 //     formData.append("file", selectedFile);
 
-//     try {
-//       const response = await axios.post(
-//         "http://localhost:3000/api/admin/upload/studentExcelFile",
-//         formData,
-//         {
-//           headers: { "Content-Type": "multipart/form-data" },
-//         }
-//       );
+//     // Set API endpoint based on selected category
+//     let apiEndpoint = "";
+//     if (selectedCategory === "students") {
+//       apiEndpoint = "http://localhost:3000/api/admin/upload/studentExcelFile";
+//     } else if (selectedCategory === "teachers") {
+//       apiEndpoint = "http://localhost:3000/api/admin/upload/teacherExcelFile";
+//     } else if (selectedCategory === "wardens") {
+//       apiEndpoint = "http://localhost:3000/api/admin/upload/wardenExcelFile";
+//     }
 
-//       alert("File uploaded successfully!");
+//     try {
+//       setIsUploading(true);
+//       const response = await axios.post(apiEndpoint, formData, {
+//         headers: { "Content-Type": "multipart/form-data" },
+//       });
+
+//       // alert(response.data.message || "File uploaded successfully!");
+//       toast.success("✅ File uploaded successfully!", {
+//         position: "top-right",
+//         autoClose: 3000, // 3 seconds
+//         hideProgressBar: false,
+//         closeOnClick: true,
+//         pauseOnHover: true,
+//         draggable: true,
+//       });
 //       setUploadModalOpen(false);
 //       setSelectedFile(null);
 //     } catch (error) {
 //       console.error("Error uploading file:", error);
-//       alert("Failed to upload file.");
+//       // alert("Failed to upload file.");
+//       toast.error("❌ File upload failed. Please try again.", {
+//         position: "top-right",
+//         autoClose: 3000,
+//       });
+//     } finally {
+//       setIsUploading(false);
 //     }
 //   };
 
@@ -86,21 +87,28 @@
 //       >
 //         <h2 className="text-xl font-semibold">Admin Dashboard</h2>
 //         <nav className="space-y-4">
-//           <a href="#" className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded">
-//             <Users className="w-5 h-5" /> User Management
-//           </a>
-//           <a href="#" className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded">
-//             <ClipboardCheck className="w-5 h-5" /> Compliance Reports
-//           </a>
-//           {/* <a href="#" className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded">
-//             <AlertTriangle className="w-5 h-5" /> Pending Cases
-//           </a>
-//           <a href="#" className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded">
-//             <FileText className="w-5 h-5" /> Documents
-//           </a>
-//           <a href="#" className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded">
-//             <Settings className="w-5 h-5" /> Settings
-//           </a> */}
+//           {/* Teacher Compliance Link */}
+//           <Link
+//             to="/admin-dashboard/teacher-compliance"
+//             className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded"
+//           >
+//             <ClipboardCheck className="w-5 h-5" /> Teachers Compliances
+//           </Link>
+
+//           {/* Wardern Compliance Link */}
+//           <Link
+//             to="/admin-dashboard/warden-compliances"
+//             className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded"
+//           >
+//             <ClipboardCheck className="w-5 h-5" /> Wardens Compliances
+//           </Link>
+//           {/* Students Compliances Link */}
+//           <Link
+//             to="/admin-dashboard/student-compliances"
+//             className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded"
+//           >
+//             <AlertTriangle className="w-5 h-5" /> Students Compliances
+//           </Link>
 //         </nav>
 //       </aside>
 
@@ -108,7 +116,10 @@
 //       <div className="flex flex-col flex-grow bg-gray-100 min-h-screen">
 //         {/* Navbar */}
 //         <nav className="bg-white shadow px-6 py-4 flex justify-between items-center">
-//           <button className="md:hidden" onClick={() => setSidebarOpen(!sidebarOpen)}>
+//           <button
+//             className="md:hidden"
+//             onClick={() => setSidebarOpen(!sidebarOpen)}
+//           >
 //             ☰
 //           </button>
 //           <h1 className="text-lg font-semibold">Admin Compliance Overview</h1>
@@ -116,35 +127,6 @@
 //             <Bell className="w-6 h-6 text-gray-600" />
 //           </div>
 //         </nav>
-
-//         {/* Message Section */}
-//         {/* <div className="p-6">
-//           <h2 className="text-xl font-semibold">Send Notification</h2>
-//           <div className="flex flex-col md:flex-row gap-4 mt-4">
-//             <select
-//               className="p-2 border rounded w-full md:w-1/3"
-//               value={department}
-//               onChange={(e) => setDepartment(e.target.value)}
-//             >
-//               <option value="">Select Department</option>
-//               {departments.map((dept) => (
-//                 <option key={dept.id} value={dept.id}>
-//                   {dept.name}
-//                 </option>
-//               ))}
-//             </select>
-//             <input
-//               type="text"
-//               className="p-2 border rounded flex-grow"
-//               placeholder="Enter Message"
-//               value={message}
-//               onChange={(e) => setMessage(e.target.value)}
-//             />
-//             <button className="bg-blue-500 text-white px-4 py-2 rounded flex items-center" onClick={sendMessage}>
-//               <Send className="w-5 h-5 mr-2" /> Send
-//             </button>
-//           </div>
-//         </div> */}
 
 //         {/* Upload Excel File Button */}
 //         <div className="p-6">
@@ -163,20 +145,46 @@
 //               <div className="flex justify-between items-center">
 //                 <h2 className="text-lg font-semibold">Upload Excel File</h2>
 //                 <button onClick={() => setUploadModalOpen(false)}>
-//                   <X className="w-5 h-5" />
+//                   <X className="w-5 h-5 text-gray-600" />
 //                 </button>
 //               </div>
+
+//               {/* Category Selection */}
+//               <label className="block mt-4 font-medium">Select Category:</label>
+//               <select
+//                 value={selectedCategory}
+//                 onChange={(e) => setSelectedCategory(e.target.value)}
+//                 className="w-full p-2 border border-gray-300 rounded mt-2"
+//               >
+//                 {categories.map((category) => (
+//                   <option key={category.value} value={category.value}>
+//                     {category.label}
+//                   </option>
+//                 ))}
+//               </select>
+
+//               {/* File Input */}
+//               <label className="block mt-4 font-medium">
+//                 Select Excel File:
+//               </label>
 //               <input
 //                 type="file"
 //                 accept=".xlsx, .xls"
-//                 className="mt-4 w-full p-2 border rounded"
 //                 onChange={handleFileChange}
+//                 className="w-full p-2 border border-gray-300 rounded mt-2"
 //               />
+
+//               {/* Upload Button */}
 //               <button
-//                 className="bg-blue-500 text-white px-4 py-2 rounded mt-4 w-full"
 //                 onClick={handleUpload}
+//                 className={`w-full mt-4 px-4 py-2 rounded text-white ${
+//                   isUploading
+//                     ? "bg-gray-500 cursor-not-allowed"
+//                     : "bg-blue-500 hover:bg-blue-600"
+//                 }`}
+//                 disabled={isUploading}
 //               >
-//                 Upload
+//                 {isUploading ? "Uploading..." : "Upload"}
 //               </button>
 //             </div>
 //           </div>
@@ -189,6 +197,7 @@
 // export default AdminDashboard;
 
 import { useState } from "react";
+// import { Link } from "react-router-dom";
 import {
   Bell,
   Users,
@@ -196,12 +205,13 @@ import {
   AlertTriangle,
   Upload,
   X,
+  Menu,
 } from "lucide-react";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+
 const AdminDashboard = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("students");
@@ -221,7 +231,10 @@ const AdminDashboard = () => {
   // Handle file upload
   const handleUpload = async () => {
     if (!selectedFile) {
-      alert("Please select an Excel file.");
+      toast.warning("⚠️ Please select an Excel file.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
       return;
     }
 
@@ -244,20 +257,14 @@ const AdminDashboard = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // alert(response.data.message || "File uploaded successfully!");
       toast.success("✅ File uploaded successfully!", {
         position: "top-right",
-        autoClose: 3000, // 3 seconds
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
+        autoClose: 3000,
       });
       setUploadModalOpen(false);
       setSelectedFile(null);
     } catch (error) {
       console.error("Error uploading file:", error);
-      // alert("Failed to upload file.");
       toast.error("❌ File upload failed. Please try again.", {
         position: "top-right",
         autoClose: 3000,
@@ -268,53 +275,53 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
       <aside
-        className={`bg-gray-900 text-white w-64 p-4 space-y-6 transition-transform duration-300 fixed md:relative z-20 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-64"
-        } md:translate-x-0`}
+        className={`${
+          isSidebarOpen ? "w-64" : "w-20"
+        } bg-[#1A2A4F] text-white transition-all duration-300 flex flex-col`}
       >
-        <h2 className="text-xl font-semibold">Admin Dashboard</h2>
-        <nav className="space-y-4">
-          {/* Teacher Compliance Link */}
-          <Link
+        <div className="flex items-center justify-between p-4">
+          {isSidebarOpen && <h1 className="text-xl font-bold">Admin Portal</h1>}
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="p-2"
+          >
+            <Menu className="w-6 h-6" />
+          </button>
+        </div>
+        {/* <nav className="flex flex-col gap-3 px-3">
+          <NavItem
+            icon={<ClipboardCheck className="w-5 h-5" />}
+            label="Teachers Compliances"
+            isSidebarOpen={isSidebarOpen}
             to="/admin-dashboard/teacher-compliance"
-            className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded"
-          >
-            <ClipboardCheck className="w-5 h-5" /> Teachers Compliances
-          </Link>
-
-          {/* Wardern Compliance Link */}
-          <Link
+          />
+          <NavItem
+            icon={<ClipboardCheck className="w-5 h-5" />}
+            label="Wardens Compliances"
+            isSidebarOpen={isSidebarOpen}
             to="/admin-dashboard/warden-compliances"
-            className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded"
-          >
-            <ClipboardCheck className="w-5 h-5" /> Wardens Compliances
-          </Link>
-          {/* Students Compliances Link */}
-          <Link
+          />
+          <NavItem
+            icon={<AlertTriangle className="w-5 h-5" />}
+            label="Students Compliances"
+            isSidebarOpen={isSidebarOpen}
             to="/admin-dashboard/student-compliances"
-            className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded"
-          >
-            <AlertTriangle className="w-5 h-5" /> Students Compliances
-          </Link>
-        </nav>
+          />
+        </nav> */}
       </aside>
 
       {/* Main Content */}
-      <div className="flex flex-col flex-grow bg-gray-100 min-h-screen">
+      <div className="flex flex-col flex-grow overflow-y-auto">
         {/* Navbar */}
-        <nav className="bg-white shadow px-6 py-4 flex justify-between items-center">
-          <button
-            className="md:hidden"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            ☰
-          </button>
-          <h1 className="text-lg font-semibold">Admin Compliance Overview</h1>
+        <nav className="bg-white px-6 py-4 shadow-md flex justify-between items-center">
+          <h1 className="text-xl font-semibold">Admin Compliance Overview</h1>
           <div className="flex items-center gap-4">
+            <Mail className="w-6 h-6 text-gray-600" />
             <Bell className="w-6 h-6 text-gray-600" />
+            <User className="w-6 h-6 text-gray-600" />
           </div>
         </nav>
 
@@ -383,5 +390,16 @@ const AdminDashboard = () => {
     </div>
   );
 };
+
+// Sidebar Navigation Item Component
+const NavItem = ({ icon, label, isSidebarOpen, to }) => (
+  <Link
+    to={to}
+    className="flex items-center gap-3 p-3 hover:bg-gray-700 rounded-md cursor-pointer transition-all"
+  >
+    {icon}
+    {isSidebarOpen && <span className="text-lg">{label}</span>}
+  </Link>
+);
 
 export default AdminDashboard;

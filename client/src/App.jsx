@@ -14,30 +14,30 @@ import "react-toastify/dist/ReactToastify.css";
 const App = () => {
   return (
     <Router>
-      <ToastContainer />
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/student-dashboard" element={<StudentDashboard />} />
-        <Route path="/warden-dashboard" element={<WardenDashboard />} />
-        <Route
-          path="/warden-dashboard/student-compliances"
-          element={<StudentCompliancesWarden />}
-        />
-        <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
-        <Route
-          path="/teacher-dashboard/student-compliances"
-          element={<StudentCompliancesTeacher />}
-        />
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
-        <Route
-          path="/admin-dashboard/warden-compliances"
-          element={<WardenCompliance />}
-        />
-        <Route
-          path="/admin-dashboard/teacher-compliances"
-          element={<TeacherCompliance />}
-        />
-      </Routes>
+     <ToastContainer />
+       <Routes>
+         <Route path="/" element={<LoginPage />} />
+         <Route path="/student-dashboard" element={<StudentDashboard />} />
+         <Route path="/warden-dashboard" element={<WardenDashboard />} />
+         <Route
+           path="/warden-dashboard/student-compliances"
+           element={<StudentCompliancesWarden />}
+         />
+         <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
+         <Route
+           path="/teacher-dashboard/student-compliances"
+           element={<StudentCompliancesTeacher />}
+         />
+         <Route path="/admin-dashboard" element={<AdminDashboard />} />
+         <Route
+           path="/admin-dashboard/warden-compliances"
+           element={<WardenCompliance />}
+         />
+         <Route
+           path="/admin-dashboard/teacher-compliances"
+           element={<TeacherCompliance />}
+         />
+       </Routes>
     </Router>
     // <AdminDashboard />
     // <TeacherCompliance />

@@ -26,7 +26,7 @@ const StudentCompliancesTeacher = () => {
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <aside className="bg-gray-900 text-white w-64 p-4 space-y-6">
+      <aside className="bg-[#1A2A4F] text-white w-64 p-4 space-y-6">
         <h2 className="text-xl font-semibold">Teacher Dashboard</h2>
         <nav className="space-y-4">
           <Link to="/teacher-dashboard/" className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded">
@@ -35,14 +35,14 @@ const StudentCompliancesTeacher = () => {
           <Link to="/teacher-dashboard/student-compliances" className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded">
             <AlertTriangle className="w-5 h-5" /> Students Compliances
           </Link>
-          <Link to="/teacher-dashboard/add-compliance" className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded">
+          {/* <Link to="/teacher-dashboard/add-compliance" className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded">
             <PlusCircle className="w-5 h-5" /> Add Compliance
-          </Link>
+          </Link> */}
         </nav>
       </aside>
 
       {/* Main Content */}
-      <div className="p-6 flex-1 overflow-auto">
+      <div className="p-6 flex-1 overflow-y-auto">
         <h1 className="text-2xl font-bold mb-4">Student Compliances Assigned by Teacher</h1>
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border border-gray-200">

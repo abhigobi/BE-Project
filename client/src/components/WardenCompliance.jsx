@@ -34,7 +34,7 @@ const WardenCompliance = () => {
     <div className="flex">
       {/* Sidebar */}
       <aside
-        className={`bg-gray-900 text-white w-64 p-4 space-y-6 transition-transform duration-300 fixed h-full z-20 ${sidebarOpen ? "translate-x-0" : "-translate-x-64"} md:relative md:translate-x-0`}
+        className={`bg-[#1A2A4F] text-white w-64 p-4 space-y-6 transition-transform duration-300 fixed h-full z-20 ${sidebarOpen ? "translate-x-0" : "-translate-x-64"} md:relative md:translate-x-0`}
       >
         {/* Sidebar Header */}
         <div className="flex justify-between items-center">
