@@ -41,6 +41,20 @@ module.exports = {
     },
     deleteFile: async (id) => {
         return await db.execute(`DELETE FROM CommonCompliancePdfForStudent WHERE id = ?`, [id]);
+    },
+    updateFileStatus: async (id, status) => {
+        try {
+            const [rows] = await db.execute(
+                `UPDATE CommonCompliancePdfForStudent SET status = ? WHERE id = ?`,
+                [status, id]
+            );
+            return rows;
+        } catch (error) {
+            throw error;
+        }
+    },
+    getNameAndUrl : async (id) => {
+        return await db.execute(`SELECT name,url FROM CommonCompliancePdfForStudent WHERE id = ?`, [id]);
     }
 };
 
