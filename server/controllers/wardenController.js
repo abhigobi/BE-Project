@@ -2,6 +2,8 @@ const cloudinary = require('../config/cloudinary');
 const fs = require('fs');
 const path = require('path');
 const CommonCompliancePdfForStudent = require('../models/CommonCompliancePdfForStudent');
+const StudentComplianceStatus = require('../models/StudentComplianceStatus');
+const Student = require('../models/Student');
 const uploadFile = async (req, res) => {
     try {
         if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
@@ -70,9 +72,9 @@ const deleteFile = async (req, res) => {
 };
 
 const updateFileStatus = async (req, res) => {
-    const { id } = req.params;
-    const { status } = req.body;
-
+    // const { studentId } = req.params;
+    const { status, studentId, compliance_id } = req.body;
+    console.log(studentId, status);
     // Validate the status
     const allowedStatuses = ['Pending', 'Completed', 'Waiting For Approve', 'Rejected'];
     if (!allowedStatuses.includes(status)) {
@@ -81,14 +83,14 @@ const updateFileStatus = async (req, res) => {
 
     try {
         // Fetch the file to ensure it exists
-        const [file] = await CommonCompliancePdfForStudent.getFileById(id);
+        const [file] = await StudentComplianceStatus.getStudentComplianceStatusID(studentId, compliance_id);
 
         if (file.length === 0) {
             return res.status(404).json({ success: false, message: "File not found" });
         }
 
         // Update the status in the database
-        await CommonCompliancePdfForStudent.updateFileStatus(id, status);
+        await StudentComplianceStatus.updateStudentComplianceStatus(studentId, compliance_id, status);
 
         res.status(200).json({ success: true, message: "Status updated successfully", newStatus: status });
     } catch (error) {
@@ -97,4 +99,37 @@ const updateFileStatus = async (req, res) => {
     }
 };
 
-module.exports = { uploadFile, deleteFile, updateFileStatus };
+const createCompliance = async (req, res) => {
+    try {
+        //   const { name, url } = req.body;
+
+        const data = await CommonCompliancePdfForStudent.getNameAndUrl(req.body.id);
+        const name = data[0][0].name;
+        const url = data[0][0].url;
+        const complianceId = await req.body.id;
+        // 1. Create the compliance PDF
+        // const complianceId = await CommonCompliancePdfForStudent.createCompliance(name, url);
+
+        // 2. Get all student IDs (replace with your logic to fetch student IDs)
+        const studentIds = await Student.getAllStudentIds(); // Example: Replace with actual student IDs
+        // console.log(studentIds);
+        // 3. Initialize status for all students
+        await StudentComplianceStatus.initializeStatusForAllStudents(complianceId, studentIds, url, name);
+
+        res.status(201).json({ success: true, complianceId });
+        // res.status(201).json({ success: true, studentIds });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to create compliance' });
+    }
+};
+
+const getAllStudentCompliances = async (req, res) => {
+    try {
+        const compliances = await StudentComplianceStatus.getAllStudentCompliances();
+        res.status(200).json({ success: true, compliances });
+    } catch (error) {
+        console.error("Error fetching student compliances:", error);
+        res.status(500).json({ error: "Failed to fetch student compliances" });
+    }
+}
+module.exports = { uploadFile, deleteFile, updateFileStatus, createCompliance, getAllStudentCompliances };

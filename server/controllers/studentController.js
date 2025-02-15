@@ -1,7 +1,7 @@
 const Student = require('../models/Student');
 const CommonCompliancePdfForStudent = require('../models/CommonCompliancePdfForStudent');
 const bcrypt = require('bcrypt');
-
+const StudentComplianceStatus = require('../models/StudentComplianceStatus');
 const getAllFiles = async (req, res) => {
     try {
         const [files] = await CommonCompliancePdfForStudent.getAllFiles();
@@ -12,18 +12,18 @@ const getAllFiles = async (req, res) => {
     }
 };
 const toggleFileStatus = async (req, res) => {
-    const { id } = req.params;
+    const { studentId, complianceId } = req.body;
 
     try {
         // Fetch the current status of the file
-        const [file] = await CommonCompliancePdfForStudent.getFileById(id);
+        const [file] = await StudentComplianceStatus.getStudentComplianceStatusID(studentId, complianceId);
 
         if (file.length === 0) {
             return res.status(404).json({ success: false, message: "File not found" });
         }
-
-        const currentStatus = file[0].status;
-
+        // console.log(file);
+        const currentStatus = file.status;
+        // console.log(currentStatus);
         // Check if the current status is "Completed"
         if (currentStatus === 'Completed') {
             return res.status(400).json({ success: false, message: "Cannot toggle status of a completed file" });
@@ -31,16 +31,17 @@ const toggleFileStatus = async (req, res) => {
 
         // Determine the new status
         let newStatus;
-        if (currentStatus === 'Pending') {
+        if (currentStatus === 'Pending' || currentStatus === 'Rejected') {
             newStatus = 'Waiting For Approve';
-        } else if (currentStatus === 'Waiting For Approve') {
+        }
+        else if (currentStatus === 'Waiting For Approve') {
             newStatus = 'Pending';
         } else {
             return res.status(400).json({ success: false, message: "Invalid current status" });
         }
 
         // Update the status in the database
-        await CommonCompliancePdfForStudent.updateFileStatus(id, newStatus);
+        await StudentComplianceStatus.updateStatus(studentId, complianceId, newStatus);
 
         res.status(200).json({ success: true, message: "Status toggled successfully", newStatus });
     } catch (error) {
@@ -48,6 +49,18 @@ const toggleFileStatus = async (req, res) => {
         res.status(500).json({ success: false, message: "Failed to toggle file status" });
     }
 };
+
+const getStudentComplianceByStudentId = async (req, res) => {
+    const { studentId } = req.params;
+
+    try {
+        const compliances = await StudentComplianceStatus.getStatusByStudent(studentId);
+        res.status(200).json({ success: true, compliances });
+    } catch (error) {
+        console.error("Error fetching student compliances:", error);
+        res.status(500).json({ error: "Failed to fetch student compliances" });
+    }
+}
 
 const getStudent = async (req, res) => {
     try {
@@ -58,4 +71,4 @@ const getStudent = async (req, res) => {
         res.status(500).json({ error: "Failed to fetch students" });
     }
 }
-module.exports = { getAllFiles, toggleFileStatus,getStudent };
+module.exports = { getAllFiles, toggleFileStatus, getStudent, getStudentComplianceByStudentId };

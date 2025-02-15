@@ -43,6 +43,11 @@ class Student {
     static async getAllStudents() {
         return await db.query('SELECT * FROM Student');
     }
+
+    static async getAllStudentIds() {
+        const [rows] = await db.query('SELECT id FROM Student');
+        return rows.map((row) => row.id);
+    }
 }
 
 module.exports = Student;

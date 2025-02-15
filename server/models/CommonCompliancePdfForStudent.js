@@ -53,6 +53,9 @@ module.exports = {
             throw error;
         }
     },
+    getNameAndUrl : async (id) => {
+        return await db.execute(`SELECT name,url FROM CommonCompliancePdfForStudent WHERE id = ?`, [id]);
+    }
 };
 
 
