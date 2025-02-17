@@ -36,12 +36,12 @@ const uploadFile = async (req, res) => {
 };
 const deleteFile = async (req, res) => {
     try {
-        const { id } = req.params;
-        if (!id) {
+        const { compliance_id } = req.params;
+        if (!compliance_id) {
             return res.status(400).json({ error: "File ID is required" });
         }
         // Fetch file from DB
-        const [files] = await CommonCompliancePdfForStudent.getFileById(id);
+        const [files] = await CommonCompliancePdfForStudent.getFileById(compliance_id);
         if (files.length === 0) {
             return res.status(404).json({ error: "File not found" });
         }
@@ -61,7 +61,7 @@ const deleteFile = async (req, res) => {
         }
 
         // Delete from Database
-        await CommonCompliancePdfForStudent.deleteFile(id);
+        await CommonCompliancePdfForStudent.deleteFile(compliance_id);
 
         res.status(200).json({ success: true, message: "File deleted successfully" });
 
@@ -101,25 +101,64 @@ const updateFileStatus = async (req, res) => {
 
 const createCompliance = async (req, res) => {
     try {
-        //   const { name, url } = req.body;
+        // Extract data from request body
+        const { complianceId, due_date } = req.body;
 
-        const data = await CommonCompliancePdfForStudent.getNameAndUrl(req.body.id);
-        const name = data[0][0].name;
-        const url = data[0][0].url;
-        const complianceId = await req.body.id;
-        // 1. Create the compliance PDF
-        // const complianceId = await CommonCompliancePdfForStudent.createCompliance(name, url);
+        // Validate input
+        if (!complianceId || !due_date) {
+            return res.status(400).json({ 
+                error: 'Both complianceId and due_date are required' 
+            });
+        }
 
-        // 2. Get all student IDs (replace with your logic to fetch student IDs)
-        const studentIds = await Student.getAllStudentIds(); // Example: Replace with actual student IDs
-        // console.log(studentIds);
-        // 3. Initialize status for all students
-        await StudentComplianceStatus.initializeStatusForAllStudents(complianceId, studentIds, url, name);
+        // Validate date format (DD-MM-YYYY)
+        const dateRegex = /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\d{4}$/;
+        if (!dateRegex.test(due_date)) {
+            return res.status(400).json({ 
+                error: 'Invalid date format. Please use DD-MM-YYYY format (e.g., 03-03-2025)' 
+            });
+        }
 
-        res.status(201).json({ success: true, complianceId });
-        // res.status(201).json({ success: true, studentIds });
+        // Convert date from DD-MM-YYYY to YYYY-MM-DD for database
+        const [day, month, year] = due_date.split('-');
+        const formattedDate = `${year}-${month}-${day}`;
+
+        // Fetch name and URL for the compliance
+        const data = await CommonCompliancePdfForStudent.getNameAndUrl(complianceId);
+        if (!data?.[0]?.[0]) {
+            return res.status(404).json({ 
+                error: `Compliance with ID ${complianceId} not found` 
+            });
+        }
+        const { name, url } = data[0][0];
+
+        // Fetch all student IDs
+        const studentIds = await Student.getAllStudentIds();
+        if (!studentIds?.length) {
+            return res.status(404).json({ 
+                error: 'No students found in the system' 
+            });
+        }
+
+        // Initialize status for all students
+        await StudentComplianceStatus.initializeStatusForAllStudents(
+            complianceId,
+            studentIds,
+            url,
+            name,
+            formattedDate
+        );
+
+        return res.status(201).json({ 
+            success: true, 
+            complianceId: complianceId 
+        });
     } catch (error) {
-        res.status(500).json({ error: 'Failed to create compliance' });
+        console.error("Error in createCompliance:", error);
+        return res.status(500).json({ 
+            error: 'Failed to create compliance',
+            details: error.message 
+        });
     }
 };
 
