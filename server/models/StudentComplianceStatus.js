@@ -67,7 +67,9 @@ module.exports = {
         c.name,
         c.url,
         s.status,
-        s.completed_at
+        s.completed_at,
+        s.due_date,
+        s.created_at
       FROM StudentComplianceStatus s
       INNER JOIN CommonCompliancePdfForStudent c 
         ON c.id = s.compliance_id
