@@ -34,12 +34,14 @@ const uploadFile = async (req, res) => {
         res.status(500).json({ error: 'File upload failed' });
     }
 };
+
 const deleteFile = async (req, res) => {
     try {
         const { compliance_id } = req.params;
         if (!compliance_id) {
             return res.status(400).json({ error: "File ID is required" });
         }
+
         // Fetch file from DB
         const [files] = await CommonCompliancePdfForStudent.getFileById(compliance_id);
         if (files.length === 0) {
@@ -53,21 +55,45 @@ const deleteFile = async (req, res) => {
         // Extract public ID by removing the extension (.pdf)
         let publicId = `pdf_uploads/${fileNameWithExt.replace(/\.pdf$/, '')}`; // Ensure the .pdf extension is removed
         publicId = `${publicId}.pdf`;
+
         // Delete from Cloudinary
-        const cloudinaryResponse = await cloudinary.uploader.destroy(publicId, { resource_type: "raw", type: "upload" });
+        const cloudinaryResponse = await cloudinary.uploader.destroy(publicId, { 
+            resource_type: "raw", 
+            type: "upload" 
+        });
 
         if (cloudinaryResponse.result !== "ok") {
             return res.status(500).json({ error: "Cloudinary deletion failed" });
         }
 
-        // Delete from Database
-        await CommonCompliancePdfForStudent.deleteFile(compliance_id);
+        try {
+            // Delete records in sequence to maintain referential integrity
+            // First delete from StudentComplianceStatus
+            await StudentComplianceStatus.deleteByComplianceId(compliance_id);
+            
+            // Then delete from CommonCompliancePdfForStudent
+            await CommonCompliancePdfForStudent.deleteFile(compliance_id);
 
-        res.status(200).json({ success: true, message: "File deleted successfully" });
+            res.status(200).json({ 
+                success: true, 
+                message: "File and associated compliance statuses deleted successfully" 
+            });
+        } catch (dbError) {
+            console.error("Database deletion error:", dbError);
+            // Since Cloudinary deletion succeeded but database deletion failed,
+            // we should inform the user of the partial success
+            res.status(500).json({ 
+                error: "File deleted from storage but database cleanup failed",
+                details: dbError.message 
+            });
+        }
 
     } catch (error) {
-        console.error("Error deleting file:", error);
-        res.status(500).json({ error: "Failed to delete file" });
+        console.error("Error in deletion process:", error);
+        res.status(500).json({ 
+            error: "Failed to delete file and associated compliance statuses",
+            details: error.message 
+        });
     }
 };
 

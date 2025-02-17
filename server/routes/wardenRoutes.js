@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post('/upload/pdf', upload.single('file'), uploadFile);
 
-router.delete('/delete/pdf/:id', deleteFile);
+router.delete('/delete/pdf/:compliance_id', deleteFile);
 router.put('/files/update-status', updateFileStatus);
 
 router.post('/create-compliance', createCompliance);

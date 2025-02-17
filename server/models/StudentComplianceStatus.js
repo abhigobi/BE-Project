@@ -118,4 +118,14 @@ module.exports = {
       [status, completedAt, studentId, complianceId]
     );
   },
+  deleteByComplianceId: async (complianceId) => {
+    try {
+      const query = 'DELETE FROM StudentComplianceStatus WHERE compliance_id = ?';
+      const [result] = await db.execute(query, [complianceId]);
+      return result;
+    } catch (error) {
+      console.error('Error in deleteByComplianceId:', error);
+      throw error;
+    }
+  }
 };
