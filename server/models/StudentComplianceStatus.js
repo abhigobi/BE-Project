@@ -13,6 +13,7 @@ const createTable = async () => {
         status ENUM('Pending', 'Completed', 'Waiting For Approve', 'Rejected') DEFAULT 'Pending',
         completed_at TIMESTAMP NULL,
         due_date TIMESTAMP NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (student_id) REFERENCES Student(id) ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (compliance_id) REFERENCES CommonCompliancePdfForStudent(id) ON DELETE CASCADE ON UPDATE CASCADE
       )
