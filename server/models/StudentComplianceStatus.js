@@ -78,8 +78,7 @@ module.exports = {
     );
     return rows;
   },
-  getAllStudentCompliances: async (page = 1, limit = 10) => {
-    const offset = (page - 1) * limit;
+  getAllStudentCompliances: async () => {
     const [rows] = await db.execute(
       `SELECT 
         s.id AS StudentComplianceStatus_ID,
@@ -89,13 +88,14 @@ module.exports = {
         s.name AS compliance_name,
         s.status,
         s.completed_at,
+        s.due_date,
+        s.created_at,
         st.name AS student_name,
         st.email AS student_email
       FROM StudentComplianceStatus s
       LEFT JOIN Student st 
         ON s.student_id = st.id
-      LIMIT ? OFFSET ?`,
-      [limit, offset]
+      ORDER BY s.created_at DESC`
     );
     return rows;
   },
