@@ -97,7 +97,39 @@ module.exports = {
         ON s.student_id = st.id
       ORDER BY s.created_at DESC`
     );
-    return rows;
+
+    // Group by student
+    const groupedByStudent = rows.reduce((acc, curr) => {
+      // Create a unique key for each student
+      const studentKey = curr.student_id;
+
+      if (!acc[studentKey]) {
+        // Initialize student object if it doesn't exist
+        acc[studentKey] = {
+          student_id: curr.student_id,
+          student_name: curr.student_name,
+          student_email: curr.student_email,
+          compliances: []
+        };
+      }
+
+      // Add compliance data
+      acc[studentKey].compliances.push({
+        compliance_id: curr.compliance_id,
+        StudentComplianceStatus_ID: curr.StudentComplianceStatus_ID,
+        urlOfCompliance: curr.urlOfCompliance,
+        compliance_name: curr.compliance_name,
+        status: curr.status,
+        completed_at: curr.completed_at,
+        due_date: curr.due_date,
+        created_at: curr.created_at
+      });
+
+      return acc;
+    }, {});
+
+    // Convert to array format
+    return Object.values(groupedByStudent);
   },
   getStudentComplianceStatusID: async (studentId, complianceId) => {
     if (!studentId || !complianceId) {

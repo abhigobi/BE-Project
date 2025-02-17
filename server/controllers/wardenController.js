@@ -190,8 +190,15 @@ const createCompliance = async (req, res) => {
 
 const getAllStudentCompliances = async (req, res) => {
     try {
-        const compliances = await StudentComplianceStatus.getAllStudentCompliances();
-        res.status(200).json({ success: true, compliances });
+        const students = await StudentComplianceStatus.getAllStudentCompliances();
+        res.status(200).json({ 
+            success: true, 
+            students,
+            total_students: students.length,
+            total_compliances: students.reduce((sum, student) => 
+                sum + student.compliances.length, 0
+            )
+        });
     } catch (error) {
         console.error("Error fetching student compliances:", error);
         res.status(500).json({ error: "Failed to fetch student compliances" });
