@@ -128,7 +128,15 @@
 // export default StudentCompliancesWarden;
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { ClipboardCheck, Menu, X } from "lucide-react";
+import {
+  ClipboardCheck,
+  Menu,
+  Trash2,
+  TrashIcon,
+  UploadCloud,
+  X,
+} from "lucide-react";
+import { toast } from "react-toastify";
 
 const StudentCompliancesWarden = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -168,7 +176,6 @@ const StudentCompliancesWarden = () => {
     },
   ];
   const handleFileChange = async (event) => {
-    event.preventDefault(); // Prevent form reload if inside a form
     const file = event.target.files[0];
     if (!file) return;
 
@@ -193,35 +200,71 @@ const StudentCompliancesWarden = () => {
 
       const data = await response.json();
       console.log("File uploaded:", data);
-
-      const pdfUrl = data.url;
-
-      // setCompliances((prevCompliances) =>
-      //   prevCompliances.map((comp) =>
-      //     comp.id === selectedFile.id ? { ...comp, pdfUrl: pdfUrl } : comp
-      //   )
-      // );
-
-      toast.success("✅ File uploaded successfully!", {
-        position: "top-right",
-        autoClose: 3000, // 3 seconds
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-
+      toast.success("✅ File uploaded successfully!");
       setSelectedFile(null);
     } catch (error) {
       console.error("Upload error:", error);
-      toast.error("❌ File upload failed. Please try again.", {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      toast.error("❌ File upload failed.");
     } finally {
       setIsLoading(false);
     }
   };
+
+  // const handleFileChange = async (event) => {
+  //   event.preventDefault(); // Prevent form reload if inside a form
+  //   const file = event.target.files[0];
+  //   if (!file) return;
+
+  //   setIsLoading(true);
+  //   setSelectedFile(file);
+
+  //   const formData = new FormData();
+  //   formData.append("pdf", file);
+
+  //   try {
+  //     const response = await fetch(
+  //       "http://localhost:3000/api/warden/upload/pdf",
+  //       {
+  //         method: "POST",
+  //         body: formData,
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       throw new Error("Failed to upload file");
+  //     }
+
+  //     const data = await response.json();
+  //     console.log("File uploaded:", data);
+
+  //     const pdfUrl = data.url;
+
+  //     // setCompliances((prevCompliances) =>
+  //     //   prevCompliances.map((comp) =>
+  //     //     comp.id === selectedFile.id ? { ...comp, pdfUrl: pdfUrl } : comp
+  //     //   )
+  //     // );
+
+  //     toast.success("✅ File uploaded successfully!", {
+  //       position: "top-right",
+  //       autoClose: 3000, // 3 seconds
+  //       hideProgressBar: false,
+  //       closeOnClick: true,
+  //       pauseOnHover: true,
+  //       draggable: true,
+  //     });
+
+  //     setSelectedFile(null);
+  //   } catch (error) {
+  //     console.error("Upload error:", error);
+  //     toast.error("❌ File upload failed. Please try again.", {
+  //       position: "top-right",
+  //       autoClose: 3000,
+  //     });
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
   const handleDeletePdf = async (complianceId) => {
     const isConfirmed = window.confirm(
       "Are you sure you want to delete this PDF?"
@@ -295,8 +338,9 @@ const StudentCompliancesWarden = () => {
         </nav>
 
         <h1 className="text-2xl font-bold mb-6">Student Compliances</h1>
-        <div className="overflow-x-auto bg-white shadow-lg rounded-lg p-4">
-          <div className="mt-6 flex flex-col items-center ">
+        <div className="flex  justify-center  p-6 ">
+          {/* Upload & Delete Section */}
+          <div className="flex flex-col md:flex-row items-center gap-4">
             <input
               type="file"
               accept="application/pdf"
@@ -306,22 +350,30 @@ const StudentCompliancesWarden = () => {
             />
             <label
               htmlFor="file-upload"
-              className="bg-green-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-green-600 transition-colors"
+              className="bg-green-500 text-white px-5 py-2 rounded-lg cursor-pointer hover:bg-green-600 transition-all duration-300 shadow-md flex items-center gap-2"
             >
-              {isLoading ? "Uploading..." : "Upload Compliance PDF"}
+              <UploadCloud className="w-5 h-5" />
+              {isLoading ? "Uploading..." : "Upload Students Compliance PDF"}
             </label>
+
             {selectedFile && (
-              <p className="mt-2 text-sm text-gray-600">
-                Selected File: {selectedFile.name}
+              <p className="text-sm text-gray-300 font-medium">
+                Selected File:{" "}
+                <span className="text-yellow-400">{selectedFile.name}</span>
               </p>
             )}
+
             <button
               onClick={() => handleDeletePdf(compliance.id)}
-              className="mt-2 bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-600 transition-colors"
+              className="bg-red-500 text-white px-5 py-2 rounded-lg cursor-pointer hover:bg-red-600 transition-all duration-300 shadow-md flex items-center gap-2"
             >
+              <Trash2 className="w-5 h-5" />
               Delete Compliance PDF
             </button>
           </div>
+        </div>
+
+        <div className="overflow-x-auto bg-white shadow-lg rounded-lg p-4">
           <table className="min-w-full border border-gray-300 rounded-lg">
             <thead>
               <tr className="bg-gray-200">

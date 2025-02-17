@@ -282,7 +282,7 @@ const StudentDashboard = () => {
                 <div className="flex justify-center mt-6">
                   <button
                     onClick={() => setShowAll(!showAll)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                    className=" text-black  hover:text-purple-600  hover:underline"
                   >
                     {showAll ? "Show Less" : "View More"}
                   </button>

@@ -286,8 +286,8 @@ import { toast } from "react-toastify";
 const WardenDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showAll, setShowAll] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [selectedFile, setSelectedFile] = useState(null);
+  // const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
 
@@ -474,22 +474,33 @@ const WardenDashboard = () => {
           {/* Total Compliances Card */}
           <div className="bg-blue-500 p-6 rounded-lg shadow-md text-white text-2xl flex-1 min-w-[150px] max-w-[350px] text-center hover:shadow-lg transition-shadow">
             <h1 className="text-lg font-semibold">Total Compliances</h1>
-            <h2 className="text-2xl font-bold mt-2">10</h2>
+            <h2 className="text-2xl font-bold mt-2">{compliances.length}</h2>
           </div>
 
-          {/* Completed Card */}
+          {/* Completed Compliances Card */}
           <div className="bg-green-500 p-6 rounded-lg shadow-md text-white flex-1 min-w-[150px] max-w-[350px] text-center hover:shadow-lg transition-shadow">
             <h1 className="text-lg font-semibold">Completed Compliances</h1>
-            <h2 className="text-2xl font-bold mt-2">6</h2>
+            <h2 className="text-2xl font-bold mt-2">
+              {
+                compliances.filter(
+                  (compliance) => compliance.status === "Completed"
+                ).length
+              }
+            </h2>
           </div>
 
-          {/* Pending Card */}
+          {/* Pending Compliances Card */}
           <div className="bg-red-500 p-6 rounded-lg shadow-md text-white flex-1 min-w-[150px] max-w-[350px] text-center hover:shadow-lg transition-shadow">
             <h1 className="text-lg font-semibold">Pending Compliances</h1>
-            <h2 className="text-2xl font-bold mt-2">4</h2>
+            <h2 className="text-2xl font-bold mt-2">
+              {
+                compliances.filter(
+                  (compliance) => compliance.status === "Pending"
+                ).length
+              }
+            </h2>
           </div>
         </div>
-        <br />
 
         <div className="p-6">
           <h2 className="text-lg font-semibold mb-4">My Compliances</h2>
@@ -545,7 +556,7 @@ const WardenDashboard = () => {
             <div className="flex justify-center mt-6">
               <button
                 onClick={() => setShowAll(!showAll)}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                className=" text-black  hover:text-purple-600  hover:underline"
               >
                 {showAll ? "Show Less" : "View More"}
               </button>
