@@ -2,9 +2,21 @@ const db = require('../config/db');
 const bcrypt = require('bcrypt');
 
 class Student {
-    static async create(student) {
-        const { name, email, password } = student;
+    static async ensureTableExists() {
+        // Create Student table if it doesn't exist
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS Student (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) UNIQUE NOT NULL,
+                password VARCHAR(255) NOT NULL
+            )
+        `);
+    }
 
+    static async create(student) {
+        await this.ensureTableExists();
+        const { name, email, password } = student;
         // Hash the password
         const saltRounds = 10; // Number of salt rounds for hashing
         const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -18,6 +30,7 @@ class Student {
     }
 
     static async bulkCreate(students) {
+        await this.ensureTableExists();
         const query = 'INSERT INTO Student (name, email, password) VALUES ?';
 
         // Hash passwords for all students
