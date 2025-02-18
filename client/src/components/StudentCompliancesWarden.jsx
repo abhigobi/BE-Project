@@ -532,8 +532,10 @@ import axios from "axios";
 
 const StudentCompliancesWarden = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [selectedComplianceId, setSelectedComplianceId] = useState(null);
+  const [selectedStudentID, setSelectedStudentID] = useState(null);
+  const [status, setStatus] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
   const [studentCompliance, setStudentCompliance] = useState([]);
   const [error, setError] = useState(null); // ✅ Fixed missing setError state
 
@@ -562,6 +564,55 @@ const StudentCompliancesWarden = () => {
     getAllStudentsCompliances();
   }, []);
 
+  const handleStatusClick = (complianceId, studentId) => {
+    setSelectedComplianceId(complianceId);
+    setSelectedStudentID(studentId);
+    setShowPopup(true); // Open popup
+  };
+  const handleStatusChange = async () => {
+    if (!status) {
+      toast.error("❌ Please select a status.");
+      return;
+    }
+  
+    // ✅ Log values before API call
+    console.log("Selected Compliance ID:", selectedComplianceId);
+    console.log("Selected Student ID:", selectedStudentID);
+    console.log("Selected Status:", status);
+  
+    if (!selectedComplianceId || !selectedStudentID) {
+      toast.error("❌ Missing compliance ID or student ID.");
+      return;
+    }
+  
+    try {
+      const response = await fetch(
+        "http://localhost:3000/api/warden/files/update-status",
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            status: status, 
+            studentId: selectedStudentID, 
+            compliance_id: selectedComplianceId, 
+          }),
+        }
+      );
+  
+      if (!response.ok) {
+        const errorText = await response.text(); // Log backend response if error occurs
+        console.error("Backend Error Response:", errorText);
+        throw new Error("Failed to update status");
+      }
+  
+      toast.success("✅ Status updated successfully!");
+      setShowPopup(false); // ✅ Close popup after successful update
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("❌ Failed to update status.");
+    }
+  };
+  
   // const handleFileChange = async (event) => {
   //   const file = event.target.files[0];
   //   if (!file) return;
@@ -630,7 +681,21 @@ const StudentCompliancesWarden = () => {
   //     toast.error("❌ File deletion failed. Please try again.");
   //   }
   // };
-
+  // Function to get status color
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Waiting For Approve":
+        return "bg-blue-200 text-blue-800";
+      case "Approved":
+        return "bg-green-200 text-green-800";
+      case "Rejected":
+        return "bg-red-200 text-red-800";
+      case "Completed":
+        return "bg-violet-200 text-violet-800";
+      default:
+        return "bg-yellow-200 text-yellow-800";
+    }
+  };
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
@@ -814,7 +879,6 @@ const StudentCompliancesWarden = () => {
                     key={compliance.StudentComplianceStatus_ID}
                     className="hover:bg-gray-100"
                   >
-                    {/* Merge student details only for the first compliance row */}
                     {index === 0 && (
                       <>
                         <td
@@ -837,82 +901,90 @@ const StudentCompliancesWarden = () => {
                         </td>
                       </>
                     )}
-
                     <td className="py-3 px-4 border-b">
-                      {compliance.compliance_name}
+                      <a
+                        href={compliance.urlOfCompliance}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 underline hover:text-blue-700"
+                      >
+                        {compliance.compliance_name}
+                      </a>
                     </td>
                     <td className="py-3 px-4 border-b">
-                      {new Date(compliance.created_at).toLocaleString("en-IN", {
-                        timeZone: "Asia/Kolkata",
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: true,
-                      })}
+                      {new Date(compliance.created_at).toLocaleString("en-IN")}
                     </td>
                     <td className="py-3 px-4 border-b">
-                      {new Date(compliance.due_date).toLocaleString("en-IN", {
-                        timeZone: "Asia/Kolkata",
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: true,
-                      })}
+                      {new Date(compliance.due_date).toLocaleString("en-IN")}
                     </td>
                     <td className="py-3 px-4 border-b">
                       {compliance.completed_at
                         ? new Date(compliance.completed_at).toLocaleString(
-                            "en-IN",
-                            {
-                              timeZone: "Asia/Kolkata",
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              second: "2-digit",
-                              hour12: true,
-                            }
+                            "en-IN"
                           )
                         : "N/A"}
                     </td>
                     <td className="py-3 px-4 border-b">
                       <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          compliance.status === "Waiting For Approve"
-                            ? "bg-blue-200 text-blue-800"
-                            : compliance.status === "Approved"
-                            ? "bg-green-200 text-green-800"
-                            : compliance.status === "Rejected"
-                            ? "bg-red-200 text-red-800"
-                            : "bg-yellow-200 text-yellow-800"
-                        }`}
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                          compliance.status
+                        )}`}
                       >
                         {compliance.status}
                       </span>
                     </td>
                     <td className="py-3 px-4 border-b">
-                      {compliance.urlOfCompliance && (
-                        <a
-                          href={compliance.urlOfCompliance}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-500 underline hover:text-blue-700"
-                        >
-                          View PDF
-                        </a>
-                      )}
+                      <button
+                        onClick={() =>
+                          handleStatusClick(
+                            compliance.compliance_id,
+                            student.student_id
+                          )
+                        }
+                        className="text-blue-500 hover:underline"
+                      >
+                        Change Status
+                      </button>
                     </td>
                   </tr>
                 ))
               )}
             </tbody>
+            {/* Popup for selecting status */}
+            {showPopup && (
+              <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+                  <h2 className="text-xl font-semibold mb-4">
+                    Change Compliance Status
+                  </h2>
+                  <select
+                    className="border border-gray-300 p-2 rounded-lg w-full"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                  >
+                    <option value="">Select Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Rejected">Rejected</option>
+                    <option value="Completed">Completed</option>
+                  </select>
+                  <div className="flex justify-end gap-4 mt-4">
+                    <button
+                      onClick={() => setShowPopup(false)}
+                      className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleStatusChange}
+                      className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                    >
+                      Update
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            );
           </table>
         </div>
       </div>
