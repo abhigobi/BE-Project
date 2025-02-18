@@ -4,6 +4,7 @@ const path = require('path');
 const CommonCompliancePdfForStudent = require('../models/CommonCompliancePdfForStudent');
 const StudentComplianceStatus = require('../models/StudentComplianceStatus');
 const Student = require('../models/Student');
+const nodemailer = require('nodemailer');
 const uploadFile = async (req, res) => {
     try {
         if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
@@ -21,7 +22,7 @@ const uploadFile = async (req, res) => {
         // Delete the local file after upload
         fs.unlink(filePath, (err) => {
             if (err) {
-                console.error("⚠️ Error deleting local file:", err);
+                console.error("Error deleting local file:", err);
             } else {
                 console.log("Local file deleted:", filePath);
             }
@@ -57,9 +58,9 @@ const deleteFile = async (req, res) => {
         publicId = `${publicId}.pdf`;
 
         // Delete from Cloudinary
-        const cloudinaryResponse = await cloudinary.uploader.destroy(publicId, { 
-            resource_type: "raw", 
-            type: "upload" 
+        const cloudinaryResponse = await cloudinary.uploader.destroy(publicId, {
+            resource_type: "raw",
+            type: "upload"
         });
 
         if (cloudinaryResponse.result !== "ok") {
@@ -70,29 +71,29 @@ const deleteFile = async (req, res) => {
             // Delete records in sequence to maintain referential integrity
             // First delete from StudentComplianceStatus
             await StudentComplianceStatus.deleteByComplianceId(compliance_id);
-            
+
             // Then delete from CommonCompliancePdfForStudent
             await CommonCompliancePdfForStudent.deleteFile(compliance_id);
 
-            res.status(200).json({ 
-                success: true, 
-                message: "File and associated compliance statuses deleted successfully" 
+            res.status(200).json({
+                success: true,
+                message: "File and associated compliance statuses deleted successfully"
             });
         } catch (dbError) {
             console.error("Database deletion error:", dbError);
             // Since Cloudinary deletion succeeded but database deletion failed,
             // we should inform the user of the partial success
-            res.status(500).json({ 
+            res.status(500).json({
                 error: "File deleted from storage but database cleanup failed",
-                details: dbError.message 
+                details: dbError.message
             });
         }
 
     } catch (error) {
         console.error("Error in deletion process:", error);
-        res.status(500).json({ 
+        res.status(500).json({
             error: "Failed to delete file and associated compliance statuses",
-            details: error.message 
+            details: error.message
         });
     }
 };
@@ -128,20 +129,20 @@ const updateFileStatus = async (req, res) => {
 const createCompliance = async (req, res) => {
     try {
         // Extract data from request body
-        const { complianceId, due_date } = req.body;
+        const { complianceId, due_date, emailSubject, emailText } = req.body;
 
         // Validate input
         if (!complianceId || !due_date) {
-            return res.status(400).json({ 
-                error: 'Both complianceId and due_date are required' 
+            return res.status(400).json({
+                error: 'Both complianceId and due_date are required'
             });
         }
 
         // Validate date format (DD-MM-YYYY)
         const dateRegex = /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\d{4}$/;
         if (!dateRegex.test(due_date)) {
-            return res.status(400).json({ 
-                error: 'Invalid date format. Please use DD-MM-YYYY format (e.g., 03-03-2025)' 
+            return res.status(400).json({
+                error: 'Invalid date format. Please use DD-MM-YYYY format (e.g., 03-03-2025)'
             });
         }
 
@@ -152,19 +153,42 @@ const createCompliance = async (req, res) => {
         // Fetch name and URL for the compliance
         const data = await CommonCompliancePdfForStudent.getNameAndUrl(complianceId);
         if (!data?.[0]?.[0]) {
-            return res.status(404).json({ 
-                error: `Compliance with ID ${complianceId} not found` 
+            return res.status(404).json({
+                error: `Compliance with ID ${complianceId} not found`
             });
         }
         const { name, url } = data[0][0];
 
         // Fetch all student IDs
         const studentIds = await Student.getAllStudentIds();
+        console.log("Student ID", studentIds)
         if (!studentIds?.length) {
-            return res.status(404).json({ 
-                error: 'No students found in the system' 
+            return res.status(404).json({
+                error: 'No students found in the system'
             });
         }
+        // Fetch all students with their emails
+        const students = await Student.getAllStudents();
+        console.log("Students fetched from DB:", students); // Debugging
+
+        // Extract the first array (actual student data)
+        const studentList = students[0] || [];
+
+        if (!studentList.length) {
+            return res.status(404).json({ error: 'No students found in the system' });
+        }
+
+        // Ensure valid emails are extracted
+        const studentEmails = studentList
+            .map(student => student?.email?.trim())  // Ensure email exists and trim whitespace
+            .filter(email => email && email.includes('@')); // Validate email format
+
+        console.log("Students email", studentEmails);
+
+        if (studentEmails.length === 0) {
+            return res.status(500).json({ error: "No valid student emails found." });
+        }
+
 
         // Initialize status for all students
         await StudentComplianceStatus.initializeStatusForAllStudents(
@@ -175,27 +199,65 @@ const createCompliance = async (req, res) => {
             formattedDate
         );
 
-        return res.status(201).json({ 
-            success: true, 
-            complianceId: complianceId 
+        await sendEmailsToStudents(studentEmails, name, due_date, url, emailSubject, emailText);
+        return res.status(201).json({
+            success: true,
+            complianceId: complianceId,
+            message: "Compliance created and email notifications sent."
         });
     } catch (error) {
         console.error("Error in createCompliance:", error);
-        return res.status(500).json({ 
+        return res.status(500).json({
             error: 'Failed to create compliance',
-            details: error.message 
+            details: error.message
         });
+    }
+};
+// Function to send emails with dynamic/default content
+const sendEmailsToStudents = async (emails, complianceName, dueDate, complianceUrl, emailSubject, emailText) => {
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL_USER, // Your email
+            pass: process.env.EMAIL_PASS  // Your email password or app password
+        }
+    });
+
+    // Default subject and text if not provided
+    const defaultSubject = `New Compliance Assigned: ${complianceName}`;
+    const defaultText = `Dear Student,
+                         A new compliance document titled "${complianceName}" has been assigned to you.
+                         Due Date: ${dueDate}
+                        Download Link: ${complianceUrl}
+
+                        Please ensure that you complete it before the deadline.
+
+                        Best Regards,
+                        KL Rahul`;
+
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: emails.join(','), // Send to all student emails
+        subject: emailSubject || defaultSubject, // Use provided subject or default
+        text: emailText || defaultText // Use provided text or default
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log("Emails sent successfully!");
+    } catch (error) {
+        console.error("Error sending emails:", error);
     }
 };
 
 const getAllStudentCompliances = async (req, res) => {
     try {
         const students = await StudentComplianceStatus.getAllStudentCompliances();
-        res.status(200).json({ 
-            success: true, 
+        res.status(200).json({
+            success: true,
             students,
             total_students: students.length,
-            total_compliances: students.reduce((sum, student) => 
+            total_compliances: students.reduce((sum, student) =>
                 sum + student.compliances.length, 0
             )
         });
