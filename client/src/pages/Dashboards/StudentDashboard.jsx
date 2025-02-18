@@ -16,19 +16,20 @@ const StudentDashboard = () => {
   // Fetch compliance data
   useEffect(() => {
     const fetchData = async () => {
-      console.log(userID);
+      // console.log(userID);
 
       try {
         const response = await fetch(
           `http://localhost:3000/api/student/getStudentComplianceByStudentId/${userID}`
         );
+        // console.log(response);
 
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
 
         if (data.success && Array.isArray(data.compliances)) {
           setCompliances(data.compliances);
@@ -223,21 +224,66 @@ const StudentDashboard = () => {
                     key={compliance.compliance_id}
                     className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow"
                   >
+                    {/* PDF Preview Section */}
                     <div className="h-40 bg-gray-100 flex items-center justify-center rounded-lg">
                       <FileText className="w-12 h-12 text-gray-400" />
                     </div>
-                    <p className="mt-2 text-center font-medium">
+
+                    {/* Compliance Name */}
+                    <p className="mt-2 text-center font-medium truncate">
                       {compliance.name || "N/A"}
                     </p>
-                    <p className="text-center text-sm text-gray-600">
-                      Date:{" "}
-                      {compliance.completed_at
-                        ? compliance.completed_at.slice(0, 10)
-                        : "N/A"}
-                    </p>
+
+                    {/* Compliance Dates */}
+                    <div className="mt-2 space-y-1 text-center text-sm text-gray-600">
+                      <p>
+                        <span className="font-medium">Created:</span>{" "}
+                        {compliance.created_at
+                          ? new Date(compliance.created_at).toLocaleString(
+                              "en-IN",
+                              {
+                                timeZone: "Asia/Kolkata",
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                                hour12: true, // Ensures AM/PM format
+                              }
+                            )
+                          : "N/A"}
+                      </p>
+                      <p>
+                        <span className="font-medium">Due:</span>{" "}
+                        {compliance.due_date
+                          ? new Date(compliance.due_date).toLocaleString(
+                              "en-IN",
+                              {
+                                timeZone: "Asia/Kolkata",
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                                hour12: true, // Ensures AM/PM format
+                              }
+                            )
+                          : "N/A"}
+                      </p>
+                      <p>
+                        <span className="font-medium">Completed:</span>{" "}
+                        {compliance.completed_at
+                          ? compliance.completed_at.slice(0, 10)
+                          : "Not Completed"}
+                      </p>
+                    </div>
+
+                    {/* Compliance Status */}
                     <div className="mt-2 text-center">
                       <span
-                        className={`px-2 py-1 rounded-full text-sm ${
+                        className={`px-2 py-1 rounded-full text-sm font-medium ${
                           compliance.status === "Pending"
                             ? "bg-yellow-100 text-yellow-800"
                             : compliance.status === "Waiting For Approve"
@@ -250,18 +296,22 @@ const StudentDashboard = () => {
                         {compliance.status || "N/A"}
                       </span>
                     </div>
+
+                    {/* View PDF Link */}
                     {compliance.url && (
                       <div className="mt-2 text-center">
                         <a
                           href={compliance.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-500 underline"
+                          className="text-blue-500 underline hover:text-blue-700"
                         >
                           View PDF
                         </a>
                       </div>
                     )}
+
+                    {/* Change Status Button */}
                     {(compliance.status === "Pending" ||
                       compliance.status === "Waiting For Approve") && (
                       <div className="mt-4 text-center">
