@@ -218,28 +218,87 @@ const sendEmailsToStudents = async (emails, complianceName, dueDate, complianceU
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: process.env.EMAIL_USER, // Your email
-            pass: process.env.EMAIL_PASS  // Your email password or app password
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
         }
     });
 
-    // Default subject and text if not provided
     const defaultSubject = `New Compliance Assigned: ${complianceName}`;
-    const defaultText = `Dear Student,
-                         A new compliance document titled "${complianceName}" has been assigned to you.
-                         Due Date: ${dueDate}
-                        Download Link: ${complianceUrl}
-
-                        Please ensure that you complete it before the deadline.
-
-                        Best Regards,
-                        KL Rahul`;
+    
+    // HTML email template with inline CSS for better email client compatibility
+    const htmlTemplate = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>${complianceName} Compliance Assignment</title>
+        </head>
+        <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+            <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px;">
+                <!-- Header -->
+                <div style="background-color: #0066cc; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
+                    <h1 style="color: #ffffff; margin: 0; font-size: 24px;">New Compliance Assignment</h1>
+                </div>
+                
+                <!-- Content -->
+                <div style="padding: 30px; background-color: #ffffff; border-radius: 0 0 8px 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <p style="color: #333333; font-size: 16px; line-height: 1.5; margin-bottom: 20px;">
+                        Dear Student,
+                    </p>
+                    
+                    <p style="color: #333333; font-size: 16px; line-height: 1.5; margin-bottom: 20px;">
+                        A new compliance document has been assigned to you:
+                    </p>
+                    
+                    <!-- Compliance Details Box -->
+                    <div style="background-color: #f8f9fa; border-left: 4px solid #0066cc; padding: 15px; margin-bottom: 20px;">
+                        <p style="margin: 0 0 10px 0; color: #333333;">
+                            <strong>Document:</strong> ${complianceName}
+                        </p>
+                        <p style="margin: 0 0 10px 0; color: #333333;">
+                            <strong>Due Date:</strong> ${dueDate}
+                        </p>
+                    </div>
+                    
+                    <!-- Action Button -->
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="${complianceUrl}" style="background-color: #0066cc; color: #ffffff; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                            Access Document
+                        </a>
+                    </div>
+                    
+                    <p style="color: #333333; font-size: 16px; line-height: 1.5; margin-bottom: 20px;">
+                        Please ensure that you complete this compliance document before the deadline.
+                    </p>
+                    
+                    <!-- Footer -->
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eeeeee;">
+                        <p style="color: #666666; font-size: 14px; margin: 0;">
+                            Best Regards,<br>
+                            <strong>KL Rahul</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>
+    `;
 
     const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: emails.join(','), // Send to all student emails
-        subject: emailSubject || defaultSubject, // Use provided subject or default
-        text: emailText || defaultText // Use provided text or default
+        to: emails.join(','),
+        subject: emailSubject || defaultSubject,
+        html: emailText || htmlTemplate, // Use provided HTML or default template
+        // Including a text version for email clients that don't support HTML
+        text: `New Compliance Assignment: ${complianceName}
+              Due Date: ${dueDate}
+              Access Document: ${complianceUrl}
+              
+              Please complete this compliance document before the deadline.
+              
+              Best Regards,
+              KL Rahul`
     };
 
     try {
