@@ -2,7 +2,19 @@ const db = require('../config/db');
 const bcrypt = require('bcrypt');
 
 class Warden {
+     static async ensureTableExists() {
+                // Create Student table if it doesn't exist
+                await db.query(`
+                    CREATE TABLE IF NOT EXISTS Warden (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        name VARCHAR(255) NOT NULL,
+                        email VARCHAR(255) UNIQUE NOT NULL,
+                        password VARCHAR(255) NOT NULL
+                    )
+                `);
+        }
     static async create(Warden) {
+        await this.ensureTableExists();
         const { name, email, password } = Warden;
 
         // Hash the password
@@ -18,6 +30,7 @@ class Warden {
     }
 
     static async bulkCreate(Wardens) {
+        await this.ensureTableExists();
         const query = 'INSERT INTO Warden (name, email, password) VALUES ?';
 
         // Hash passwords for all Wardens
@@ -36,6 +49,7 @@ class Warden {
 
     // New method: Find a Warden by email
     static async findByEmail(email) {
+        await this.ensureTableExists();
         const [rows] = await db.query('SELECT * FROM Warden WHERE email = ?', [email]);
         return rows[0]; // Return the first matching Warden
     }
