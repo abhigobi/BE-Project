@@ -36,7 +36,7 @@ const loginUser = async (req, res) => {
         const token = jwt.sign(
             { id: user.id, email: user.email, role: table }, // Payload
             process.env.JWT_SECRET_KEY,
-            { expiresIn: '1h' } // Token expiration
+            { expiresIn: '7d' } // Token expiration
         );
 
         // Exclude password from response
