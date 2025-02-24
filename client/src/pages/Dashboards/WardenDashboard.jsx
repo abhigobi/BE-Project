@@ -76,6 +76,12 @@ const WardenDashboard = () => {
             to="/warden-dashboard/student-compliances"
             isSidebarOpen={sidebarOpen}
           />
+          <NavItem
+            icon={<FaClipboardList className="w-5 h-5" />}
+            label="Students List"
+            to="/warden-dashboard/student-list"
+            isSidebarOpen={sidebarOpen}
+          />
         </nav>
       </aside>
 
@@ -192,32 +198,6 @@ const WardenDashboard = () => {
               </button>
             </div>
           )}
-          {/* <div className="mt-6 flex flex-col items-center">
-            <input
-              type="file"
-              accept="application/pdf"
-              onChange={handleFileChange}
-              className="hidden"
-              id="file-upload"
-            />
-            <label
-              htmlFor="file-upload"
-              className="bg-green-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-green-600 transition-colors"
-            >
-              {isLoading ? "Uploading..." : "Upload Compliance PDF"}
-            </label>
-            {selectedFile && (
-              <p className="mt-2 text-sm text-gray-600">
-                Selected File: {selectedFile.name}
-              </p>
-            )}
-            <button
-              onClick={() => handleDeletePdf(compliance.id)}
-              className="mt-2 bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-600 transition-colors"
-            >
-              Delete Compliance PDF
-            </button>
-          </div> */}
         </div>
       </div>
     </div>

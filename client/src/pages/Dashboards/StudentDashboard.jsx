@@ -111,7 +111,7 @@ const StudentDashboard = () => {
       {/* Sidebar */}
       <aside
         className={`${
-          isSidebarOpen ? "w-64" : "w-20"
+          isSidebarOpen ? "w-84" : "w-20"
         } bg-[#1A2A4F] text-white transition-all duration-300 flex flex-col`}
       >
         <div className="flex items-center justify-between p-4">

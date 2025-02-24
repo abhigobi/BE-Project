@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { FaFileUpload, FaClipboardCheck } from "react-icons/fa";
 const StudentCompliancesWarden = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedComplianceId, setSelectedComplianceId] = useState(null);
   const [selectedStudentID, setSelectedStudentID] = useState(null);
   const [status, setStatus] = useState("");
@@ -104,50 +104,47 @@ const StudentCompliancesWarden = () => {
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
       <aside
-        className={`bg-[#1A2A4F] text-white w-64 p-4 fixed inset-y-0 left-0 transform transition-transform duration-300 z-50 shadow-lg md:relative md:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-64"
-        }`}
+        className={`${
+          sidebarOpen ? "w-64" : "w-20"
+        } bg-[#1A2A4F] text-white  transition-all duration-300 flex flex-col`}
       >
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold">Warden Dashboard</h2>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="md:hidden text-gray-300 hover:text-white"
-            aria-label="Close sidebar"
-          >
-            <X className="w-6 h-6" />
-          </button>
-        </div>
-        <nav className="space-y-4">
-          <Link
-            to="/warden-dashboard"
-            className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded"
-          >
-            <FaClipboardCheck className="w-5 h-5" /> My Compliance
-          </Link>
-          <Link
-            to="/warden-dashboard/upload-student-compliances"
-            className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded"
-          >
-            <FaFileUpload className="w-5 h-5" /> Upload Student Compliance
-          </Link>
-        </nav>
-      </aside>
-
-      {/* Main Content */}
-      <div className="flex-1 p-6 overflow-y-auto">
-        <nav className="bg-white shadow-md px-6 py-4 flex justify-between items-center md:hidden">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="text-gray-600"
-            aria-label="Open sidebar"
-          >
+        {/* Sidebar Header */}
+        <div className="flex items-center justify-between p-4">
+          {sidebarOpen && (
+            <h1 className="text-xl font-bold">Warden Dashboard</h1>
+          )}
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2">
             <Menu className="w-6 h-6" />
           </button>
-          <h1 className="text-lg font-semibold">Student Compliances</h1>
-        </nav>
+        </div>
 
-        <h1 className="text-2xl font-bold mb-6">Student Compliances</h1>
+        {/* Navigation Links */}
+        <nav className="flex flex-col gap-3 px-3">
+          <NavItem
+            icon={<FaClipboardCheck className="w-5 h-5" />}
+            label="My Compliance"
+            to="/warden-dashboard"
+            isSidebarOpen={sidebarOpen}
+          />
+          <NavItem
+            icon={<FaFileUpload className="w-5 h-5" />}
+            label="Upload Student Compliance"
+            to="/warden-dashboard/upload-student-compliances"
+            isSidebarOpen={sidebarOpen}
+          />
+        </nav>
+      </aside>
+      {/* Main Content */}
+      <div className="flex-1 p-6 overflow-y-auto">
+        <nav className="bg-white shadow px-6 py-4 flex justify-between items-center">
+          <button
+            className="md:hidden p-2"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            ☰
+          </button>
+          <h1 className="text-2xl font-bold mb-6">Student Compliances</h1>
+        </nav>
 
         {/* Error Message */}
         {error && (
@@ -161,15 +158,15 @@ const StudentCompliancesWarden = () => {
           <table className="min-w-full border border-gray-300 rounded-lg">
             <thead>
               <tr className="bg-gray-200">
-                <th className="py-3 px-2 border-b text-left">Student ID</th>
-                <th className="py-3 px-4 border-b text-left">Student Name</th>
-                <th className="py-3 px-4 border-b text-left">Email</th>
-                <th className="py-3 px-4 border-b text-left">Compliance</th>
-                <th className="py-3 px-4 border-b text-left">Created</th>
-                <th className="py-3 px-4 border-b text-left">Due</th>
-                <th className="py-3 px-4 border-b text-left">Complete</th>
-                <th className="py-3 px-2 border-b text-left">Status</th>
-                <th className="py-3 px-2 border-b text-left">Action</th>
+                <th className="py-3 px-2 border-b text-center">Student ID</th>
+                <th className="py-3 px-4 border-b text-center">Student Name</th>
+                <th className="py-3 px-4 border-b text-center">Email</th>
+                <th className="py-3 px-4 border-b text-center">Compliance</th>
+                <th className="py-3 px-4 border-b text-center">Created</th>
+                <th className="py-3 px-4 border-b text-center">Due</th>
+                <th className="py-3 px-4 border-b text-center">Complete</th>
+                <th className="py-3 px-2 border-b text-center">Status</th>
+                <th className="py-3 px-2 border-b text-center">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -182,26 +179,26 @@ const StudentCompliancesWarden = () => {
                     {index === 0 && (
                       <>
                         <td
-                          className="py-3 px-4 border-b"
+                          className="py-3 px-4 border-b text-center"
                           rowSpan={student.compliances.length}
                         >
                           {student.student_id}
                         </td>
                         <td
-                          className="py-3 px-4 border-b"
+                          className="py-3 px-4 border-b text-center"
                           rowSpan={student.compliances.length}
                         >
                           {student.student_name}
                         </td>
                         <td
-                          className="py-3 px-4 border-b"
+                          className="py-3 px-4 border-b text-center"
                           rowSpan={student.compliances.length}
                         >
                           {student.student_email}
                         </td>
                       </>
                     )}
-                    <td className="py-3 px-4 border-b">
+                    <td className="py-3 px-4 border-b text-center">
                       <a
                         href={compliance.urlOfCompliance}
                         target="_blank"
@@ -211,20 +208,20 @@ const StudentCompliancesWarden = () => {
                         {compliance.compliance_name}
                       </a>
                     </td>
-                    <td className="py-3 px-4 border-b">
+                    <td className="py-3 px-4 border-b text-center">
                       {new Date(compliance.created_at).toLocaleString("en-IN")}
                     </td>
-                    <td className="py-3 px-4 border-b">
+                    <td className="py-3 px-4 border-b text-center">
                       {new Date(compliance.due_date).toLocaleString("en-IN")}
                     </td>
-                    <td className="py-3 px-4 border-b">
+                    <td className="py-3 px-4 border-b text-center">
                       {compliance.completed_at
                         ? new Date(compliance.completed_at).toLocaleString(
                             "en-IN"
                           )
                         : "N/A"}
                     </td>
-                    <td className="py-3 px-4 border-b">
+                    <td className="py-3 px-4 border-b text-center">
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
                           compliance.status
@@ -233,7 +230,7 @@ const StudentCompliancesWarden = () => {
                         {compliance.status}
                       </span>
                     </td>
-                    <td className="py-3 px-4 border-b">
+                    <td className="py-3 px-4 border-b text-center">
                       <button
                         onClick={() =>
                           handleStatusClick(
@@ -289,6 +286,17 @@ const StudentCompliancesWarden = () => {
         )}
       </div>
     </div>
+  );
+};
+const NavItem = ({ icon, label, to, isSidebarOpen }) => {
+  return (
+    <Link
+      to={to}
+      className="flex items-center gap-3 p-3 hover:bg-gray-700 rounded-md cursor-pointer transition-all"
+    >
+      {icon}
+      {isSidebarOpen && <span>{label}</span>}
+    </Link>
   );
 };
 

@@ -15,6 +15,8 @@ import StudentComplianceUploadWarden from "./components/StudentComplianceUploadW
 import StudentComplianceUploadTeacher from "./components/StudentComplianceUploadTeacher";
 import StudentCompliance from "./components/StudentCompliance";
 import SummarizeCompliance from "./components/SummarizeCompliance";
+import StudentListWarden from "./components/StudentListWarden";
+import StudentListTeacher from "./components/StudentListTeacher";
 const App = () => {
   return (
     <Router>
@@ -37,6 +39,10 @@ const App = () => {
           path="/warden-dashboard/upload-student-compliances"
           element={<StudentComplianceUploadWarden />}
         />
+        <Route
+          path="/warden-dashboard/student-list"
+          element={<StudentListWarden />}
+        />
         <Route path="/teacher-dashboard" element={<TeacherDashboard />} /> //
         teacher dashboard
         <Route
@@ -46,6 +52,10 @@ const App = () => {
         <Route
           path="/teacher-dashboard/upload-student-compliances"
           element={<StudentComplianceUploadTeacher />}
+        />
+        <Route
+          path="/teacher-dashboard/student-list"
+          element={<StudentListTeacher />}
         />
         <Route path="/admin-dashboard" element={<AdminDashboard />} /> // admin
         dashboard

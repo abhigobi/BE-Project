@@ -77,6 +77,12 @@ const TeacherDashboard = () => {
             isSidebarOpen={isSidebarOpen}
             to="/teacher-dashboard/student-compliances" // Pass the `to` prop for navigation
           />
+          <NavItem
+            icon={<FaClipboardList className="w-5 h-5" />}
+            label="Students List"
+            to="/teacher-dashboard/student-list"
+            isSidebarOpen={isSidebarOpen}
+          />
         </nav>
       </aside>
 

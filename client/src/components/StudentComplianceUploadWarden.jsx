@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa";
 
 const StudentComplianceUploadWarden = () => {
+  // const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingUpload, setIsLoadingUpload] = useState(false);
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
@@ -18,7 +19,7 @@ const StudentComplianceUploadWarden = () => {
   const [selectedFileUpload, setSelectedFileUpload] = useState(null);
   const [selectedComplianceId, setSelectedComplianceId] = useState(null);
   const [dueDate, setDueDate] = useState("");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [showUploadForm, setShowUploadForm] = useState(false);
@@ -213,44 +214,49 @@ const StudentComplianceUploadWarden = () => {
   return (
     <div className="flex min-h-screen overflow-auto">
       {/* Sidebar */}
+
       <aside
-        className={`bg-[#1A2A4F] text-white w-64 p-5 space-y-6 transition-transform duration-300 fixed md:relative z-20 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-64"
-        } md:translate-x-0`}
+        className={`${
+          sidebarOpen ? "w-64" : "w-20"
+        } bg-[#1A2A4F] text-white  transition-all duration-300 flex flex-col`}
       >
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold">Warden Dashboard</h2>
-          <button onClick={() => setSidebarOpen(false)} className="md:hidden">
-            <X className="w-6 h-6" />
+        {/* Sidebar Header */}
+        <div className="flex items-center justify-between p-4">
+          {sidebarOpen && (
+            <h1 className="text-xl font-bold">Warden Dashboard</h1>
+          )}
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2">
+            <Menu className="w-6 h-6" />
           </button>
         </div>
 
-        <nav className="space-y-4">
-          <Link
+        {/* Navigation Links */}
+        <nav className="flex flex-col gap-3 px-3">
+          <NavItem
+            icon={<FaClipboardCheck className="w-5 h-5" />}
+            label="My Compliance"
             to="/warden-dashboard"
-            className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded"
-          >
-            <FaClipboardCheck className="w-5 h-5" />
-            My Compliances
-          </Link>
-          <Link
+            isSidebarOpen={sidebarOpen}
+          />
+          <NavItem
+            icon={<FaClipboardList className="w-5 h-5" />}
+            label="Students Compliances Status"
             to="/warden-dashboard/student-compliances"
-            className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded"
-          >
-            <FaClipboardList className="w-5 h-5" />
-            Student Compliances Status
-          </Link>
+            isSidebarOpen={sidebarOpen}
+          />
         </nav>
       </aside>
 
       {/* Main Content */}
       <div className="flex-1 p-6">
-        <button
-          onClick={() => setSidebarOpen(true)}
-          className="md:hidden bg-gray-800 text-white p-2 rounded-lg mb-4"
-        >
-          <Menu className="w-6 h-6" />
-        </button>
+        <nav className="bg-white shadow px-6 py-4 flex justify-between items-center">
+          <button
+            className="md:hidden p-2"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            ☰
+          </button>
+        </nav>
         <h1 className="text-2xl font-bold mb-4">Upload Student Compliance</h1>
         {/* Upload Section */}
         <div className="flex justify-center p-6">
@@ -383,6 +389,18 @@ const StudentComplianceUploadWarden = () => {
         <ToastContainer />
       </div>
     </div>
+  );
+};
+
+const NavItem = ({ icon, label, to, isSidebarOpen }) => {
+  return (
+    <Link
+      to={to}
+      className="flex items-center gap-3 p-3 hover:bg-gray-700 rounded-md cursor-pointer transition-all"
+    >
+      {icon}
+      {isSidebarOpen && <span>{label}</span>}
+    </Link>
   );
 };
 
