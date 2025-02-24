@@ -6,6 +6,7 @@ const userRoutes = require('./routes/loginRoutes');
 const wardenRoutes = require('./routes/wardenRoutes');
 const summarizeRoutes = require('./routes/summarizeRoutes');
 const errorHandler = require('./middleware/errorHandler');
+const downloadExelFileRoutes = require('./routes/downloadExelFileRotes');
 require('dotenv').config();
 
 const app = express();
@@ -35,6 +36,9 @@ app.use('/api/warden', wardenRoutes);
 
 //  paf summarization routes
 app.use('/api/summarize', summarizeRoutes);
+
+// download excel file routes
+app.use('/api/download', downloadExelFileRoutes);
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
