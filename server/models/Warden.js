@@ -53,6 +53,9 @@ class Warden {
         const [rows] = await db.query('SELECT * FROM Warden WHERE email = ?', [email]);
         return rows[0]; // Return the first matching Warden
     }
+    static async getAllWardens() {
+        return await db.query('SELECT id, name, email FROM Warden');
+    }
 }
 
 module.exports = Warden;

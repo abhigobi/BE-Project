@@ -54,7 +54,7 @@ class Student {
     }
 
     static async getAllStudents() {
-        return await db.query('SELECT * FROM Student');
+        return await db.query('SELECT id, name, email FROM Student');
     }
 
     static async getAllStudentIds() {
