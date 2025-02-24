@@ -19,8 +19,8 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use('/api/summarize', summarizeRoutes);
 app.use(errorHandler);
+
 // Admin Routes
 app.use('/api/admin', adminRoutes);
 
@@ -33,6 +33,8 @@ app.use('/api/user', userRoutes);
 // Warden Routes
 app.use('/api/warden', wardenRoutes);
 
+//  paf summarization routes
+app.use('/api/summarize', summarizeRoutes);
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
