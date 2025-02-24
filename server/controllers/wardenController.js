@@ -101,7 +101,7 @@ const deleteFile = async (req, res) => {
 const updateFileStatus = async (req, res) => {
     // const { studentId } = req.params;
     const { status, studentId, compliance_id } = req.body;
-    console.log(studentId, status);
+    // console.log(studentId, status);
     // Validate the status
     const allowedStatuses = ['Pending', 'Completed', 'Waiting For Approve', 'Rejected'];
     if (!allowedStatuses.includes(status)) {
