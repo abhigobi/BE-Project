@@ -4,6 +4,8 @@ const adminRoutes = require('./routes/adminRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 const userRoutes = require('./routes/loginRoutes');
 const wardenRoutes = require('./routes/wardenRoutes');
+const summarizeRoutes = require('./routes/summarizeRoutes');
+const errorHandler = require('./middleware/errorHandler');
 require('dotenv').config();
 
 const app = express();
@@ -17,7 +19,8 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 app.use(express.json());
-
+app.use('/api/summarize', summarizeRoutes);
+app.use(errorHandler);
 // Admin Routes
 app.use('/api/admin', adminRoutes);
 
