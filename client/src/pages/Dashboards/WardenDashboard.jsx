@@ -67,7 +67,7 @@ const WardenDashboard = () => {
           <NavItem
             icon={<FaClipboardCheck className="w-5 h-5" />}
             label="My Compliance"
-            to="/warden-dashboard/"
+            to="/warden-dashboard"
             isSidebarOpen={sidebarOpen}
           />
           <NavItem

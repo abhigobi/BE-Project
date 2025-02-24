@@ -49,7 +49,7 @@ const StudentCompliancesTeacher = () => {
         <h2 className="text-xl font-semibold">Teacher Dashboard</h2>
         <nav className="space-y-4">
           <Link
-            to="/teacher-dashboard/"
+            to="/teacher-dashboard"
             className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded"
           >
             <FaClipboardCheck className="w-5 h-5" /> My Compliance

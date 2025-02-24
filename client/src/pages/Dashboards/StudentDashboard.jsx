@@ -1,13 +1,8 @@
 import { Bell, User, Menu, FileText, Mail } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../store/AuthContext";
-import {
-  FaChalkboardTeacher,
-  FaUserShield,
-  FaUserGraduate,
-  FaClipboardCheck
-} from "react-icons/fa";
-
+import { FaClipboardCheck, FaListAlt } from "react-icons/fa";
+import { Link } from "react-router-dom";
 const StudentDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [compliances, setCompliances] = useState([]);
@@ -22,20 +17,16 @@ const StudentDashboard = () => {
   // Fetch compliance data
   useEffect(() => {
     const fetchData = async () => {
-      // console.log(userID);
-
       try {
         const response = await fetch(
           `http://localhost:3000/api/student/getStudentComplianceByStudentId/${userID}`
         );
-        // console.log(response);
 
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
         const data = await response.json();
-        // console.log(data);
 
         if (data.success && Array.isArray(data.compliances)) {
           setCompliances(data.compliances);
@@ -136,9 +127,15 @@ const StudentDashboard = () => {
         </div>
         <nav className="flex flex-col gap-3 px-3">
           <NavItem
-            icon={<FaClipboardCheck />}
-            label="Compliances"
+            icon={<FaClipboardCheck className="w-5 h-5" />}
+            label="My Compliances"
             isSidebarOpen={isSidebarOpen}
+          />
+          <NavItem
+            icon={<FaListAlt className="w-5 h-5" />}
+            label="Summarize Compliances"
+            isSidebarOpen={isSidebarOpen}
+            to="/student-dashboard/summarize-compliances"
           />
         </nav>
       </aside>
@@ -385,11 +382,16 @@ const StudentDashboard = () => {
 };
 
 // Sidebar Navigation Item Component
-const NavItem = ({ icon, label, isSidebarOpen }) => (
-  <div className="flex items-center gap-3 p-3 hover:bg-gray-700 rounded-md cursor-pointer transition-all">
-    {icon}
-    {isSidebarOpen && <span className="text-lg">{label}</span>}
-  </div>
-);
+const NavItem = ({ icon, label, isSidebarOpen, to = "#" }) => {
+  return (
+    <Link
+      to={to}
+      className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-700 transition-colors"
+    >
+      {icon}
+      {isSidebarOpen && <span>{label}</span>}
+    </Link>
+  );
+};
 
 export default StudentDashboard;

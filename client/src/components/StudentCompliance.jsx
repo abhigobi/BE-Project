@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import {
@@ -6,68 +6,108 @@ import {
   FaFileUpload,
   FaChalkboardTeacher,
 } from "react-icons/fa";
+import axios from "axios";
 const StudentCompliance = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [studentCompliance, setStudentCompliance] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Dummy data for teachers and their compliance statuses
-  const teachers = [
-    {
-      id: 1,
-      name: "Dr. Robert Brown",
-      compliances: [
-        { id: 1, name: "Course Completion Report", status: "Approved" },
-        { id: 2, name: "Exam Paper Submission", status: "Pending" },
-        { id: 3, name: "Research Grant Clearance", status: "Rejected" },
-        { id: 4, name: "Conference Attendance", status: "Approved" },
-        { id: 5, name: "Library Dues", status: "Pending" },
-      ],
-    },
-    {
-      id: 2,
-      name: "Prof. Alice Johnson",
-      compliances: [
-        { id: 1, name: "Course Completion Report", status: "Pending" },
-        { id: 2, name: "Exam Paper Submission", status: "Pending" },
-        { id: 3, name: "Research Grant Clearance", status: "Pending" },
-        { id: 4, name: "Conference Attendance", status: "Approved" },
-        { id: 5, name: "Library Dues", status: "Approved" },
-      ],
-    },
-    {
-      id: 3,
-      name: "Dr. Michael Smith",
-      compliances: [
-        { id: 1, name: "Course Completion Report", status: "Approved" },
-        { id: 2, name: "Exam Paper Submission", status: "Approved" },
-        { id: 3, name: "Research Grant Clearance", status: "Approved" },
-        { id: 4, name: "Conference Attendance", status: "Approved" },
-        { id: 5, name: "Library Dues", status: "Approved" },
-      ],
-    },
-    {
-      id: 4,
-      name: "Prof. Emily White",
-      compliances: [
-        { id: 1, name: "Course Completion Report", status: "Rejected" },
-        { id: 2, name: "Exam Paper Submission", status: "Pending" },
-        { id: 3, name: "Research Grant Clearance", status: "Approved" },
-        { id: 4, name: "Conference Attendance", status: "Pending" },
-        { id: 5, name: "Library Dues", status: "Rejected" },
-      ],
-    },
-    {
-      id: 5,
-      name: "Dr. William Davis",
-      compliances: [
-        { id: 1, name: "Course Completion Report", status: "Approved" },
-        { id: 2, name: "Exam Paper Submission", status: "Rejected" },
-        { id: 3, name: "Research Grant Clearance", status: "Pending" },
-        { id: 4, name: "Conference Attendance", status: "Approved" },
-        { id: 5, name: "Library Dues", status: "Pending" },
-      ],
-    },
-  ];
+  // const teachers = [
+  //   {
+  //     id: 1,
+  //     name: "Dr. Robert Brown",
+  //     compliances: [
+  //       { id: 1, name: "Course Completion Report", status: "Approved" },
+  //       { id: 2, name: "Exam Paper Submission", status: "Pending" },
+  //       { id: 3, name: "Research Grant Clearance", status: "Rejected" },
+  //       { id: 4, name: "Conference Attendance", status: "Approved" },
+  //       { id: 5, name: "Library Dues", status: "Pending" },
+  //     ],
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Prof. Alice Johnson",
+  //     compliances: [
+  //       { id: 1, name: "Course Completion Report", status: "Pending" },
+  //       { id: 2, name: "Exam Paper Submission", status: "Pending" },
+  //       { id: 3, name: "Research Grant Clearance", status: "Pending" },
+  //       { id: 4, name: "Conference Attendance", status: "Approved" },
+  //       { id: 5, name: "Library Dues", status: "Approved" },
+  //     ],
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Dr. Michael Smith",
+  //     compliances: [
+  //       { id: 1, name: "Course Completion Report", status: "Approved" },
+  //       { id: 2, name: "Exam Paper Submission", status: "Approved" },
+  //       { id: 3, name: "Research Grant Clearance", status: "Approved" },
+  //       { id: 4, name: "Conference Attendance", status: "Approved" },
+  //       { id: 5, name: "Library Dues", status: "Approved" },
+  //     ],
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "Prof. Emily White",
+  //     compliances: [
+  //       { id: 1, name: "Course Completion Report", status: "Rejected" },
+  //       { id: 2, name: "Exam Paper Submission", status: "Pending" },
+  //       { id: 3, name: "Research Grant Clearance", status: "Approved" },
+  //       { id: 4, name: "Conference Attendance", status: "Pending" },
+  //       { id: 5, name: "Library Dues", status: "Rejected" },
+  //     ],
+  //   },
+  //   {
+  //     id: 5,
+  //     name: "Dr. William Davis",
+  //     compliances: [
+  //       { id: 1, name: "Course Completion Report", status: "Approved" },
+  //       { id: 2, name: "Exam Paper Submission", status: "Rejected" },
+  //       { id: 3, name: "Research Grant Clearance", status: "Pending" },
+  //       { id: 4, name: "Conference Attendance", status: "Approved" },
+  //       { id: 5, name: "Library Dues", status: "Pending" },
+  //     ],
+  //   },
+  // ];
+  useEffect(() => {
+    const getAllStudentsCompliances = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/api/warden/get-all-student-compliances"
+        );
 
+        if (response.status === 200 && response.data) {
+          setStudentCompliance(response.data.students);
+        } else {
+          throw new Error("Invalid response from the server");
+        }
+      } catch (error) {
+        console.error("Error fetching student compliances:", error);
+        setError(
+          "Failed to fetch student compliances. Please try again later."
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getAllStudentsCompliances();
+  }, []);
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Waiting For Approve":
+        return "bg-blue-200 text-blue-800";
+      case "Approved":
+        return "bg-green-200 text-green-800";
+      case "Rejected":
+        return "bg-red-200 text-red-800";
+      case "Completed":
+        return "bg-violet-200 text-violet-800";
+      default:
+        return "bg-yellow-200 text-yellow-800";
+    }
+  };
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
@@ -120,59 +160,100 @@ const StudentCompliance = () => {
           <Menu className="w-6 h-6" />
         </button>
         <h1 className="text-2xl font-bold mb-6 text-gray-800">
-          Teacher Compliances
+          Student Compliances
         </h1>
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="py-3 px-4 text-center text-sm font-semibold text-gray-700 uppercase">
-                  Teacher Name
-                </th>
-                <th className="py-3 px-4 text-center text-sm font-semibold text-gray-700 uppercase">
-                  Compliance
-                </th>
-                <th className="py-3 px-4 text-center text-sm font-semibold text-gray-700 uppercase">
-                  Status
-                </th>
+        <div className="overflow-x-auto bg-white shadow-lg rounded-lg p-4">
+          <table className="min-w-full border border-gray-300 rounded-lg">
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="py-3 px-2 border-b text-left">Student ID</th>
+                <th className="py-3 px-4 border-b text-left">Student Name</th>
+                {/* <th className="py-3 px-4 border-b text-left">Email</th> */}
+                <th className="py-3 px-4 border-b text-left">Compliance</th>
+                {/* <th className="py-3 px-4 border-b text-left">Created</th> */}
+                {/* <th className="py-3 px-4 border-b text-left">Due</th> */}
+                {/* <th className="py-3 px-4 border-b text-left">Complete</th> */}
+                <th className="py-3 px-2 border-b text-left">Status</th>
+                {/* <th className="py-3 px-2 border-b text-left">Action</th> */}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
-              {teachers.map((teacher) => (
-                <React.Fragment key={teacher.id}>
-                  {teacher.compliances.map((compliance, index) => (
-                    <tr
-                      key={compliance.id}
-                      className="hover:bg-gray-50 transition-colors"
-                    >
-                      {index === 0 && (
+            <tbody>
+              {studentCompliance.map((student) =>
+                student.compliances.map((compliance, index) => (
+                  <tr
+                    key={compliance.StudentComplianceStatus_ID}
+                    className="hover:bg-gray-100"
+                  >
+                    {index === 0 && (
+                      <>
                         <td
-                          rowSpan={teacher.compliances.length}
-                          className="py-3 px-4 text-center font-semibold text-gray-700"
+                          className="py-3 px-4 border-b"
+                          rowSpan={student.compliances.length}
                         >
-                          {teacher.name}
+                          {student.student_id}
                         </td>
-                      )}
-                      <td className="py-3 px-4 text-gray-600 text-center">
-                        {compliance.name}
-                      </td>
-                      <td className="py-3 px-4 text-center">
-                        <span
-                          className={`px-2 py-1  rounded text-sm font-medium ${
-                            compliance.status === "Approved"
-                              ? "bg-green-100 text-green-800"
-                              : compliance.status === "Rejected"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-yellow-100 text-yellow-800"
-                          }`}
+                        <td
+                          className="py-3 px-4 border-b"
+                          rowSpan={student.compliances.length}
                         >
-                          {compliance.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </React.Fragment>
-              ))}
+                          {student.student_name}
+                        </td>
+                        {/* <td
+                          className="py-3 px-4 border-b"
+                          rowSpan={student.compliances.length}
+                        >
+                          {student.student_email}
+                        </td> */}
+                      </>
+                    )}
+                    <td className="py-3 px-4 border-b">
+                      <a
+                        href={compliance.urlOfCompliance}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 underline hover:text-blue-700"
+                      >
+                        {compliance.compliance_name}
+                      </a>
+                    </td>
+                    {/* <td className="py-3 px-4 border-b">
+                      {new Date(compliance.created_at).toLocaleString("en-IN")}
+                    </td>
+                    <td className="py-3 px-4 border-b">
+                      {new Date(compliance.due_date).toLocaleString("en-IN")}
+                    </td>
+                    <td className="py-3 px-4 border-b">
+                      {compliance.completed_at
+                        ? new Date(compliance.completed_at).toLocaleString(
+                            "en-IN"
+                          )
+                        : "N/A"}
+                    </td> */}
+                    <td className="py-3 px-4 border-b">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                          compliance.status
+                        )}`}
+                      >
+                        {compliance.status}
+                      </span>
+                    </td>
+                    {/* <td className="py-3 px-4 border-b">
+                      <button
+                        onClick={() =>
+                          handleStatusClick(
+                            compliance.compliance_id,
+                            student.student_id
+                          )
+                        }
+                        className="text-blue-500 hover:underline"
+                      >
+                        Change Status
+                      </button>
+                    </td> */}
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

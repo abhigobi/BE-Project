@@ -14,14 +14,21 @@ import "react-toastify/dist/ReactToastify.css";
 import StudentComplianceUploadWarden from "./components/StudentComplianceUploadWarden";
 import StudentComplianceUploadTeacher from "./components/StudentComplianceUploadTeacher";
 import StudentCompliance from "./components/StudentCompliance";
+import SummarizeCompliance from "./components/SummarizeCompliance";
 const App = () => {
   return (
     <Router>
       <ToastContainer />
       <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/student-dashboard" element={<StudentDashboard />} />
-        <Route path="/warden-dashboard" element={<WardenDashboard />} />
+        <Route path="/" element={<LoginPage />} /> // Login page
+        <Route path="/student-dashboard" element={<StudentDashboard />} /> //
+        Student dashboard
+        <Route
+          path="/student-dashboard/summarize-compliances"
+          element={<SummarizeCompliance />}
+        />
+        <Route path="/warden-dashboard" element={<WardenDashboard />} /> //
+        warden dashboard
         <Route
           path="/warden-dashboard/student-compliances"
           element={<StudentCompliancesWarden />}
@@ -30,7 +37,8 @@ const App = () => {
           path="/warden-dashboard/upload-student-compliances"
           element={<StudentComplianceUploadWarden />}
         />
-        <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
+        <Route path="/teacher-dashboard" element={<TeacherDashboard />} /> //
+        teacher dashboard
         <Route
           path="/teacher-dashboard/student-compliances"
           element={<StudentCompliancesTeacher />}
@@ -39,7 +47,8 @@ const App = () => {
           path="/teacher-dashboard/upload-student-compliances"
           element={<StudentComplianceUploadTeacher />}
         />
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} /> // admin
+        dashboard
         <Route
           path="/admin-dashboard/warden-compliance"
           element={<WardenCompliance />}
