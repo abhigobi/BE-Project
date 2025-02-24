@@ -1,6 +1,12 @@
 import { Bell, User, Menu, FileText, Mail } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../store/AuthContext";
+import {
+  FaChalkboardTeacher,
+  FaUserShield,
+  FaUserGraduate,
+  FaClipboardCheck
+} from "react-icons/fa";
 
 const StudentDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -130,7 +136,7 @@ const StudentDashboard = () => {
         </div>
         <nav className="flex flex-col gap-3 px-3">
           <NavItem
-            icon={<FileText />}
+            icon={<FaClipboardCheck />}
             label="Compliances"
             isSidebarOpen={isSidebarOpen}
           />

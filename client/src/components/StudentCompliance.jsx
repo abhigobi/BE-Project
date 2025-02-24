@@ -2,34 +2,68 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import {
-  FaChalkboardTeacher,
+  FaUserShield,
   FaFileUpload,
-  FaUserGraduate,
+  FaChalkboardTeacher,
 } from "react-icons/fa";
-const WardenCompliance = () => {
+const StudentCompliance = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const wardens = [
+  // Dummy data for teachers and their compliance statuses
+  const teachers = [
     {
       id: 1,
-      name: "Mr. Sharma",
+      name: "Dr. Robert Brown",
       compliances: [
-        { id: 1, name: "Hostel Inspection", status: "Approved" },
-        { id: 2, name: "Fire Safety Check", status: "Pending" },
-        { id: 3, name: "Sanitation Report", status: "Rejected" },
-        { id: 4, name: "Electrical Safety", status: "Approved" },
-        { id: 5, name: "Security Review", status: "Pending" },
+        { id: 1, name: "Course Completion Report", status: "Approved" },
+        { id: 2, name: "Exam Paper Submission", status: "Pending" },
+        { id: 3, name: "Research Grant Clearance", status: "Rejected" },
+        { id: 4, name: "Conference Attendance", status: "Approved" },
+        { id: 5, name: "Library Dues", status: "Pending" },
       ],
     },
     {
       id: 2,
-      name: "Ms. Verma",
+      name: "Prof. Alice Johnson",
       compliances: [
-        { id: 1, name: "Hostel Inspection", status: "Pending" },
-        { id: 2, name: "Fire Safety Check", status: "Approved" },
-        { id: 3, name: "Sanitation Report", status: "Approved" },
-        { id: 4, name: "Electrical Safety", status: "Rejected" },
-        { id: 5, name: "Security Review", status: "Approved" },
+        { id: 1, name: "Course Completion Report", status: "Pending" },
+        { id: 2, name: "Exam Paper Submission", status: "Pending" },
+        { id: 3, name: "Research Grant Clearance", status: "Pending" },
+        { id: 4, name: "Conference Attendance", status: "Approved" },
+        { id: 5, name: "Library Dues", status: "Approved" },
+      ],
+    },
+    {
+      id: 3,
+      name: "Dr. Michael Smith",
+      compliances: [
+        { id: 1, name: "Course Completion Report", status: "Approved" },
+        { id: 2, name: "Exam Paper Submission", status: "Approved" },
+        { id: 3, name: "Research Grant Clearance", status: "Approved" },
+        { id: 4, name: "Conference Attendance", status: "Approved" },
+        { id: 5, name: "Library Dues", status: "Approved" },
+      ],
+    },
+    {
+      id: 4,
+      name: "Prof. Emily White",
+      compliances: [
+        { id: 1, name: "Course Completion Report", status: "Rejected" },
+        { id: 2, name: "Exam Paper Submission", status: "Pending" },
+        { id: 3, name: "Research Grant Clearance", status: "Approved" },
+        { id: 4, name: "Conference Attendance", status: "Pending" },
+        { id: 5, name: "Library Dues", status: "Rejected" },
+      ],
+    },
+    {
+      id: 5,
+      name: "Dr. William Davis",
+      compliances: [
+        { id: 1, name: "Course Completion Report", status: "Approved" },
+        { id: 2, name: "Exam Paper Submission", status: "Rejected" },
+        { id: 3, name: "Research Grant Clearance", status: "Pending" },
+        { id: 4, name: "Conference Attendance", status: "Approved" },
+        { id: 5, name: "Library Dues", status: "Pending" },
       ],
     },
   ];
@@ -63,21 +97,21 @@ const WardenCompliance = () => {
             <FaFileUpload className="w-5 h-5" /> Upload File
           </Link>
           <Link
+            to="/admin-dashboard/warden-compliance"
+            className="flex items-center gap-2 hover:bg-[#2C3E6D] p-2 rounded transition-colors duration-200"
+          >
+            <FaUserShield className="w-5 h-5" /> Warden Compliances
+          </Link>
+          <Link
             to="/admin-dashboard/teacher-compliance"
             className="flex items-center gap-2 hover:bg-[#2C3E6D] p-2 rounded transition-colors duration-200"
           >
             <FaChalkboardTeacher className="w-5 h-5" /> Teacher Compliances
           </Link>
-          <Link
-            to="/admin-dashboard/student-compliance"
-            className="flex items-center gap-2 hover:bg-[#2C3E6D] p-2 rounded transition-colors duration-200"
-          >
-            <FaUserGraduate className="w-5 h-5" /> Student Compliances
-          </Link>
         </nav>
       </aside>
 
-      {/* Content */}
+      {/* Main Content */}
       <div className="flex-1 p-6 overflow-x-auto">
         <button
           className="md:hidden mb-4 bg-[#1A2A4F] text-white p-2 rounded"
@@ -86,14 +120,14 @@ const WardenCompliance = () => {
           <Menu className="w-6 h-6" />
         </button>
         <h1 className="text-2xl font-bold mb-6 text-gray-800">
-          Warden Compliances
+          Teacher Compliances
         </h1>
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <table className="min-w-full">
             <thead className="bg-gray-50">
               <tr>
                 <th className="py-3 px-4 text-center text-sm font-semibold text-gray-700 uppercase">
-                  Warden Name
+                  Teacher Name
                 </th>
                 <th className="py-3 px-4 text-center text-sm font-semibold text-gray-700 uppercase">
                   Compliance
@@ -104,19 +138,19 @@ const WardenCompliance = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {wardens.map((warden) => (
-                <React.Fragment key={warden.id}>
-                  {warden.compliances.map((compliance, index) => (
+              {teachers.map((teacher) => (
+                <React.Fragment key={teacher.id}>
+                  {teacher.compliances.map((compliance, index) => (
                     <tr
                       key={compliance.id}
                       className="hover:bg-gray-50 transition-colors"
                     >
                       {index === 0 && (
                         <td
-                          rowSpan={warden.compliances.length}
-                          className="py-3 px-4 text-center text-gray-700"
+                          rowSpan={teacher.compliances.length}
+                          className="py-3 px-4 text-center font-semibold text-gray-700"
                         >
-                          {warden.name}
+                          {teacher.name}
                         </td>
                       )}
                       <td className="py-3 px-4 text-gray-600 text-center">
@@ -124,7 +158,7 @@ const WardenCompliance = () => {
                       </td>
                       <td className="py-3 px-4 text-center">
                         <span
-                          className={`px-2 py-1 rounded text-sm font-medium ${
+                          className={`px-2 py-1  rounded text-sm font-medium ${
                             compliance.status === "Approved"
                               ? "bg-green-100 text-green-800"
                               : compliance.status === "Rejected"
@@ -147,4 +181,4 @@ const WardenCompliance = () => {
   );
 };
 
-export default WardenCompliance;
+export default StudentCompliance;

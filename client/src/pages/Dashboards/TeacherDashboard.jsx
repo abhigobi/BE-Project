@@ -1,15 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom"; // Ensure Link is imported
-import {
-  Bell,
-  User,
-  ClipboardCheck,
-  AlertTriangle,
-  FileText,
-  Menu,
-  Mail,
-} from "lucide-react";
-
+import { Bell, User, FileText, Menu, Mail } from "lucide-react";
+import { FaClipboardList, FaClipboardCheck } from "react-icons/fa";
 const TeacherDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [showAll, setShowAll] = useState(false);
@@ -74,14 +66,14 @@ const TeacherDashboard = () => {
         </div>
         <nav className="flex flex-col gap-3 px-3">
           <NavItem
-            icon={<ClipboardCheck className="w-5 h-5" />}
+            icon={<FaClipboardCheck className="w-5 h-5" />}
             label="My Compliance"
             isSidebarOpen={isSidebarOpen}
             to="/teacher-dashboard" // Pass the `to` prop for navigation
           />
           <NavItem
-            icon={<AlertTriangle className="w-5 h-5" />}
-            label="Students Compliances"
+            icon={<FaClipboardList className="w-5 h-5" />}
+            label="Students Compliances Status"
             isSidebarOpen={isSidebarOpen}
             to="/teacher-dashboard/student-compliances" // Pass the `to` prop for navigation
           />

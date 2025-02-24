@@ -12,6 +12,8 @@ import StudentCompliancesTeacher from "./components/StudentCompliancesTeacher";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import StudentComplianceUploadWarden from "./components/StudentComplianceUploadWarden";
+import StudentComplianceUploadTeacher from "./components/StudentComplianceUploadTeacher";
+import StudentCompliance from "./components/StudentCompliance";
 const App = () => {
   return (
     <Router>
@@ -33,20 +35,25 @@ const App = () => {
           path="/teacher-dashboard/student-compliances"
           element={<StudentCompliancesTeacher />}
         />
+        <Route
+          path="/teacher-dashboard/upload-student-compliances"
+          element={<StudentComplianceUploadTeacher />}
+        />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route
-          path="/admin-dashboard/warden-compliances"
+          path="/admin-dashboard/warden-compliance"
           element={<WardenCompliance />}
         />
         <Route
-          path="/admin-dashboard/teacher-compliances"
+          path="/admin-dashboard/teacher-compliance"
           element={<TeacherCompliance />}
+        />
+        <Route
+          path="/admin-dashboard/student-compliance"
+          element={<StudentCompliance />}
         />
       </Routes>
     </Router>
-    // <AdminDashboard />
-    // <TeacherCompliance />
-    // <WardenCompliance />
   );
 };
 

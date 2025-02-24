@@ -3,14 +3,9 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Menu, X, UploadCloud } from "lucide-react";
 import { Link } from "react-router-dom";
-import {
-  FaChalkboardTeacher,
-  FaUserShield,
-  FaClipboardList,
-  FaClipboardCheck,
-} from "react-icons/fa";
+import { FaClipboardList, FaClipboardCheck } from "react-icons/fa";
 
-const StudentComplianceUploadWarden = () => {
+const StudentComplianceUploadTeacher = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingUpload, setIsLoadingUpload] = useState(false);
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
@@ -219,7 +214,7 @@ const StudentComplianceUploadWarden = () => {
         } md:translate-x-0`}
       >
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold">Warden Dashboard</h2>
+          <h2 className="text-xl font-semibold">Teacher Dashboard</h2>
           <button onClick={() => setSidebarOpen(false)} className="md:hidden">
             <X className="w-6 h-6" />
           </button>
@@ -227,14 +222,14 @@ const StudentComplianceUploadWarden = () => {
 
         <nav className="space-y-4">
           <Link
-            to="/warden-dashboard"
+            to="/teacher-dashboard"
             className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded"
           >
             <FaClipboardCheck className="w-5 h-5" />
             My Compliances
           </Link>
           <Link
-            to="/warden-dashboard/student-compliances"
+            to="/teacher-dashboard/student-compliances"
             className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded"
           >
             <FaClipboardList className="w-5 h-5" />
@@ -386,4 +381,4 @@ const StudentComplianceUploadWarden = () => {
   );
 };
 
-export default StudentComplianceUploadWarden;
+export default StudentComplianceUploadTeacher;
