@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { FaFileUpload, FaClipboardCheck } from "react-icons/fa";
+
 const StudentCompliancesWarden = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedComplianceId, setSelectedComplianceId] = useState(null);
@@ -13,6 +14,15 @@ const StudentCompliancesWarden = () => {
   const [studentCompliance, setStudentCompliance] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [showRejectionNotePopup, setShowRejectionNotePopup] = useState(false);
+  const [note, setNote] = useState("");
+  const [selectedComplianceName, setSelectedComplianceName] = useState("");
+  const [selectedStudentEmail, setSelectedStudentEmail] = useState("");
+
+  // Added state to store the entire selected student record
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [selectedCompliance, setSelectedCompliance] = useState(null);
 
   useEffect(() => {
     const getAllStudentsCompliances = async () => {
@@ -37,11 +47,22 @@ const StudentCompliancesWarden = () => {
     };
 
     getAllStudentsCompliances();
-  }, []);
+  }, [status]);
 
-  const handleStatusClick = (complianceId, studentId) => {
+  const handleStatusClick = (
+    complianceId,
+    studentId,
+    complianceName,
+    studentEmail,
+    student,
+    compliance
+  ) => {
     setSelectedComplianceId(complianceId);
     setSelectedStudentID(studentId);
+    setSelectedComplianceName(complianceName);
+    setSelectedStudentEmail(studentEmail);
+    setSelectedStudent(student);
+    setSelectedCompliance(compliance);
     setShowPopup(true);
   };
 
@@ -56,6 +77,27 @@ const StudentCompliancesWarden = () => {
       return;
     }
 
+    if (status === "Rejected") {
+      // Show rejection note popup instead of immediately submitting
+      setShowRejectionNotePopup(true);
+      setShowPopup(false); // Hide the main status popup
+      return;
+    }
+
+    await submitStatusUpdate(status, "");
+  };
+
+  const handleRejectionSubmit = async () => {
+    if (!note.trim()) {
+      toast.error("❌ Please enter a rejection note.");
+      return;
+    }
+
+    await submitStatusUpdate("Rejected", note);
+    setShowRejectionNotePopup(false);
+  };
+
+  const submitStatusUpdate = async (status, note) => {
     try {
       const response = await fetch(
         "http://localhost:3000/api/warden/files/update-status",
@@ -66,6 +108,9 @@ const StudentCompliancesWarden = () => {
             status: status,
             studentId: selectedStudentID,
             compliance_id: selectedComplianceId,
+            complianceName: selectedComplianceName,
+            studentEmail: selectedStudentEmail,
+            note: note,
           }),
         }
       );
@@ -78,7 +123,8 @@ const StudentCompliancesWarden = () => {
 
       toast.success("✅ Status updated successfully!");
       setShowPopup(false);
-      setStatus(""); // Reset status
+      setStatus("");
+      setNote("");
     } catch (error) {
       console.error("Error updating status:", error);
       toast.error("❌ Failed to update status.");
@@ -209,15 +255,32 @@ const StudentCompliancesWarden = () => {
                       </a>
                     </td>
                     <td className="py-3 px-4 border-b text-center">
-                      {new Date(compliance.created_at).toLocaleString("en-IN")}
+                      {new Date(compliance.created_at).toLocaleString("en-IN", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
                     </td>
                     <td className="py-3 px-4 border-b text-center">
-                      {new Date(compliance.due_date).toLocaleString("en-IN")}
+                      {new Date(compliance.due_date).toLocaleDateString(
+                        "en-IN"
+                      )}
                     </td>
                     <td className="py-3 px-4 border-b text-center">
                       {compliance.completed_at
                         ? new Date(compliance.completed_at).toLocaleString(
-                            "en-IN"
+                            "en-IN",
+                            {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            }
                           )
                         : "N/A"}
                     </td>
@@ -235,7 +298,11 @@ const StudentCompliancesWarden = () => {
                         onClick={() =>
                           handleStatusClick(
                             compliance.compliance_id,
-                            student.student_id
+                            student.student_id,
+                            compliance.compliance_name,
+                            student.student_email,
+                            student,
+                            compliance
                           )
                         }
                         className="text-blue-500 hover:underline"
@@ -250,23 +317,28 @@ const StudentCompliancesWarden = () => {
           </table>
         </div>
 
-        {/* Popup for selecting status */}
+        {/* Main Status Update Popup */}
         {showPopup && (
-          <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 transition-opacity duration-300">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-80 transform transition-transform duration-300 scale-95 hover:scale-100">
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
               <h2 className="text-xl font-semibold mb-4">
-                Change Compliance Status
+                Update Compliance Status
               </h2>
-              <select
-                className="border border-gray-300 p-2 rounded-lg w-full"
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-              >
-                <option value="">Select Status</option>
-                <option value="Pending">Pending</option>
-                <option value="Rejected">Rejected</option>
-                <option value="Completed">Completed</option>
-              </select>
+
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2">Status:</label>
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="w-full p-2 border rounded-lg"
+                >
+                  <option value="">Select Status</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
+              </div>
+
               <div className="flex justify-end gap-4 mt-4">
                 <button
                   onClick={() => setShowPopup(false)}
@@ -284,10 +356,74 @@ const StudentCompliancesWarden = () => {
             </div>
           </div>
         )}
+
+        {/* Enhanced Rejection Note Popup with Student Details */}
+        {showRejectionNotePopup && (
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+              <h2 className="text-xl font-semibold mb-4">Rejection Details</h2>
+
+              {/* Student and Compliance Information */}
+              <div className="bg-gray-100 p-4 rounded-lg mb-4">
+                <div className="grid grid-cols-2 gap-2 mb-2">
+                  <div>
+                    <span className="font-semibold text-gray-700">
+                      Student ID:
+                    </span>
+                    <p className="text-gray-800">{selectedStudentID}</p>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-gray-700">Email:</span>
+                    <p className="text-gray-800 break-words">
+                      {selectedStudentEmail}
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <span className="font-semibold text-gray-700">
+                    Compliance:
+                  </span>
+                  <p className="text-gray-800">{selectedComplianceName}</p>
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2 font-semibold">
+                  Reason for Rejection:
+                </label>
+                <textarea
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  className="w-full p-3 border rounded-lg h-28 focus:border-red-500 focus:ring focus:ring-red-200 focus:outline-none"
+                  placeholder="Enter detailed reason for rejection..."
+                />
+              </div>
+
+              <div className="flex justify-end gap-4 mt-6">
+                <button
+                  onClick={() => {
+                    setShowRejectionNotePopup(false);
+                    setStatus("");
+                  }}
+                  className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleRejectionSubmit}
+                  className="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  {isLoading ? "Sending..." : "Submit Rejection"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
+
 const NavItem = ({ icon, label, to, isSidebarOpen }) => {
   return (
     <Link
