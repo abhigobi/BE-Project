@@ -5,6 +5,7 @@ const CommonCompliancePdfForStudent = require('../models/CommonCompliancePdfForS
 const StudentComplianceStatus = require('../models/StudentComplianceStatus');
 const Student = require('../models/Student');
 const nodemailer = require('nodemailer');
+const { sendRejectionEmail, sendCompletionEmail } = require('../services/emailService');
 const uploadFile = async (req, res) => {
     try {
         if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
@@ -98,9 +99,54 @@ const deleteFile = async (req, res) => {
     }
 };
 
+/* 
+const updateFileStatus = async (req, res) => {
+    const { status, studentId, compliance_id, note } = req.body;
+    
+    // Validate the status
+    const allowedStatuses = ['Pending', 'Completed', 'Waiting For Approve', 'Rejected'];
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({ success: false, message: "Invalid status provided" });
+    }
+  
+    try {
+      // Fetch the file to ensure it exists
+      const [file] = await StudentComplianceStatus.getStudentComplianceStatusID(studentId, compliance_id);
+  
+      if (file.length === 0) {
+        return res.status(404).json({ success: false, message: "File not found" });
+      }
+  
+      // Update the status in the database
+      await StudentComplianceStatus.updateStudentComplianceStatus(studentId, compliance_id, status);
+  
+      // Get student email from database (assuming you have a method for this)
+      const [student] = await Student.getStudentById(studentId);
+      const studentEmail = student.email;
+      
+      // Get compliance name (assuming you have this method)
+      const [compliance] = await Compliance.getComplianceById(compliance_id);
+      const complianceName = compliance.name;
+  
+      // Send email based on status
+      if (status === 'Rejected') {
+        await sendRejectionEmail(studentEmail, complianceName, note);
+      } else if (status === 'Completed') {
+        await sendCompletionEmail(studentEmail, complianceName);
+      }
+  
+      res.status(200).json({ success: true, message: "Status updated successfully", newStatus: status });
+    } catch (error) {
+      console.error("Error updating file status:", error);
+      res.status(500).json({ success: false, message: "Failed to update file status" });
+    }
+}; 
+
+*/
+
 const updateFileStatus = async (req, res) => {
     // const { studentId } = req.params;
-    const { status, studentId, compliance_id } = req.body;
+    const { status, studentId, compliance_id, complianceName, studentEmail, note } = req.body;
     // console.log(studentId, status);
     // Validate the status
     const allowedStatuses = ['Pending', 'Completed', 'Waiting For Approve', 'Rejected'];
@@ -115,17 +161,21 @@ const updateFileStatus = async (req, res) => {
         if (file.length === 0) {
             return res.status(404).json({ success: false, message: "File not found" });
         }
-
-        // Update the status in the database
-        await StudentComplianceStatus.updateStudentComplianceStatus(studentId, compliance_id, status);
-
+        if (status === 'Rejected') {
+            await StudentComplianceStatus.updateStudentComplianceStatus(studentId, compliance_id, status);
+            await sendRejectionEmail(studentEmail, complianceName, note);
+            // Update the status in the database
+        }
+        else if (status === 'Completed') {
+            await StudentComplianceStatus.updateStudentComplianceStatus(studentId, compliance_id, status);
+            await sendCompletionEmail(studentEmail, complianceName);
+        }
         res.status(200).json({ success: true, message: "Status updated successfully", newStatus: status });
     } catch (error) {
         console.error("Error updating file status:", error);
         res.status(500).json({ success: false, message: "Failed to update file status" });
     }
 };
-
 const createCompliance = async (req, res) => {
     try {
         // Extract data from request body
@@ -224,7 +274,7 @@ const sendEmailsToStudents = async (emails, complianceName, dueDate, complianceU
     });
 
     const defaultSubject = `New Compliance Assigned: ${complianceName}`;
-    
+
     // HTML email template with inline CSS for better email client compatibility
     const htmlTemplate = `
         <!DOCTYPE html>

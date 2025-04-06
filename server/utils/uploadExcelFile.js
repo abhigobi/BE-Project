@@ -4,17 +4,21 @@ const fs = require('fs');
 const uploadExcelFile = (Model) => async (req, res) => {
     try {
         if (!req.file) {
-            console.log("student")
+            // console.log("student")
             const { name, email, password } = req.body;
             await Model.create({ name, email, password });
             return res.status(200).json({ message: `Record inserted successfully` });
         }
 
         // Read the uploaded Excel file
+        // console.log("file aa gya gru")
         const workbook = xlsx.readFile(req.file.path);
+        console.log(workbook)
         const sheetName = workbook.SheetNames[0];
+        console.log(sheetName)
         const sheet = workbook.Sheets[sheetName];
         const data = xlsx.utils.sheet_to_json(sheet);
+        console.log(data)
 
         // Insert data into the database
         const result = await Model.bulkCreate(data);
