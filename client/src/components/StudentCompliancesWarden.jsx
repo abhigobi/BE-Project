@@ -14,6 +14,8 @@ const StudentCompliancesWarden = () => {
   const [studentCompliance, setStudentCompliance] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  // Added isSubmitting state for button loading indicator
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [showRejectionNotePopup, setShowRejectionNotePopup] = useState(false);
   const [note, setNote] = useState("");
@@ -93,7 +95,13 @@ const StudentCompliancesWarden = () => {
       return;
     }
 
+    // Set submitting state to true
+    setIsSubmitting(true);
+
     await submitStatusUpdate("Rejected", note);
+
+    // Reset submitting state
+    setIsSubmitting(false);
     setShowRejectionNotePopup(false);
   };
 
@@ -333,7 +341,7 @@ const StudentCompliancesWarden = () => {
                   className="w-full p-2 border rounded-lg"
                 >
                   <option value="">Select Status</option>
-                  <option value="Completed">Completed</option>
+                  <option value="Approved">Approved</option>
                   <option value="Pending">Pending</option>
                   <option value="Rejected">Rejected</option>
                 </select>
@@ -406,14 +414,16 @@ const StudentCompliancesWarden = () => {
                     setStatus("");
                   }}
                   className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition-colors"
+                  disabled={isSubmitting}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleRejectionSubmit}
-                  className="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  className="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center min-w-[140px]"
+                  disabled={isSubmitting}
                 >
-                  {isLoading ? "Sending..." : "Submit Rejection"}
+                  {isSubmitting ? "Sending..." : "Submit Rejection"}
                 </button>
               </div>
             </div>

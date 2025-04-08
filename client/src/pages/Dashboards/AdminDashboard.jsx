@@ -469,12 +469,12 @@ const AdminDashboard = () => {
               icon: FaChalkboardTeacher,
               color: "bg-yellow-500",
             },
-            {
-              role: "warden",
-              label: "Wardens",
-              icon: FaUserShield,
-              color: "bg-red-500",
-            },
+            // {
+            //   role: "warden",
+            //   label: "Wardens",
+            //   icon: FaUserShield,
+            //   color: "bg-red-500",
+            // },
           ].map(({ role, label, icon: Icon, color }) => (
             <div
               key={role}
