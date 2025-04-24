@@ -142,15 +142,13 @@ const StudentCompliancesWarden = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case "Waiting For Approve":
-        return "bg-blue-200 text-blue-800";
-      case "Approved":
-        return "bg-green-200 text-green-800";
+        return "text-blue-500";
       case "Rejected":
-        return "bg-red-200 text-red-800";
+        return "text-red-500";
       case "Completed":
-        return "bg-violet-200 text-violet-800";
+        return "text-green-500";
       default:
-        return "bg-yellow-200 text-yellow-800";
+        return "text-yellow-500";
     }
   };
 
@@ -294,7 +292,7 @@ const StudentCompliancesWarden = () => {
                     </td>
                     <td className="py-3 px-4 border-b text-center">
                       <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                        className={`px-3 py-1 rounded-full text-sm font-bold ${getStatusColor(
                           compliance.status
                         )}`}
                       >
@@ -341,7 +339,7 @@ const StudentCompliancesWarden = () => {
                   className="w-full p-2 border rounded-lg"
                 >
                   <option value="">Select Status</option>
-                  <option value="Approved">Approved</option>
+                  <option value="Completed">Completed</option>
                   <option value="Pending">Pending</option>
                   <option value="Rejected">Rejected</option>
                 </select>

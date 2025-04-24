@@ -12,64 +12,6 @@ const StudentCompliance = () => {
   const [studentCompliance, setStudentCompliance] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Dummy data for teachers and their compliance statuses
-  // const teachers = [
-  //   {
-  //     id: 1,
-  //     name: "Dr. Robert Brown",
-  //     compliances: [
-  //       { id: 1, name: "Course Completion Report", status: "Approved" },
-  //       { id: 2, name: "Exam Paper Submission", status: "Pending" },
-  //       { id: 3, name: "Research Grant Clearance", status: "Rejected" },
-  //       { id: 4, name: "Conference Attendance", status: "Approved" },
-  //       { id: 5, name: "Library Dues", status: "Pending" },
-  //     ],
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Prof. Alice Johnson",
-  //     compliances: [
-  //       { id: 1, name: "Course Completion Report", status: "Pending" },
-  //       { id: 2, name: "Exam Paper Submission", status: "Pending" },
-  //       { id: 3, name: "Research Grant Clearance", status: "Pending" },
-  //       { id: 4, name: "Conference Attendance", status: "Approved" },
-  //       { id: 5, name: "Library Dues", status: "Approved" },
-  //     ],
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Dr. Michael Smith",
-  //     compliances: [
-  //       { id: 1, name: "Course Completion Report", status: "Approved" },
-  //       { id: 2, name: "Exam Paper Submission", status: "Approved" },
-  //       { id: 3, name: "Research Grant Clearance", status: "Approved" },
-  //       { id: 4, name: "Conference Attendance", status: "Approved" },
-  //       { id: 5, name: "Library Dues", status: "Approved" },
-  //     ],
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "Prof. Emily White",
-  //     compliances: [
-  //       { id: 1, name: "Course Completion Report", status: "Rejected" },
-  //       { id: 2, name: "Exam Paper Submission", status: "Pending" },
-  //       { id: 3, name: "Research Grant Clearance", status: "Approved" },
-  //       { id: 4, name: "Conference Attendance", status: "Pending" },
-  //       { id: 5, name: "Library Dues", status: "Rejected" },
-  //     ],
-  //   },
-  //   {
-  //     id: 5,
-  //     name: "Dr. William Davis",
-  //     compliances: [
-  //       { id: 1, name: "Course Completion Report", status: "Approved" },
-  //       { id: 2, name: "Exam Paper Submission", status: "Rejected" },
-  //       { id: 3, name: "Research Grant Clearance", status: "Pending" },
-  //       { id: 4, name: "Conference Attendance", status: "Approved" },
-  //       { id: 5, name: "Library Dues", status: "Pending" },
-  //     ],
-  //   },
-  // ];
   useEffect(() => {
     const getAllStudentsCompliances = async () => {
       try {
@@ -97,15 +39,13 @@ const StudentCompliance = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case "Waiting For Approve":
-        return "bg-blue-200 text-blue-800";
-      case "Approved":
-        return "bg-green-200 text-green-800";
+        return " text-blue-500";
       case "Rejected":
-        return "bg-red-200 text-red-800";
+        return " text-red-500";
       case "Completed":
-        return "bg-violet-200 text-violet-800";
+        return " text-violet-500";
       default:
-        return "bg-yellow-200 text-yellow-800";
+        return " text-yellow-500";
     }
   };
   return (
@@ -168,13 +108,10 @@ const StudentCompliance = () => {
               <tr className="bg-gray-200">
                 <th className="py-3 px-2 border-b text-left">Student ID</th>
                 <th className="py-3 px-4 border-b text-left">Student Name</th>
-                {/* <th className="py-3 px-4 border-b text-left">Email</th> */}
+
                 <th className="py-3 px-4 border-b text-left">Compliance</th>
-                {/* <th className="py-3 px-4 border-b text-left">Created</th> */}
-                {/* <th className="py-3 px-4 border-b text-left">Due</th> */}
-                {/* <th className="py-3 px-4 border-b text-left">Complete</th> */}
+
                 <th className="py-3 px-2 border-b text-left">Status</th>
-                {/* <th className="py-3 px-2 border-b text-left">Action</th> */}
               </tr>
             </thead>
             <tbody>
@@ -198,12 +135,6 @@ const StudentCompliance = () => {
                         >
                           {student.student_name}
                         </td>
-                        {/* <td
-                          className="py-3 px-4 border-b"
-                          rowSpan={student.compliances.length}
-                        >
-                          {student.student_email}
-                        </td> */}
                       </>
                     )}
                     <td className="py-3 px-4 border-b">
@@ -216,19 +147,7 @@ const StudentCompliance = () => {
                         {compliance.compliance_name}
                       </a>
                     </td>
-                    {/* <td className="py-3 px-4 border-b">
-                      {new Date(compliance.created_at).toLocaleString("en-IN")}
-                    </td>
-                    <td className="py-3 px-4 border-b">
-                      {new Date(compliance.due_date).toLocaleString("en-IN")}
-                    </td>
-                    <td className="py-3 px-4 border-b">
-                      {compliance.completed_at
-                        ? new Date(compliance.completed_at).toLocaleString(
-                            "en-IN"
-                          )
-                        : "N/A"}
-                    </td> */}
+
                     <td className="py-3 px-4 border-b">
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
@@ -238,19 +157,6 @@ const StudentCompliance = () => {
                         {compliance.status}
                       </span>
                     </td>
-                    {/* <td className="py-3 px-4 border-b">
-                      <button
-                        onClick={() =>
-                          handleStatusClick(
-                            compliance.compliance_id,
-                            student.student_id
-                          )
-                        }
-                        className="text-blue-500 hover:underline"
-                      >
-                        Change Status
-                      </button>
-                    </td> */}
                   </tr>
                 ))
               )}

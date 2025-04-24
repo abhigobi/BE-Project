@@ -111,7 +111,7 @@ const StudentDashboard = () => {
       {/* Sidebar */}
       <aside
         className={`${
-          isSidebarOpen ? "w-84" : "w-20"
+          isSidebarOpen ? "w-64" : "w-20"
         } bg-[#1A2A4F] text-white transition-all duration-300 flex flex-col`}
       >
         <div className="flex items-center justify-between p-4">
@@ -173,12 +173,26 @@ const StudentDashboard = () => {
           </div>
 
           {/* Pending Compliances Card */}
-          <div className="bg-red-500 p-6 rounded-lg shadow-md text-white flex-1 min-w-[150px] max-w-[350px] text-center hover:shadow-lg transition-shadow">
+          <div className="bg-yellow-500 p-6 rounded-lg shadow-md text-white flex-1 min-w-[150px] max-w-[350px] text-center hover:shadow-lg transition-shadow">
             <h1 className="text-lg font-semibold">Pending Compliances</h1>
             <h2 className="text-2xl font-bold mt-2">
               {
                 compliances.filter(
                   (compliance) => compliance.status === "Pending"
+                ).length
+              }
+            </h2>
+          </div>
+        </div>
+
+        {/* Rejected Compliances Card */}
+        <div className="flex justify-center mt-10">
+          <div className="bg-red-500 p-6 rounded-lg shadow-md text-white flex-1 min-w-[150px] max-w-[350px] text-center hover:shadow-lg transition-shadow">
+            <h1 className="text-lg font-semibold">Rejected Compliances</h1>
+            <h2 className="text-2xl font-bold mt-2">
+              {
+                compliances.filter(
+                  (compliance) => compliance.status === "Rejected"
                 ).length
               }
             </h2>
@@ -207,7 +221,7 @@ const StudentDashboard = () => {
             >
               <option value="All">All</option>
               <option value="Pending">Pending</option>
-              <option value="Approved">Approved</option>
+              <option value="Rejected">Rejected</option>
               <option value="Waiting For Approve">Waiting For Approval</option>
               <option value="Completed">Completed</option>
             </select>
@@ -286,14 +300,14 @@ const StudentDashboard = () => {
                     {/* Compliance Status */}
                     <div className="mt-2 text-center">
                       <span
-                        className={`px-2 py-1 rounded-full text-sm font-medium ${
+                        className={`px-2 py-1 rounded-full text-lg font-bold ${
                           compliance.status === "Pending"
-                            ? "bg-yellow-100 text-yellow-800"
+                            ? " text-yellow-500"
                             : compliance.status === "Waiting For Approve"
-                            ? "bg-blue-100 text-blue-800"
+                            ? " text-blue-500"
                             : compliance.status === "Completed"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                            ? " text-green-500"
+                            : " text-red-500"
                         }`}
                       >
                         {compliance.status || "N/A"}
@@ -382,11 +396,11 @@ const StudentDashboard = () => {
 };
 
 // Sidebar Navigation Item Component
-const NavItem = ({ icon, label, isSidebarOpen, to = "#" }) => {
+const NavItem = ({ icon, label, isSidebarOpen, to }) => {
   return (
     <Link
       to={to}
-      className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-700 transition-colors"
+      className="flex items-center gap-3 p-3  hover:bg-gray-700 rounded-md cursor-pointer transition-all"
     >
       {icon}
       {isSidebarOpen && <span>{label}</span>}

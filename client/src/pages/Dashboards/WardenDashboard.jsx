@@ -55,7 +55,7 @@ const WardenDashboard = () => {
         {/* Sidebar Header */}
         <div className="flex items-center justify-between p-4">
           {sidebarOpen && (
-            <h1 className="text-xl font-bold">Warden Dashboard</h1>
+            <h1 className="text-xl font-bold">Warden Portal</h1>
           )}
           <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2">
             <Menu className="w-6 h-6" />
@@ -94,7 +94,7 @@ const WardenDashboard = () => {
           >
             ☰
           </button>
-          <h1 className="text-xl font-semibold">Warden Compliance Overview</h1>
+          <h1 className="text-xl font-semibold">I2IT Warden Dashboard</h1>
           <div className="flex items-center gap-4">
             <Mail
               className="w-6 h-6 text-gray-600"
@@ -126,12 +126,26 @@ const WardenDashboard = () => {
           </div>
 
           {/* Pending Compliances Card */}
-          <div className="bg-red-500 p-6 rounded-lg shadow-md text-white flex-1 min-w-[150px] max-w-[350px] text-center hover:shadow-lg transition-shadow">
+          <div className="bg-yellow-500 p-6 rounded-lg shadow-md text-white flex-1 min-w-[150px] max-w-[350px] text-center hover:shadow-lg transition-shadow">
             <h1 className="text-lg font-semibold">Pending Compliances</h1>
             <h2 className="text-2xl font-bold mt-2">
               {
                 compliances.filter(
                   (compliance) => compliance.status === "Pending"
+                ).length
+              }
+            </h2>
+          </div>
+        </div>
+
+        {/* Rejected Compliances Card */}
+        <div className="flex justify-center mt-10">
+          <div className="bg-red-500 p-6 rounded-lg shadow-md text-white flex-1 min-w-[150px] max-w-[350px] text-center hover:shadow-lg transition-shadow">
+            <h1 className="text-lg font-semibold">Rejected Compliances</h1>
+            <h2 className="text-2xl font-bold mt-2">
+              {
+                compliances.filter(
+                  (compliance) => compliance.status === "Rejected"
                 ).length
               }
             </h2>
@@ -155,6 +169,8 @@ const WardenDashboard = () => {
             >
               <option value="All">All</option>
               <option value="Pending">Pending</option>
+              <option value="Rejected">Rejected</option>
+              <option value="Waiting For Approve">Waiting For Approval</option>
               <option value="Completed">Completed</option>
             </select>
           </div>
@@ -170,9 +186,22 @@ const WardenDashboard = () => {
                 <p className="mt-2 text-center font-medium">
                   {compliance.name}
                 </p>
-                <p className="text-center text-sm text-gray-600">
-                  Status: {compliance.status}
-                </p>
+                {/* Compliance Status */}
+                <div className="mt-2 text-center">
+                  <span
+                    className={`px-2 py-1 rounded-full text-lg font-bold ${
+                      compliance.status === "Pending"
+                        ? " text-yellow-500"
+                        : compliance.status === "Waiting For Approve"
+                        ? " text-blue-500"
+                        : compliance.status === "Completed"
+                        ? " text-green-500"
+                        : " text-red-500"
+                    }`}
+                  >
+                    {compliance.status || "N/A"}
+                  </span>
+                </div>
                 {compliance.pdfUrl && (
                   <div className="mt-2 text-center">
                     <a
