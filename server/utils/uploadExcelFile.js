@@ -13,12 +13,12 @@ const uploadExcelFile = (Model) => async (req, res) => {
         // Read the uploaded Excel file
         // console.log("file aa gya gru")
         const workbook = xlsx.readFile(req.file.path);
-        console.log(workbook)
+        // console.log(workbook)
         const sheetName = workbook.SheetNames[0];
-        console.log(sheetName)
+        // console.log(sheetName)
         const sheet = workbook.Sheets[sheetName];
         const data = xlsx.utils.sheet_to_json(sheet);
-        console.log(data)
+        // console.log(data)
 
         // Insert data into the database
         const result = await Model.bulkCreate(data);

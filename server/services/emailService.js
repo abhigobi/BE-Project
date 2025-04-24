@@ -13,7 +13,8 @@ const transporter = nodemailer.createTransport({
 // Function to send rejection email
 const sendRejectionEmail = async (studentEmail, complianceName, note) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    // from: process.env.EMAIL_USER,
+    from: `"I2IT Warden" <${process.env.EMAIL_USER}>`,
     to: studentEmail,
     subject: `Compliance Document Rejected: ${complianceName}`,
     html: rejectionEmailTemplate(complianceName, note)
@@ -25,7 +26,8 @@ const sendRejectionEmail = async (studentEmail, complianceName, note) => {
 // Function to send completion email
 const sendCompletionEmail = async (studentEmail, complianceName) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    // from: process.env.EMAIL_USER,
+    from: `"I2IT Warden" <${process.env.EMAIL_USER}>`,
     to: studentEmail,
     subject: `Compliance Document Completed: ${complianceName}`,
     html: completionEmailTemplate(complianceName)

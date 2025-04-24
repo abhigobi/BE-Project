@@ -8,7 +8,7 @@ import {
 } from "react-icons/fa";
 import axios from "axios";
 import { toast } from "react-toastify";
-
+const serverUrl = import.meta.env.VITE_SERVER_URL;
 const AdminDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -35,8 +35,8 @@ const AdminDashboard = () => {
 
   // API endpoints for fetching data
   const getApiEndpoints = {
-    student: "http://localhost:3000/api/student/getStudent",
-    teacher: "http://localhost:3000/api/admin/get-all-teachers",
+    student: `${serverUrl}/api/student/getStudent`,
+    teacher: `${serverUrl}/api/admin/get-all-teachers`,
     // warden: "http://localhost:3000/api/warden/getWarden",
   };
 
@@ -77,9 +77,9 @@ const AdminDashboard = () => {
   };
   // API endpoints for different roles
   const apiEndpoints = {
-    student: "http://localhost:3000/api/admin/upload/studentExcelFile",
-    teacher: "http://localhost:3000/api/admin/upload/teacherExcelFile",
-    warden: "http://localhost:3000/api/admin/upload/wardenExcelFile",
+    student: `${serverUrl}/api/admin/upload/studentExcelFile`,
+    teacher: `${serverUrl}/api/admin/upload/teacherExcelFile`,
+    warden: `${serverUrl}/api/admin/upload/wardenExcelFile`,
   };
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -134,11 +134,11 @@ const AdminDashboard = () => {
 
     let apiEndpoint = "";
     if (selectedCategory === "students") {
-      apiEndpoint = "http://localhost:3000/api/admin/upload/studentExcelFile";
+      apiEndpoint = `${serverUrl}/api/admin/upload/studentExcelFile`;
     } else if (selectedCategory === "teachers") {
-      apiEndpoint = "http://localhost:3000/api/admin/upload/teacherExcelFile";
+      apiEndpoint = `${serverUrl}/api/admin/upload/teacherExcelFile`;
     } else if (selectedCategory === "wardens") {
-      apiEndpoint = "http://localhost:3000/api/admin/upload/wardenExcelFile";
+      apiEndpoint = `${serverUrl}/api/admin/upload/wardenExcelFile`;
     }
 
     try {
@@ -156,7 +156,7 @@ const AdminDashboard = () => {
       fetchData(); // Refresh the data after upload
     } catch (error) {
       console.error("Error uploading file:", error);
-      toast.error("❌ File upload failed. Please try again.", {
+      toast.error("File upload failed. Please try again.", {
         position: "top-right",
         autoClose: 3000,
       });
@@ -190,7 +190,7 @@ const AdminDashboard = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/download/convertTableIntoExcel",
+        `${serverUrl}/api/download/convertTableIntoExcel`,
         requestBody,
         {
           headers: {

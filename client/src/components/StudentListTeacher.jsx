@@ -4,6 +4,7 @@ import { Menu } from "lucide-react";
 import { FaClipboardList, FaClipboardCheck } from "react-icons/fa";
 import axios from "axios";
 import { toast } from "react-toastify";
+const serverUrl = import.meta.env.VITE_SERVER_URL;
 
 const StudentListTeacher = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -16,7 +17,8 @@ const StudentListTeacher = () => {
     const fetchStudents = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3000/api/student/getStudent"
+          // "http://localhost:3000/api/student/getStudent"
+          `${serverUrl}/api/student/getStudent`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch student data");
@@ -49,7 +51,7 @@ const StudentListTeacher = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/download/convertTableIntoExcel",
+        `${serverUrl}/api/download/convertTableIntoExcel`,
         requestBody,
         {
           headers: {

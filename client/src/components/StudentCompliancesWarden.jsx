@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { FaFileUpload, FaClipboardCheck } from "react-icons/fa";
+const serverUrl = import.meta.env.VITE_SERVER_URL;
 
 const StudentCompliancesWarden = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -30,7 +31,8 @@ const StudentCompliancesWarden = () => {
     const getAllStudentsCompliances = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/warden/get-all-student-compliances"
+          // "http://localhost:3000/api/warden/get-all-student-compliances"
+          `${serverUrl}/api/warden/get-all-student-compliances`
         );
 
         if (response.status === 200 && response.data) {
@@ -70,12 +72,12 @@ const StudentCompliancesWarden = () => {
 
   const handleStatusChange = async () => {
     if (!status) {
-      toast.error("❌ Please select a status.");
+      toast.error("Please select a status.");
       return;
     }
 
     if (!selectedComplianceId || !selectedStudentID) {
-      toast.error("❌ Missing compliance ID or student ID.");
+      toast.error("Missing compliance ID or student ID.");
       return;
     }
 
@@ -91,7 +93,7 @@ const StudentCompliancesWarden = () => {
 
   const handleRejectionSubmit = async () => {
     if (!note.trim()) {
-      toast.error("❌ Please enter a rejection note.");
+      toast.error("Please enter a rejection note.");
       return;
     }
 
@@ -108,7 +110,8 @@ const StudentCompliancesWarden = () => {
   const submitStatusUpdate = async (status, note) => {
     try {
       const response = await fetch(
-        "http://localhost:3000/api/warden/files/update-status",
+        // "http://localhost:3000/api/warden/files/update-status",
+        `${serverUrl}/api/warden/files/update-status`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -129,13 +132,13 @@ const StudentCompliancesWarden = () => {
         throw new Error("Failed to update status");
       }
 
-      toast.success("✅ Status updated successfully!");
+      toast.success("Status updated successfully!");
       setShowPopup(false);
       setStatus("");
       setNote("");
     } catch (error) {
       console.error("Error updating status:", error);
-      toast.error("❌ Failed to update status.");
+      toast.error("Failed to update status.");
     }
   };
 

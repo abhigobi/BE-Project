@@ -23,15 +23,18 @@ function chunkText(text, maxLength = 2000) {
 
 async function summarizeChunk(chunk) {
     const prompt = `Please provide a concise summary of the following text: "${chunk}"`;
-    
+
     try {
-        const result = await model.generateContent(prompt);
-        return result.response.text();
+        const result = await model.generateContent({ contents: [{ role: "user", parts: [{ text: prompt }] }] });
+        const response = await result.response;
+        const text = await response.text();
+        return text;
     } catch (error) {
         console.error('Error summarizing chunk:', error.message);
         return '';
     }
 }
+
 
 exports.summarizePDF = async (req, res) => {
     try {

@@ -9,6 +9,7 @@ import {
   FaClipboardList,
   FaClipboardCheck,
 } from "react-icons/fa";
+const serverUrl = import.meta.env.VITE_SERVER_URL;
 
 const StudentComplianceUploadWarden = () => {
   // const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -42,7 +43,8 @@ const StudentComplianceUploadWarden = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/api/warden/upload/pdf",
+        // "http://localhost:3000/api/warden/upload/pdf",
+        `${serverUrl}/api/warden/upload/pdf`,
         {
           method: "POST",
           body: formData,
@@ -68,7 +70,7 @@ const StudentComplianceUploadWarden = () => {
       setSelectedFile(null);
     } catch (error) {
       console.error("Upload error:", error);
-      toast.error("❌ File upload failed. Please try again.", {
+      toast.error("File upload failed. Please try again.", {
         position: "top-right",
         autoClose: 3000,
       });
@@ -80,7 +82,8 @@ const StudentComplianceUploadWarden = () => {
   const fetchFiles = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3000/api/student/getAllFiles"
+        // "http://localhost:3000/api/student/getAllFiles"
+        `${serverUrl}/api/student/getAllFiles`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch files");
@@ -115,7 +118,7 @@ const StudentComplianceUploadWarden = () => {
 
       setIsLoadingDelete(true);
       const response = await fetch(
-        `http://localhost:3000/api/warden/delete/pdf/${selectedComplianceId}`,
+        `${serverUrl}/api/warden/delete/pdf/${selectedComplianceId}`,
         {
           method: "DELETE",
           headers: {
@@ -167,7 +170,7 @@ const StudentComplianceUploadWarden = () => {
       const formattedDate = `${day}-${month}-${year}`;
 
       const response = await fetch(
-        "http://localhost:3000/api/warden/create-compliance",
+        `${serverUrl}/api/warden/create-compliance`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

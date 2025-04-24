@@ -2,7 +2,7 @@ import { Menu } from "lucide-react";
 import { useState } from "react";
 import { FaClipboardCheck } from "react-icons/fa";
 import { Link } from "react-router-dom";
-
+const serverUrl = import.meta.env.VITE_SERVER_URL;
 const SummarizeCompliance = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -27,7 +27,7 @@ const SummarizeCompliance = () => {
     formData.append("file", selectedFile);
 
     try {
-      const response = await fetch("http://localhost:3000/api/summarize", {
+      const response = await fetch(`${serverUrl}/api/summarize`, {
         method: "POST",
         body: formData,
       });

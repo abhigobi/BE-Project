@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { Menu, X, UploadCloud } from "lucide-react";
 import { Link } from "react-router-dom";
 import { FaClipboardList, FaClipboardCheck } from "react-icons/fa";
-
+const serverUrl = import.meta.env.VITE_SERVER_URL;
 const StudentComplianceUploadTeacher = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingUpload, setIsLoadingUpload] = useState(false);
@@ -36,7 +36,8 @@ const StudentComplianceUploadTeacher = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/api/warden/upload/pdf",
+        // "http://localhost:3000/api/warden/upload/pdf",
+        `${serverUrl}/api/warden/upload/pdf`,
         {
           method: "POST",
           body: formData,
@@ -62,7 +63,7 @@ const StudentComplianceUploadTeacher = () => {
       setSelectedFile(null);
     } catch (error) {
       console.error("Upload error:", error);
-      toast.error("❌ File upload failed. Please try again.", {
+      toast.error("File upload failed. Please try again.", {
         position: "top-right",
         autoClose: 3000,
       });
@@ -74,7 +75,8 @@ const StudentComplianceUploadTeacher = () => {
   const fetchFiles = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3000/api/student/getAllFiles"
+        // "http://localhost:3000/api/student/getAllFiles"
+        `${serverUrl}/api/student/getAllFiles`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch files");
@@ -109,7 +111,8 @@ const StudentComplianceUploadTeacher = () => {
 
       setIsLoadingDelete(true);
       const response = await fetch(
-        `http://localhost:3000/api/warden/delete/pdf/${selectedComplianceId}`,
+        // `http://localhost:3000/api/warden/delete/pdf/${selectedComplianceId}`,
+        `${serverUrl}/api/warden/delete/pdf/${selectedComplianceId}`,
         {
           method: "DELETE",
           headers: {
@@ -161,7 +164,8 @@ const StudentComplianceUploadTeacher = () => {
       const formattedDate = `${day}-${month}-${year}`;
 
       const response = await fetch(
-        "http://localhost:3000/api/warden/create-compliance",
+        // "http://localhost:3000/api/warden/create-compliance",
+        `${serverUrl}/api/warden/create-compliance`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

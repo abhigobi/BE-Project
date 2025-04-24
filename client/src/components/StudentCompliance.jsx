@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+const serverUrl = import.meta.env.VITE_SERVER_URL;
 import {
   FaUserShield,
   FaFileUpload,
@@ -16,7 +17,8 @@ const StudentCompliance = () => {
     const getAllStudentsCompliances = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/warden/get-all-student-compliances"
+          // "http://localhost:3000/api/warden/get-all-student-compliances"
+          `${serverUrl}/api/warden/get-all-student-compliances`
         );
 
         if (response.status === 200 && response.data) {
