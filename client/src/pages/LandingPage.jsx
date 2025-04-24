@@ -129,8 +129,6 @@ const LandingPage = () => {
         </div>
       </header>
 
-      
-
       {/* CTA Section */}
       <section className="py-20 px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white text-center">
         <motion.div

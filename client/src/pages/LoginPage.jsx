@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, ArrowLeft, LogIn } from "lucide-react";
 import { toast } from "react-toastify";
-import i2it_logo from "../assets/images/i2it logo.png";
 const serverUrl = import.meta.env.VITE_SERVER_URL;
+import i2it_logo from "../assets/images/logo.png"; // Import your logo here
 const LoginPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-// 
+  //
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -94,10 +94,10 @@ const LoginPage = () => {
           <div className="mb-6">
             <a
               href="https://www.isquareit.edu.in/"
-              className="flex items-center mb-6 text-2xl font-semibold text-black"
+              className="flex flex-col items-center text-2xl font-semibold text-black"
             >
               <img
-                className="w-16 h-16 md:w-20 md:h-20 mr-2"
+                className="w-18 h-16 md:w-24 md:h-28 mb-2 object-contain"
                 src={i2it_logo}
                 alt="i2it Logo"
               />

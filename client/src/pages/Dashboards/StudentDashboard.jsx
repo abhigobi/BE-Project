@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../store/AuthContext";
 import { FaClipboardCheck, FaListAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
+const serverUrl = import.meta.env.VITE_SERVER_URL;
 const StudentDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [compliances, setCompliances] = useState([]);
@@ -19,7 +20,7 @@ const StudentDashboard = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/student/getStudentComplianceByStudentId/${userID}`
+          `${serverUrl}/api/student/getStudentComplianceByStudentId/${userID}`
         );
 
         if (!response.ok) {
@@ -47,7 +48,7 @@ const StudentDashboard = () => {
   const toggleStatus = async (complianceId) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/student/toggleFileStatus`,
+        `${serverUrl}/api/student/toggleFileStatus`,
         {
           method: "POST",
           headers: {
