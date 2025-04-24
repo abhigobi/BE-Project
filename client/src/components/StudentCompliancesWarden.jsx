@@ -341,7 +341,7 @@ const StudentCompliancesWarden = () => {
                   className="w-full p-2 border rounded-lg"
                 >
                   <option value="">Select Status</option>
-                  <option value="Approved">Approved</option>
+                  <option value="Completed">Approved</option>
                   <option value="Pending">Pending</option>
                   <option value="Rejected">Rejected</option>
                 </select>
