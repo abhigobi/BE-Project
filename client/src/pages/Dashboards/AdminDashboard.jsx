@@ -122,7 +122,7 @@ const AdminDashboard = () => {
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      toast.warning("⚠️ Please select an Excel file.", {
+      toast.warning("Please select an Excel file.", {
         position: "top-right",
         autoClose: 3000,
       });
