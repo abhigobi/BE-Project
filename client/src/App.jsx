@@ -17,12 +17,14 @@ import StudentCompliance from "./components/StudentCompliance";
 import SummarizeCompliance from "./components/SummarizeCompliance";
 import StudentListWarden from "./components/StudentListWarden";
 import StudentListTeacher from "./components/StudentListTeacher";
+import LandingPage from "./pages/LandingPage";
 const App = () => {
   return (
     <Router>
       <ToastContainer />
       <Routes>
-        <Route path="/" element={<LoginPage />} /> // Login page
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login-Page" element={<LoginPage />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} /> //
         Student dashboard
         <Route

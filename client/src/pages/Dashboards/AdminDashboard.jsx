@@ -292,16 +292,16 @@ const AdminDashboard = () => {
         </h2>
         <div className="flex justify-center gap-5 items-center mt-6">
           <button
-            className="bg-blue-500 text-white px-6 py-3 rounded flex items-center hover:bg-blue-600 transition-colors"
-            onClick={() => setAddSingleDataOpen(true)}
-          >
-            <Upload className="w-5 h-5 mr-2" /> Add Single Data
-          </button>
-          <button
             className="bg-green-500 text-white px-6 py-3 rounded flex items-center hover:bg-green-600 transition-colors"
             onClick={() => setUploadModalOpen(true)}
           >
             <Upload className="w-5 h-5 mr-2" /> Upload Excel File
+          </button>
+          <button
+            className="bg-blue-500 text-white px-6 py-3 rounded flex items-center hover:bg-blue-600 transition-colors"
+            onClick={() => setAddSingleDataOpen(true)}
+          >
+            <Upload className="w-5 h-5 mr-2" /> Add Single Data
           </button>
         </div>
 
@@ -593,4 +593,3 @@ const NavItem = ({ icon, label, isSidebarOpen, to }) => (
 );
 
 export default AdminDashboard;
-
