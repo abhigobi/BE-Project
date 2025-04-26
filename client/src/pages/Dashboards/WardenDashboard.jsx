@@ -54,9 +54,7 @@ const WardenDashboard = () => {
       >
         {/* Sidebar Header */}
         <div className="flex items-center justify-between p-4">
-          {sidebarOpen && (
-            <h1 className="text-xl font-bold">Warden Portal</h1>
-          )}
+          {sidebarOpen && <h1 className="text-2xl font-bold">Warden Portal</h1>}
           <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2">
             <Menu className="w-6 h-6" />
           </button>
@@ -66,19 +64,19 @@ const WardenDashboard = () => {
         <nav className="flex flex-col gap-3 px-3">
           <NavItem
             icon={<FaClipboardCheck className="w-5 h-5" />}
-            label="My Compliance"
+            label={<span className="text-lg">My Compliances</span>}
             to="/warden-dashboard"
             isSidebarOpen={sidebarOpen}
           />
           <NavItem
             icon={<FaClipboardList className="w-5 h-5" />}
-            label="Students Compliances Status"
+            label={<span className="text-lg">Students Compliances Status</span>}
             to="/warden-dashboard/student-compliances"
             isSidebarOpen={sidebarOpen}
           />
           <NavItem
             icon={<FaClipboardList className="w-5 h-5" />}
-            label="Students List"
+            label={<span className="text-lg">Students List</span>}
             to="/warden-dashboard/student-list"
             isSidebarOpen={sidebarOpen}
           />

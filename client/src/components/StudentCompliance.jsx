@@ -8,6 +8,8 @@ import {
   FaChalkboardTeacher,
 } from "react-icons/fa";
 import axios from "axios";
+
+
 const StudentCompliance = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [studentCompliance, setStudentCompliance] = useState([]);

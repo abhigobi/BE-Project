@@ -112,29 +112,32 @@ const StudentDashboard = () => {
       {/* Sidebar */}
       <aside
         className={`${
-          isSidebarOpen ? "w-64" : "w-20"
+          isSidebarOpen ? "w-auto" : "w-28"
         } bg-[#1A2A4F] text-white transition-all duration-300 flex flex-col`}
       >
+        {/* Sidebar Header */}
         <div className="flex items-center justify-between p-4">
           {isSidebarOpen && (
-            <h1 className="text-xl font-bold">Student Portal</h1>
+            <h1 className="text-2xl font-bold">Student Portal</h1>
           )}
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             className="p-2"
           >
-            <Menu className="w-6 h-6" />
+            <Menu className="w-8 h-8" />
           </button>
         </div>
-        <nav className="flex flex-col gap-3 px-3">
+
+        {/* Navigation */}
+        <nav className="flex flex-col gap-4 px-4">
           <NavItem
-            icon={<FaClipboardCheck className="w-5 h-5" />}
-            label="My Compliances"
+            icon={<FaClipboardCheck className="w-6 h-6" />}
+            label={<span className="text-lg">My Compliances</span>}
             isSidebarOpen={isSidebarOpen}
           />
           <NavItem
-            icon={<FaListAlt className="w-5 h-5" />}
-            label="Summarize Compliances"
+            icon={<FaListAlt className="w-6 h-6" />}
+            label={<span className="text-lg">Summarize Compliances</span>}
             isSidebarOpen={isSidebarOpen}
             to="/student-dashboard/summarize-compliances"
           />

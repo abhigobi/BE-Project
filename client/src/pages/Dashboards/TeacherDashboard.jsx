@@ -55,7 +55,7 @@ const TeacherDashboard = () => {
       >
         <div className="flex items-center justify-between p-4">
           {isSidebarOpen && (
-            <h1 className="text-xl font-bold">Teacher Portal</h1>
+            <h1 className="text-2xl font-bold">Teacher Portal</h1>
           )}
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -67,15 +67,15 @@ const TeacherDashboard = () => {
         <nav className="flex flex-col gap-3 px-3">
           <NavItem
             icon={<FaClipboardCheck className="w-5 h-5" />}
-            label="My Compliance"
+            label={<span className="text-lg">My Compliances</span>}
             isSidebarOpen={isSidebarOpen}
             to="/teacher-dashboard" // Pass the `to` prop for navigation
           />
           <NavItem
             icon={<FaClipboardList className="w-5 h-5" />}
-            label="Students Compliances Status"
+            label={<span className="text-lg">Students Compliances</span>}
             isSidebarOpen={isSidebarOpen}
-            to="/teacher-dashboard/student-compliances" // Pass the `to` prop for navigation
+            to="/teacher-dashboard/student-compliances" 
           />
           <NavItem
             icon={<FaClipboardList className="w-5 h-5" />}

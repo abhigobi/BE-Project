@@ -198,7 +198,7 @@ const StudentCompliancesWarden = () => {
           >
             ☰
           </button>
-          <h1 className="text-2xl font-bold mb-6">Student Compliances</h1>
+          <h1 className="text-2xl font-bold mb-2">Student Compliances</h1>
         </nav>
 
         {/* Error Message */}
@@ -212,7 +212,7 @@ const StudentCompliancesWarden = () => {
         <div className="overflow-x-auto bg-white shadow-lg rounded-lg p-4">
           <table className="min-w-full border border-gray-300 rounded-lg">
             <thead>
-              <tr className="bg-gray-200">
+              <tr className="bg-gray-200 border-x-2 border-y-2">
                 <th className="py-3 px-2 border-b text-center">Student ID</th>
                 <th className="py-3 px-4 border-b text-center">Student Name</th>
                 <th className="py-3 px-4 border-b text-center">Email</th>
@@ -234,36 +234,42 @@ const StudentCompliancesWarden = () => {
                     {index === 0 && (
                       <>
                         <td
-                          className="py-3 px-4 border-b text-center"
+                          className="py-3 px-4 border-b text-center border-x-2 border-y-2"
                           rowSpan={student.compliances.length}
                         >
                           {student.student_id}
                         </td>
                         <td
-                          className="py-3 px-4 border-b text-center"
+                          className="py-3 px-4 border-b text-center border-x-2 border-y-2"
                           rowSpan={student.compliances.length}
                         >
                           {student.student_name}
                         </td>
                         <td
-                          className="py-3 px-4 border-b text-center"
+                          className="py-3 px-4 border-b text-center border-x-2 border-y-2"
                           rowSpan={student.compliances.length}
                         >
                           {student.student_email}
                         </td>
                       </>
                     )}
-                    <td className="py-3 px-4 border-b text-center">
+                    <td className="py-3 px-4 border-b text-center border-x-2 border-y-2 align-middle">
                       <a
                         href={compliance.urlOfCompliance}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-500 underline hover:text-blue-700"
+                        style={{
+                          wordBreak: "break-word", // Ensures long words are broken
+                          whiteSpace: "normal", // Allows text to wrap
+                          overflowWrap: "break-word", // Ensures better handling of long strings
+                        }}
                       >
                         {compliance.compliance_name}
                       </a>
                     </td>
-                    <td className="py-3 px-4 border-b text-center">
+
+                    <td className="py-3 px-2 border-b text-center border-x-2 border-y-2">
                       {new Date(compliance.created_at).toLocaleString("en-IN", {
                         day: "2-digit",
                         month: "2-digit",
@@ -273,12 +279,12 @@ const StudentCompliancesWarden = () => {
                         hour12: true,
                       })}
                     </td>
-                    <td className="py-3 px-4 border-b text-center">
+                    <td className="py-3 px-2 border-b text-center border-x-2 border-y-2">
                       {new Date(compliance.due_date).toLocaleDateString(
                         "en-IN"
                       )}
                     </td>
-                    <td className="py-3 px-4 border-b text-center">
+                    <td className="py-3 px-4 border-b text-center border-x-2 border-y-2">
                       {compliance.completed_at
                         ? new Date(compliance.completed_at).toLocaleString(
                             "en-IN",
@@ -293,7 +299,7 @@ const StudentCompliancesWarden = () => {
                           )
                         : "N/A"}
                     </td>
-                    <td className="py-3 px-4 border-b text-center">
+                    <td className="py-3 px-2 border-b text-center border-x-2 border-y-2">
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-bold ${getStatusColor(
                           compliance.status
@@ -302,7 +308,7 @@ const StudentCompliancesWarden = () => {
                         {compliance.status}
                       </span>
                     </td>
-                    <td className="py-3 px-4 border-b text-center">
+                    <td className="py-3 px-2 border-b text-center border-x-2 border-y-2">
                       <button
                         onClick={() =>
                           handleStatusClick(

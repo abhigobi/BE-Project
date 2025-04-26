@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Bell, User, Upload, Mail, X, Menu } from "lucide-react";
+import { motion} from "framer-motion";
+// import { useInView } from "react-intersection-observer";
+import { Bell, User, Upload, Mail, X, Menu ,Pencil,Trash2,Plus,Download,Loader2} from "lucide-react";
 import {
   FaChalkboardTeacher,
   FaUserShield,
@@ -278,305 +280,429 @@ const AdminDashboard = () => {
       </aside>
 
       {/* Main Content */}
-      <div className="flex flex-col flex-grow overflow-y-auto">
-        <nav className="bg-white px-6 py-4 shadow-md flex justify-between items-center">
-          <h1 className="text-xl font-semibold">Admin Compliance Overview</h1>
+      <div className="flex flex-col flex-grow overflow-y-auto bg-gray-50">
+        {/* Header */}
+        <nav className="bg-white px-6 py-4 shadow-sm flex justify-between items-center sticky top-0 z-10">
+          <h1 className="text-xl font-semibold text-gray-800">
+            Admin Compliance Overview
+          </h1>
           <div className="flex items-center gap-4">
-            <Mail className="w-6 h-6 text-gray-600 hover:text-gray-800 cursor-pointer" />
-            <Bell className="w-6 h-6 text-gray-600 hover:text-gray-800 cursor-pointer" />
-            <User className="w-6 h-6 text-gray-600 hover:text-gray-800 cursor-pointer" />
+            <div className="relative group">
+              <Mail className="w-6 h-6 text-gray-500 hover:text-blue-600 cursor-pointer transition-colors" />
+              <div className="absolute hidden group-hover:block bg-white p-2 rounded-md shadow-lg border border-gray-100 w-48 right-0">
+                <p className="text-sm text-gray-600">Messages (3)</p>
+              </div>
+            </div>
+            <div className="relative group">
+              <Bell className="w-6 h-6 text-gray-500 hover:text-blue-600 cursor-pointer transition-colors" />
+              {/* <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                5
+              </span> */}
+            </div>
+            {/* <div className="relative group">
+              <div className="flex items-center gap-2 cursor-pointer">
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">
+                  A
+                </div>
+              </div>
+            </div> */}
           </div>
         </nav>
-        <h2 className="text-2xl font-bold ml-6 mt-5 mb-4 text-gray-800">
-          Upload Excel File Role Wise And Add Single Data
-        </h2>
-        <div className="flex justify-center gap-5 items-center mt-6">
-          <button
-            className="bg-green-500 text-white px-6 py-3 rounded flex items-center hover:bg-green-600 transition-colors"
-            onClick={() => setUploadModalOpen(true)}
-          >
-            <Upload className="w-5 h-5 mr-2" /> Upload Excel File
-          </button>
-          <button
-            className="bg-blue-500 text-white px-6 py-3 rounded flex items-center hover:bg-blue-600 transition-colors"
-            onClick={() => setAddSingleDataOpen(true)}
-          >
-            <Upload className="w-5 h-5 mr-2" /> Add Single Data
-          </button>
-        </div>
 
-        {/* Role Selection Modal */}
-        {addSingleData && !selectedRole && (
-          <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-              <h2 className="text-xl font-semibold mb-6 text-gray-800">
-                Select Role
-              </h2>
-              <div className="flex flex-col gap-3">
-                <button
-                  className="bg-blue-500 text-white py-2.5 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
-                  onClick={() => setSelectedRole("student")}
-                >
-                  <User className="w-5 h-5" /> Student
-                </button>
-                <button
-                  className="bg-yellow-500 text-white py-2.5 rounded-lg hover:bg-yellow-600 transition-colors flex items-center justify-center gap-2"
-                  onClick={() => setSelectedRole("teacher")}
-                >
-                  <FaChalkboardTeacher className="w-5 h-5" /> Teacher
-                </button>
-                <button
-                  className="bg-red-500 text-white py-2.5 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center gap-2"
-                  onClick={() => setSelectedRole("warden")}
-                >
-                  <FaUserShield className="w-5 h-5" /> Warden
-                </button>
-              </div>
-              {/* Cancel Button */}
-              <button
-                className="mt-6 bg-gray-500 text-white py-2.5 px-4 rounded-lg w-full hover:bg-gray-600 transition-colors"
-                onClick={() => setAddSingleDataOpen(false)}
+        {/* Main Content */}
+        <div className="p-6">
+          {/* Upload Section */}
+          <section className="bg-white rounded-xl shadow-sm p-6 mb-8 border border-gray-100">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              Upload Excel File Role Wise And Add Single Data
+            </h2>
+            <div className="flex justify-center gap-5">
+              <motion.button
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all"
+                onClick={() => setUploadModalOpen(true)}
               >
-                Cancel
-              </button>
-            </div>
-          </div>
-        )}
+                <Upload className="w-5 h-5" />
+                <span>Upload Excel File</span>
+              </motion.button>
 
-        {/* Data Entry Form Modal */}
-        {selectedRole && addSingleData && (
-          <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-              <h2 className="text-xl font-semibold mb-6 text-gray-800">
-                Add{" "}
-                {selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}{" "}
-                Data
-              </h2>
-              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Enter Name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="border border-gray-300 p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Enter Email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="border border-gray-300 p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Enter Password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="border border-gray-300 p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-                <div className="flex justify-between gap-4">
+              <motion.button
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all"
+                onClick={() => setAddSingleDataOpen(true)}
+              >
+                <Plus className="w-5 h-5" />
+                <span>Add Single Data</span>
+              </motion.button>
+            </div>
+          </section>
+
+          {/* Role Selection Modal */}
+          {addSingleData && !selectedRole && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50"
+            >
+              <motion.div
+                initial={{ scale: 0.95 }}
+                animate={{ scale: 1 }}
+                className="bg-white p-6 rounded-xl shadow-xl w-96 border border-gray-100"
+              >
+                <h2 className="text-xl font-semibold mb-6 text-gray-800">
+                  Select Role
+                </h2>
+                <div className="space-y-3">
+                  {[
+                    {
+                      role: "student",
+                      label: "Student",
+                      icon: User,
+                      color: "bg-blue-500",
+                    },
+                    {
+                      role: "teacher",
+                      label: "Teacher",
+                      icon: FaChalkboardTeacher,
+                      color: "bg-yellow-500",
+                    },
+                    {
+                      role: "warden",
+                      label: "Warden",
+                      icon: FaUserShield,
+                      color: "bg-red-500",
+                    },
+                  ].map((item) => (
+                    <motion.button
+                      key={item.role}
+                      whileHover={{ x: 5 }}
+                      className={`${item.color} text-white py-2.5 rounded-lg flex items-center justify-center gap-2 w-full`}
+                      onClick={() => setSelectedRole(item.role)}
+                    >
+                      <item.icon className="w-5 h-5" />
+                      {item.label}
+                    </motion.button>
+                  ))}
+                </div>
+                <button
+                  className="mt-6 bg-gray-100 hover:bg-gray-200 text-gray-800 py-2.5 px-4 rounded-lg w-full transition-colors"
+                  onClick={() => setAddSingleDataOpen(false)}
+                >
+                  Cancel
+                </button>
+              </motion.div>
+            </motion.div>
+          )}
+
+          {/* Data Entry Form Modal */}
+          {selectedRole && addSingleData && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50"
+            >
+              <motion.div
+                initial={{ y: 20 }}
+                animate={{ y: 0 }}
+                className="bg-white p-6 rounded-xl shadow-xl w-96 border border-gray-100"
+              >
+                <h2 className="text-xl font-semibold mb-6 text-gray-800">
+                  Add{" "}
+                  {selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}{" "}
+                  Data
+                </h2>
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Name
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="Enter Name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="Enter Email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Password
+                    </label>
+                    <input
+                      type="password"
+                      name="password"
+                      placeholder="Enter Password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                      required
+                    />
+                  </div>
+
+                  <div className="flex justify-between gap-4 pt-2">
+                    <button
+                      type="button"
+                      className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2.5 rounded-lg w-full transition-colors"
+                      onClick={() => {
+                        setSelectedRole("");
+                        setAddSingleDataOpen(false);
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="bg-green-500 hover:bg-green-600 text-white px-4 py-2.5 rounded-lg w-full transition-colors"
+                    >
+                      Add Data
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            </motion.div>
+          )}
+
+          {/* Upload Modal */}
+          {uploadModalOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50"
+            >
+              <motion.div
+                initial={{ scale: 0.95 }}
+                animate={{ scale: 1 }}
+                className="bg-white p-6 rounded-xl shadow-xl w-96 border border-gray-100"
+              >
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-semibold text-gray-800">
+                    Upload Excel File
+                  </h2>
                   <button
-                    type="button"
-                    className="bg-gray-500 text-white px-4 py-2.5 rounded-lg w-full hover:bg-gray-600 transition-colors"
-                    onClick={() => {
-                      setSelectedRole("");
-                      setAddSingleDataOpen(false);
-                    }}
+                    onClick={() => setUploadModalOpen(false)}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                   >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="bg-green-500 text-white px-4 py-2.5 rounded-lg w-full hover:bg-green-600 transition-colors"
-                  >
-                    Add Data
+                    <X className="w-5 h-5 text-gray-500" />
                   </button>
                 </div>
-              </form>
-            </div>
-          </div>
-        )}
-        {uploadModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-              <div className="flex justify-between items-center">
-                <h2 className="text-lg font-semibold">Upload Excel File</h2>
-                <button
-                  onClick={() => setUploadModalOpen(false)}
-                  className="p-2 hover:bg-gray-100 rounded transition-colors"
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Select Category:
+                    </label>
+                    <select
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    >
+                      {categories.map((category) => (
+                        <option key={category.value} value={category.value}>
+                          {category.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Select Excel File:
+                    </label>
+                    <div className="flex items-center justify-center w-full">
+                      <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                          <Upload className="w-8 h-8 mb-3 text-gray-500" />
+                          <p className="mb-2 text-sm text-gray-500">
+                            <span className="font-semibold">
+                              Click to upload
+                            </span>{" "}
+                          </p>
+                          <p className="text-xs text-gray-500">XLSX or XLS</p>
+                        </div>
+                        <input
+                          type="file"
+                          accept=".xlsx, .xls"
+                          onChange={handleFileChange}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleUpload}
+                    disabled={isUploading}
+                    className={`w-full mt-4 px-4 py-2.5 rounded-lg text-white transition-colors ${
+                      isUploading
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-blue-500 hover:bg-blue-600"
+                    }`}
+                  >
+                    {isUploading ? (
+                      <div className="flex items-center justify-center gap-2">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Uploading...
+                      </div>
+                    ) : (
+                      "Upload"
+                    )}
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+
+          {/* Role Selection Cards */}
+          <section className="bg-white rounded-xl shadow-sm p-6 mb-8 border border-gray-100">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              List of Selected Role
+            </h2>
+            <div className="flex justify-center gap-6">
+              {[
+                {
+                  role: "student",
+                  label: "Students",
+                  icon: FaUserGraduate,
+                  color: "from-blue-500 to-blue-600",
+                },
+                {
+                  role: "teacher",
+                  label: "Teachers",
+                  icon: FaChalkboardTeacher,
+                  color: "from-yellow-500 to-yellow-600",
+                },
+                // { role: "warden", label: "Wardens", icon: FaUserShield, color: "from-red-500 to-red-600" }
+              ].map((item) => (
+                <motion.div
+                  key={item.role}
+                  whileHover={{ y: -5 }}
+                  className={`cursor-pointer p-6 rounded-xl shadow-md flex flex-col items-center justify-center gap-3 w-32 h-32 transition-all ${
+                    selectedRoleList === item.role
+                      ? `bg-gradient-to-r ${item.color} text-white`
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                  onClick={() => setSelectedRoleList(item.role)}
                 >
-                  <X className="w-5 h-5 text-gray-600" />
-                </button>
-              </div>
-
-              <label className="block mt-4 font-medium">Select Category:</label>
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded mt-2 focus:outline-none focus:border-blue-500"
-              >
-                {categories.map((category) => (
-                  <option key={category.value} value={category.value}>
-                    {category.label}
-                  </option>
-                ))}
-              </select>
-
-              <label className="block mt-4 font-medium">
-                Select Excel File:
-              </label>
-              <input
-                type="file"
-                accept=".xlsx, .xls"
-                onChange={handleFileChange}
-                className="w-full p-2 border border-gray-300 rounded mt-2 focus:outline-none focus:border-blue-500"
-              />
-
-              <button
-                onClick={handleUpload}
-                className={`w-full mt-4 px-4 py-2 rounded text-white ${
-                  isUploading
-                    ? "bg-gray-500 cursor-not-allowed"
-                    : "bg-blue-500 hover:bg-blue-600"
-                } transition-colors`}
-                disabled={isUploading}
-              >
-                {isUploading ? "Uploading..." : "Upload"}
-              </button>
+                  <item.icon className="w-8 h-8" />
+                  <span className="font-semibold">{item.label}</span>
+                </motion.div>
+              ))}
             </div>
-          </div>
-        )}
-        <h2 className="text-2xl font-bold ml-6 mt-5 mb-4 text-gray-800">
-          List of Selected Role
-        </h2>
-        <div className="flex justify-center gap-6 mt-6">
-          {[
-            {
-              role: "student",
-              label: "Students",
-              icon: FaUserGraduate,
-              color: "bg-blue-500",
-            },
-            {
-              role: "teacher",
-              label: "Teachers",
-              icon: FaChalkboardTeacher,
-              color: "bg-yellow-500",
-            },
-            // {
-            //   role: "warden",
-            //   label: "Wardens",
-            //   icon: FaUserShield,
-            //   color: "bg-red-500",
-            // },
-          ].map(({ role, label, icon: Icon, color }) => (
-            <div
-              key={role}
-              className={`cursor-pointer p-6 rounded-xl shadow-lg flex flex-col items-center 
-        transition-all duration-300 w-32 h-32 justify-center gap-3 
-        ${
-          selectedRoleList === role
-            ? `${color} text-white`
-            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-        }
-      `}
-              onClick={() => setSelectedRoleList(role)}
-            >
-              <Icon className="w-8 h-8" />
-              <span className="font-semibold">{label}</span>
-            </div>
-          ))}
-        </div>
+          </section>
 
-        {/* Data Table */}
-        {selectedRoleList && (
-          <div className="p-6 ">
-            <div className="flex justify-between">
-              <h2 className="text-2xl font-bold mb-6 text-gray-800">
-                {selectedRoleList.charAt(0).toUpperCase() +
-                  selectedRoleList.slice(1)}{" "}
-                List
-              </h2>
-              <button
-                onClick={handleDownload}
-                className={`bg-gradient-to-r text-white px-6 py-3 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 focus:ring-2 ${
-                  selectedRoleList === "student"
-                    ? "from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 focus:ring-blue-300"
+          {/* Data Table Section */}
+          {selectedRoleList && (
+            <section className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">
+                  {selectedRoleList.charAt(0).toUpperCase() +
+                    selectedRoleList.slice(1)}{" "}
+                  List
+                </h2>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleDownload}
+                  className={`bg-gradient-to-r text-white px-6 py-3 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all ${
+                    selectedRoleList === "student"
+                      ? "from-blue-500 to-blue-600"
+                      : selectedRoleList === "teacher"
+                      ? "from-yellow-500 to-yellow-600"
+                      : "from-red-500 to-red-600"
+                  }`}
+                >
+                  <Download className="w-5 h-5" />
+                  Download{" "}
+                  {selectedRoleList === "student"
+                    ? "Students"
                     : selectedRoleList === "teacher"
-                    ? "from-yellow-500 to-yellow-700 hover:from-yellow-600 hover:to-yellow-800 focus:ring-yellow-300"
-                    : "from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 focus:ring-red-300"
-                }`}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Download{" "}
-                {selectedRoleList === "student"
-                  ? "Students"
-                  : selectedRoleList === "teacher"
-                  ? "Teachers"
-                  : "Wardens"}{" "}
-                Data
-              </button>
-            </div>
-            {loading ? (
-              <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                    ? "Teachers"
+                    : "Wardens"}{" "}
+                  Data
+                </motion.button>
               </div>
-            ) : (
-              <div className="bg-white rounded-lg shadow overflow-auto">
-                <table className="min-w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="py-3 px-4 text-center text-sm font-extrabold text-gray-700 uppercase">
-                        S.No.
-                      </th>
-                      <th className="py-3 px-4 text-center text-sm font-extrabold text-gray-700 uppercase">
-                        Name
-                      </th>
-                      <th className="py-3 px-4 text-center text-sm font-extrabold text-gray-700 uppercase">
-                        Email
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {data.map((item, index) => (
-                      <tr
-                        key={item._id || index}
-                        className="hover:bg-gray-50 transition-colors"
-                      >
-                        <td className="py-3 px-4 text-gray-700 text-center">
-                          {index + 1}
-                        </td>
-                        <td className="py-3 px-4 text-gray-700 text-center">
-                          {item.name}
-                        </td>
-                        <td className="py-3 px-4 text-gray-700 text-center">
-                          {item.email}
-                        </td>
+
+              {loading ? (
+                <div className="flex justify-center items-center h-64">
+                  <Loader2 className="w-12 h-12 animate-spin text-blue-500" />
+                </div>
+              ) : (
+                <div className="overflow-auto rounded-lg border border-gray-200">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          S.No.
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Name
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Email
+                        </th>
+                        {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Actions
+                        </th> */}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {data.map((item, index) => (
+                        <tr
+                          key={item._id || index}
+                          className="hover:bg-gray-50 transition-colors"
+                        >
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {index + 1}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {item.name}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {item.email}
+                          </td>
+                          {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <div className="flex gap-2">
+                              <button className="text-blue-600 hover:text-blue-800">
+                                <Pencil className="w-4 h-4" />
+                              </button>
+                              <button className="text-red-600 hover:text-red-800">
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td> */}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </section>
+          )}
+        </div>
       </div>
     </div>
   );
