@@ -149,11 +149,6 @@ const StudentDashboard = () => {
         {/* Navbar */}
         <nav className="bg-white px-6 py-4 shadow-md flex justify-between items-center">
           <h1 className="text-xl font-semibold">I2IT Student Dashboard</h1>
-          <div className="flex items-center gap-4">
-            <Mail className="w-6 h-6 text-gray-600" />
-            <Bell className="w-6 h-6 text-gray-600" />
-            <User className="w-6 h-6 text-gray-600" />
-          </div>
         </nav>
 
         {/* Stats Cards */}

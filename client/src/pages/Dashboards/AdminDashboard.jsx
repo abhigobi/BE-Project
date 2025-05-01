@@ -1,8 +1,20 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion} from "framer-motion";
+import { motion } from "framer-motion";
 // import { useInView } from "react-intersection-observer";
-import { Bell, User, Upload, Mail, X, Menu ,Pencil,Trash2,Plus,Download,Loader2} from "lucide-react";
+import {
+  Bell,
+  User,
+  Upload,
+  Mail,
+  X,
+  Menu,
+  Pencil,
+  Trash2,
+  Plus,
+  Download,
+  Loader2,
+} from "lucide-react";
 import {
   FaChalkboardTeacher,
   FaUserShield,
@@ -286,27 +298,6 @@ const AdminDashboard = () => {
           <h1 className="text-xl font-semibold text-gray-800">
             Admin Compliance Overview
           </h1>
-          <div className="flex items-center gap-4">
-            <div className="relative group">
-              <Mail className="w-6 h-6 text-gray-500 hover:text-blue-600 cursor-pointer transition-colors" />
-              <div className="absolute hidden group-hover:block bg-white p-2 rounded-md shadow-lg border border-gray-100 w-48 right-0">
-                <p className="text-sm text-gray-600">Messages (3)</p>
-              </div>
-            </div>
-            <div className="relative group">
-              <Bell className="w-6 h-6 text-gray-500 hover:text-blue-600 cursor-pointer transition-colors" />
-              {/* <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                5
-              </span> */}
-            </div>
-            {/* <div className="relative group">
-              <div className="flex items-center gap-2 cursor-pointer">
-                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">
-                  A
-                </div>
-              </div>
-            </div> */}
-          </div>
         </nav>
 
         {/* Main Content */}

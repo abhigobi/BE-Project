@@ -93,16 +93,6 @@ const WardenDashboard = () => {
             ☰
           </button>
           <h1 className="text-xl font-semibold">I2IT Warden Dashboard</h1>
-          <div className="flex items-center gap-4">
-            <Mail
-              className="w-6 h-6 text-gray-600"
-              onClick={() => {
-                alert("Mail");
-              }}
-            />
-            <Bell className="w-6 h-6 text-gray-600" />
-            <User className="w-6 h-6 text-gray-600" />
-          </div>
         </nav>
         <div className="flex flex-wrap gap-10 mt-5 justify-center">
           {/* Total Compliances Card */}

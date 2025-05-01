@@ -91,11 +91,7 @@ const TeacherDashboard = () => {
         {/* Navbar */}
         <nav className="bg-[#FAFAFA] px-6 py-4 shadow-md flex justify-between items-center">
           <h1 className="text-xl font-semibold">I2IT Teacher Dashboard</h1>
-          <div className="flex items-center gap-4">
-            <Mail className="w-6 h-6 text-gray-600 " />
-            <Bell className="w-6 h-6 text-gray-600" />
-            <User className="w-6 h-6 text-gray-600" />
-          </div>
+          
         </nav>
         <div className="flex flex-wrap gap-10 mt-5 justify-center">
           {/* Total Compliances Card */}
