@@ -13,7 +13,7 @@ const createTable = async () => {
             )
         `);
     } catch (error) {
-        console.error("❌ Error creating table:", error);
+        console.error("Error creating table:", error);
     }
 };
 

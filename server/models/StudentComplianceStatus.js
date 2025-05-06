@@ -10,16 +10,19 @@ const createTable = async () => {
         compliance_id INT NOT NULL,
         urlOfCompliance VARCHAR(2083) NOT NULL,
         name VARCHAR(255) NOT NULL,
+        submissionMode ENUM('Online', 'Offline') DEFAULT 'Online',
+        warden_id INT DEFAULT NULL,
         status ENUM('Pending', 'Completed', 'Waiting For Approve', 'Rejected') DEFAULT 'Pending',
         completed_at TIMESTAMP NULL,
         due_date TIMESTAMP NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (student_id) REFERENCES Student(id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (compliance_id) REFERENCES CommonCompliancePdfForStudent(id) ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (compliance_id) REFERENCES CommonCompliancePdfForStudent(id) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (warden_id) REFERENCES Warden(id) ON DELETE SET NULL ON UPDATE CASCADE
       )
     `);
   } catch (error) {
-    console.error("❌ Error creating table:", error);
+    console.error("Error creating table:", error);
   }
 };
 
@@ -28,28 +31,28 @@ createTable();
 // Student Compliance Status (Individual tracking)
 module.exports = {
   // Initialize status for all students when a new compliance is added
-  initializeStatusForAllStudents: async (complianceId, studentIds, urlOfCompliance, name, due_date) => {
-    if (!complianceId || !studentIds || !urlOfCompliance || !name || !due_date) {
+  initializeStatusForAllStudents: async (complianceId, studentIds, urlOfCompliance, name, due_date, warden_id) => {
+    if (!complianceId || !studentIds || !urlOfCompliance || !name || !due_date || !warden_id) {
       throw new Error("All parameters are required.");
     }
     if (studentIds.length === 0) {
       console.log("No students to initialize.");
       return;
     }
-    const values = studentIds.map((studentId) => [studentId, complianceId, urlOfCompliance, name, due_date]);
+    const values = studentIds.map((studentId) => [studentId, complianceId, urlOfCompliance, name, due_date, warden_id]);
     await db.query(
-      'INSERT INTO StudentComplianceStatus (student_id, compliance_id, urlOfCompliance, name, due_date) VALUES ?',
+      'INSERT INTO StudentComplianceStatus (student_id, compliance_id, urlOfCompliance, name, due_date, warden_id) VALUES ?',
       [values]
     );
   },
 
   // Update a student's compliance status
   updateStatus: async (studentId, complianceId, status) => {
-    const allowedStatuses = ['Pending', 'Completed', 'Waiting For Approve', 'Rejected'];
+    const allowedStatuses = ['Waiting For Approve'];
     if (!allowedStatuses.includes(status)) {
       throw new Error(`Invalid status: ${status}. Allowed values are ${allowedStatuses.join(', ')}.`);
     }
-    const completedAt = status === 'Completed' ? new Date() : null;
+    const completedAt = null;
     await db.execute(
       'UPDATE StudentComplianceStatus SET status = ?, completed_at = ? WHERE student_id = ? AND compliance_id = ?',
       [status, completedAt, studentId, complianceId]
@@ -69,7 +72,8 @@ module.exports = {
         s.status,
         s.completed_at,
         s.due_date,
-        s.created_at
+        s.created_at,
+        s.submissionMode,
       FROM StudentComplianceStatus s
       INNER JOIN CommonCompliancePdfForStudent c 
         ON c.id = s.compliance_id
@@ -91,20 +95,18 @@ module.exports = {
         s.due_date,
         s.created_at,
         st.name AS student_name,
-        st.email AS student_email
+        st.email AS student_email,
+        w.name AS warden_name
       FROM StudentComplianceStatus s
-      LEFT JOIN Student st 
-        ON s.student_id = st.id
+      LEFT JOIN Student st ON s.student_id = st.id
+      LEFT JOIN Warden w ON s.warden_id = w.id
       ORDER BY s.created_at DESC`
     );
-
-    // Group by student
+  
     const groupedByStudent = rows.reduce((acc, curr) => {
-      // Create a unique key for each student
       const studentKey = curr.student_id;
-
+  
       if (!acc[studentKey]) {
-        // Initialize student object if it doesn't exist
         acc[studentKey] = {
           student_id: curr.student_id,
           student_name: curr.student_name,
@@ -112,25 +114,26 @@ module.exports = {
           compliances: []
         };
       }
-
-      // Add compliance data
+  
       acc[studentKey].compliances.push({
         compliance_id: curr.compliance_id,
         StudentComplianceStatus_ID: curr.StudentComplianceStatus_ID,
         urlOfCompliance: curr.urlOfCompliance,
         compliance_name: curr.compliance_name,
         status: curr.status,
+        warden_name: curr.warden_name,
+        submissionMode: curr.submissionMode,
         completed_at: curr.completed_at,
         due_date: curr.due_date,
         created_at: curr.created_at
       });
-
+  
       return acc;
     }, {});
-
-    // Convert to array format
+  
     return Object.values(groupedByStudent);
   },
+  
   getStudentComplianceStatusID: async (studentId, complianceId) => {
     if (!studentId || !complianceId) {
       throw new Error("Student ID and Compliance ID are required.");
@@ -141,17 +144,27 @@ module.exports = {
     );
     return rows;
   },
-
-  updateStudentComplianceStatus: async (studentId, complianceId, status) => {
+  updateStudentComplianceStatus: async (studentId, complianceId, status, wardenId = null) => {
     const allowedStatuses = ['Pending', 'Completed', 'Waiting For Approve', 'Rejected'];
     if (!allowedStatuses.includes(status)) {
       throw new Error(`Invalid status: ${status}. Allowed values are ${allowedStatuses.join(', ')}.`);
     }
-    const completedAt = status === 'Completed' ? new Date() : null;
-    await db.execute(
-      'UPDATE StudentComplianceStatus SET status = ?, completed_at = ? WHERE student_id = ? AND compliance_id = ?',
-      [status, completedAt, studentId, complianceId]
-    );
+
+    if (status === 'Completed') {
+      await db.execute(
+        `UPDATE StudentComplianceStatus 
+         SET status = ?, warden_id = ?, completed_at = CURRENT_TIMESTAMP 
+         WHERE student_id = ? AND compliance_id = ?`,
+        [status, wardenId, studentId, complianceId]
+      );
+    } else {
+      await db.execute(
+        `UPDATE StudentComplianceStatus 
+         SET status = ?, warden_id = ?, completed_at = NULL 
+         WHERE student_id = ? AND compliance_id = ?`,
+        [status, wardenId, studentId, complianceId]
+      );
+    }
   },
   deleteByComplianceId: async (complianceId) => {
     try {

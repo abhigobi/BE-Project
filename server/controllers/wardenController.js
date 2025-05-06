@@ -6,8 +6,10 @@ const StudentComplianceStatus = require('../models/StudentComplianceStatus');
 const Student = require('../models/Student');
 const nodemailer = require('nodemailer');
 const { sendRejectionEmail, sendCompletionEmail } = require('../services/emailService');
+
 const uploadFile = async (req, res) => {
     try {
+        console.log("File upload request received");
         if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
         const filePath = path.join(__dirname, '..', req.file.path);
@@ -146,7 +148,7 @@ const updateFileStatus = async (req, res) => {
 
 const updateFileStatus = async (req, res) => {
     // const { studentId } = req.params;
-    const { status, studentId, compliance_id, complianceName, studentEmail, note } = req.body;
+    const { status, studentId, compliance_id, complianceName, studentEmail, note, wardenId, wardenName } = req.body;
     // console.log(studentId, status);
     // Validate the status
     const allowedStatuses = ['Pending', 'Completed', 'Waiting For Approve', 'Rejected'];
@@ -162,13 +164,13 @@ const updateFileStatus = async (req, res) => {
             return res.status(404).json({ success: false, message: "File not found" });
         }
         if (status === 'Rejected') {
-            await StudentComplianceStatus.updateStudentComplianceStatus(studentId, compliance_id, status);
-            await sendRejectionEmail(studentEmail, complianceName, note);
+            await StudentComplianceStatus.updateStudentComplianceStatus(studentId, compliance_id, status, wardenId);
+            await sendRejectionEmail(studentEmail, complianceName, note, wardenName);
             // Update the status in the database
         }
         else if (status === 'Completed') {
-            await StudentComplianceStatus.updateStudentComplianceStatus(studentId, compliance_id, status);
-            await sendCompletionEmail(studentEmail, complianceName);
+            await StudentComplianceStatus.updateStudentComplianceStatus(studentId, compliance_id, status, wardenId);
+            await sendCompletionEmail(studentEmail, complianceName, wardenName);
         }
         res.status(200).json({ success: true, message: "Status updated successfully", newStatus: status });
     } catch (error) {
@@ -179,7 +181,7 @@ const updateFileStatus = async (req, res) => {
 const createCompliance = async (req, res) => {
     try {
         // Extract data from request body
-        const { complianceId, due_date, emailSubject, emailText } = req.body;
+        const { complianceId, due_date, emailSubject, emailText, wardenName, wardenId } = req.body;
 
         // Validate input
         if (!complianceId || !due_date) {
@@ -211,7 +213,7 @@ const createCompliance = async (req, res) => {
 
         // Fetch all student IDs
         const studentIds = await Student.getAllStudentIds();
-        console.log("Student ID", studentIds)
+        // console.log("Student ID", studentIds)
         if (!studentIds?.length) {
             return res.status(404).json({
                 error: 'No students found in the system'
@@ -219,7 +221,7 @@ const createCompliance = async (req, res) => {
         }
         // Fetch all students with their emails
         const students = await Student.getAllStudents();
-        console.log("Students fetched from DB:", students); // Debugging
+        // console.log("Students fetched from DB:", students); // Debugging
 
         // Extract the first array (actual student data)
         const studentList = students[0] || [];
@@ -233,7 +235,7 @@ const createCompliance = async (req, res) => {
             .map(student => student?.email?.trim())  // Ensure email exists and trim whitespace
             .filter(email => email && email.includes('@')); // Validate email format
 
-        console.log("Students email", studentEmails);
+        // console.log("Students email", studentEmails);
 
         if (studentEmails.length === 0) {
             return res.status(500).json({ error: "No valid student emails found." });
@@ -246,10 +248,11 @@ const createCompliance = async (req, res) => {
             studentIds,
             url,
             name,
-            formattedDate
+            formattedDate,
+            wardenId
         );
 
-        await sendEmailsToStudents(studentEmails, name, due_date, url, emailSubject, emailText);
+        await sendEmailsToStudents(studentEmails, name, due_date, url, emailSubject, emailText, wardenName);
         return res.status(201).json({
             success: true,
             complianceId: complianceId,
@@ -264,7 +267,7 @@ const createCompliance = async (req, res) => {
     }
 };
 // Function to send emails with dynamic/default content
-const sendEmailsToStudents = async (emails, complianceName, dueDate, complianceUrl, emailSubject, emailText) => {
+const sendEmailsToStudents = async (emails, complianceName, dueDate, complianceUrl, emailSubject, emailText, wardenName) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -326,7 +329,7 @@ const sendEmailsToStudents = async (emails, complianceName, dueDate, complianceU
                     <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eeeeee;">
                         <p style="color: #666666; font-size: 14px; margin: 0;">
                             Best Regards,<br>
-                            <strong>KL Rahul</strong>
+                            <strong>${wardenName || "KL Rahul"}</strong>
                         </p>
                     </div>
                 </div>
@@ -347,8 +350,8 @@ const sendEmailsToStudents = async (emails, complianceName, dueDate, complianceU
               
               Please complete this compliance document before the deadline.
               
-              Best Regards,
-              KL Rahul`
+              Best Regards,<br>
+              <strong>${wardenName || "KL Rahul"}</strong>`
     };
 
     try {
