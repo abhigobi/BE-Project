@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom"; // Ensure Link is imported
+import { NavLink } from "react-router-dom"; // Ensure Link is imported
 import { Bell, User, FileText, Menu, Mail } from "lucide-react";
 import { FaClipboardList, FaClipboardCheck } from "react-icons/fa";
 const TeacherDashboard = () => {
@@ -75,7 +75,7 @@ const TeacherDashboard = () => {
             icon={<FaClipboardList className="w-5 h-5" />}
             label={<span className="text-lg">Students Compliances</span>}
             isSidebarOpen={isSidebarOpen}
-            to="/teacher-dashboard/student-compliances" 
+            to="/teacher-dashboard/student-compliances"
           />
           <NavItem
             icon={<FaClipboardList className="w-5 h-5" />}
@@ -91,7 +91,6 @@ const TeacherDashboard = () => {
         {/* Navbar */}
         <nav className="bg-[#FAFAFA] px-6 py-4 shadow-md flex justify-between items-center">
           <h1 className="text-xl font-semibold">I2IT Teacher Dashboard</h1>
-          
         </nav>
         <div className="flex flex-wrap gap-10 mt-5 justify-center">
           {/* Total Compliances Card */}
@@ -228,14 +227,41 @@ const TeacherDashboard = () => {
 };
 
 // Sidebar Navigation Item Component
-const NavItem = ({ icon, label, isSidebarOpen, to }) => (
-  <Link
-    to={to} // Use the `to` prop for navigation
-    className="flex items-center gap-3 p-3 hover:bg-gray-700 rounded-md cursor-pointer transition-all"
-  >
-    {icon}
-    {isSidebarOpen && <span className="text-lg">{label}</span>}
-  </Link>
-);
+const NavItem = ({ icon, label, to, isSidebarOpen }) => {
+  return (
+    <NavLink
+      to={to}
+      end
+      className={({ isActive }) =>
+        `flex items-center gap-3 p-3 rounded-lg transition-all duration-200 ${
+          isActive
+            ? "bg-gray-800 text-white dark:bg-gray-700 font-medium"
+            : "text-gray-600 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-800"
+        }`
+      }
+    >
+      {({ isActive }) => (
+        <>
+          <span
+            className={`flex-shrink-0 ${
+              isActive ? "text-white" : "text-gray-500 dark:text-gray-400"
+            }`}
+          >
+            {icon}
+          </span>
+          {isSidebarOpen && (
+            <span
+              className={`${
+                isActive ? "text-white" : "text-gray-700 dark:text-gray-300"
+              }`}
+            >
+              {label}
+            </span>
+          )}
+        </>
+      )}
+    </NavLink>
+  );
+};
 
 export default TeacherDashboard;

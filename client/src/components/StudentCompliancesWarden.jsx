@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { toast } from "react-toastify";
+import WardenDashboardSidebar from "./WardenDashboardSidebar";
 import axios from "axios";
-import { FaFileUpload, FaClipboardCheck } from "react-icons/fa";
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
 const StudentCompliancesWarden = () => {
@@ -36,6 +35,8 @@ const StudentCompliancesWarden = () => {
         );
 
         if (response.status === 200 && response.data) {
+          // console.log(response.data.students);
+
           setStudentCompliance(response.data.students);
         } else {
           throw new Error("Invalid response from the server");
@@ -157,38 +158,8 @@ const StudentCompliancesWarden = () => {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside
-        className={`${
-          sidebarOpen ? "w-64" : "w-20"
-        } bg-[#1A2A4F] text-white  transition-all duration-300 flex flex-col`}
-      >
-        {/* Sidebar Header */}
-        <div className="flex items-center justify-between p-4">
-          {sidebarOpen && (
-            <h1 className="text-xl font-bold">Warden Dashboard</h1>
-          )}
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2">
-            <Menu className="w-6 h-6" />
-          </button>
-        </div>
-
-        {/* Navigation Links */}
-        <nav className="flex flex-col gap-3 px-3">
-          <NavItem
-            icon={<FaClipboardCheck className="w-5 h-5" />}
-            label="My Compliance"
-            to="/warden-dashboard"
-            isSidebarOpen={sidebarOpen}
-          />
-          <NavItem
-            icon={<FaFileUpload className="w-5 h-5" />}
-            label="Upload Student Compliance"
-            to="/warden-dashboard/upload-student-compliances"
-            isSidebarOpen={sidebarOpen}
-          />
-        </nav>
-      </aside>
+      {/* Warden Sidebar Component */}
+      <WardenDashboardSidebar />
       {/* Main Content */}
       <div className="flex-1 p-6 overflow-y-auto">
         <nav className="bg-white shadow px-6 py-4 flex justify-between items-center">
@@ -222,6 +193,7 @@ const StudentCompliancesWarden = () => {
                 <th className="py-3 px-4 border-b text-center">Complete</th>
                 <th className="py-3 px-2 border-b text-center">Status</th>
                 <th className="py-3 px-2 border-b text-center">Action</th>
+                <th className="py-3 px-2 border-b text-center">Warden Name</th>
               </tr>
             </thead>
             <tbody>
@@ -324,6 +296,12 @@ const StudentCompliancesWarden = () => {
                       >
                         Change Status
                       </button>
+                    </td>
+                    <td
+                      className="py-3 px-4 border-b text-center border-x-2 border-y-2"
+                      // rowSpan={student.compliances.length}
+                    >
+                      {compliance.warden_name}
                     </td>
                   </tr>
                 ))
@@ -441,16 +419,6 @@ const StudentCompliancesWarden = () => {
   );
 };
 
-const NavItem = ({ icon, label, to, isSidebarOpen }) => {
-  return (
-    <Link
-      to={to}
-      className="flex items-center gap-3 p-3 hover:bg-gray-700 rounded-md cursor-pointer transition-all"
-    >
-      {icon}
-      {isSidebarOpen && <span>{label}</span>}
-    </Link>
-  );
-};
+
 
 export default StudentCompliancesWarden;

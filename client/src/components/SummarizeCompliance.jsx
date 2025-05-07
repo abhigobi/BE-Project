@@ -1,10 +1,8 @@
-import { Menu } from "lucide-react";
 import { useState } from "react";
-import { FaClipboardCheck } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import StudentDashboardSidebar from "./StudentDashboardSidebar";
 const serverUrl = import.meta.env.VITE_SERVER_URL;
+
 const SummarizeCompliance = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selectedFile, setSelectedFile] = useState(null);
   const [summary, setSummary] = useState("");
   const [pdfName, setPdfName] = useState("");
@@ -52,31 +50,7 @@ const SummarizeCompliance = () => {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside
-        className={`${
-          isSidebarOpen ? "w-64" : "w-20"
-        } bg-[#1A2A4F] text-white transition-all duration-300 flex flex-col`}
-      >
-        <div className="flex items-center justify-between p-4">
-          {isSidebarOpen && (
-            <h1 className="text-xl font-bold">Student Portal</h1>
-          )}
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-2 hover:bg-[#2C3E6D] rounded transition-colors"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
-        </div>
-        <nav className="flex flex-col gap-3 px-3">
-          <NavItem
-            icon={<FaClipboardCheck className="w-5 h-5" />}
-            label="My Compliances"
-            isSidebarOpen={isSidebarOpen}
-            to="/student-dashboard"
-          />
-        </nav>
-      </aside>
+      <StudentDashboardSidebar />
 
       {/* Main Content */}
       <div className="flex flex-col flex-grow overflow-y-auto p-6">
@@ -124,19 +98,6 @@ const SummarizeCompliance = () => {
         </div>
       )}
     </div>
-  );
-};
-
-// Sidebar Navigation Item Component
-const NavItem = ({ icon, label, isSidebarOpen, to = "#" }) => {
-  return (
-    <Link
-      to={to}
-      className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#2C3E6D] transition-colors"
-    >
-      {icon}
-      {isSidebarOpen && <span className="text-lg">{label}</span>}
-    </Link>
   );
 };
 

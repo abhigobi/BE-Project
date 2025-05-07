@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-// import { useInView } from "react-intersection-observer";
+import { useInView } from "react-intersection-observer";
+import AdminDashboardSidebar from "../../components/AdminDashboardSidebar";
 import {
   Bell,
   User,
@@ -23,8 +23,9 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 const serverUrl = import.meta.env.VITE_SERVER_URL;
+
 const AdminDashboard = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("students");
@@ -255,41 +256,7 @@ const AdminDashboard = () => {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside
-        className={`${
-          isSidebarOpen ? "w-64" : "w-20"
-        } bg-[#1A2A4F] text-white transition-all duration-300 flex flex-col`}
-      >
-        <div className="flex items-center justify-between p-4">
-          {isSidebarOpen && <h1 className="text-xl font-bold">Admin Portal</h1>}
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-2 hover:bg-[#2C3E6D] rounded transition-colors"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
-        </div>
-        <nav className="flex flex-col gap-3 px-3">
-          <NavItem
-            icon={<FaChalkboardTeacher className="w-5 h-5" />}
-            label="Teachers Compliances"
-            isSidebarOpen={isSidebarOpen}
-            to="/admin-dashboard/teacher-compliance"
-          />
-          <NavItem
-            icon={<FaUserShield className="w-5 h-5" />}
-            label="Wardens Compliances"
-            isSidebarOpen={isSidebarOpen}
-            to="/admin-dashboard/warden-compliance"
-          />
-          <NavItem
-            icon={<FaUserGraduate className="w-5 h-5" />}
-            label="Students Compliances"
-            isSidebarOpen={isSidebarOpen}
-            to="/admin-dashboard/student-compliance"
-          />
-        </nav>
-      </aside>
+      <AdminDashboardSidebar />
 
       {/* Main Content */}
       <div className="flex flex-col flex-grow overflow-y-auto bg-gray-50">
@@ -698,15 +665,5 @@ const AdminDashboard = () => {
     </div>
   );
 };
-
-const NavItem = ({ icon, label, isSidebarOpen, to }) => (
-  <Link
-    to={to}
-    className="flex items-center gap-3 p-3 hover:bg-[#2C3E6D] rounded-md cursor-pointer transition-colors"
-  >
-    {icon}
-    {isSidebarOpen && <span className="text-lg">{label}</span>}
-  </Link>
-);
 
 export default AdminDashboard;

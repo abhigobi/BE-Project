@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import WardenDashboardSidebar from "../../components/WardenDashboardSidebar";
 import { Mail, Bell, User, FileText, Menu } from "lucide-react";
-import { FaClipboardList, FaClipboardCheck } from "react-icons/fa";
+
 // import { toast } from "react-toastify";
 
 const WardenDashboard = () => {
@@ -46,42 +46,8 @@ const WardenDashboard = () => {
   });
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside
-        className={`${
-          sidebarOpen ? "w-64" : "w-20"
-        } bg-[#1A2A4F] text-white  transition-all duration-300 flex flex-col`}
-      >
-        {/* Sidebar Header */}
-        <div className="flex items-center justify-between p-4">
-          {sidebarOpen && <h1 className="text-2xl font-bold">Warden Portal</h1>}
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2">
-            <Menu className="w-6 h-6" />
-          </button>
-        </div>
-
-        {/* Navigation Links */}
-        <nav className="flex flex-col gap-3 px-3">
-          <NavItem
-            icon={<FaClipboardCheck className="w-5 h-5" />}
-            label={<span className="text-lg">My Compliances</span>}
-            to="/warden-dashboard"
-            isSidebarOpen={sidebarOpen}
-          />
-          <NavItem
-            icon={<FaClipboardList className="w-5 h-5" />}
-            label={<span className="text-lg">Students Compliances Status</span>}
-            to="/warden-dashboard/student-compliances"
-            isSidebarOpen={sidebarOpen}
-          />
-          <NavItem
-            icon={<FaClipboardList className="w-5 h-5" />}
-            label={<span className="text-lg">Students List</span>}
-            to="/warden-dashboard/student-list"
-            isSidebarOpen={sidebarOpen}
-          />
-        </nav>
-      </aside>
+      {/* Warden Sidebar Component */}
+      <WardenDashboardSidebar />
 
       {/* Main Content */}
       <div className="flex flex-col flex-grow bg-gray-100 min-h-screen overflow-auto">
@@ -221,16 +187,5 @@ const WardenDashboard = () => {
   );
 };
 
-const NavItem = ({ icon, label, to, isSidebarOpen }) => {
-  return (
-    <Link
-      to={to}
-      className="flex items-center gap-3 p-3 hover:bg-gray-700 rounded-md cursor-pointer transition-all"
-    >
-      {icon}
-      {isSidebarOpen && <span>{label}</span>}
-    </Link>
-  );
-};
 
 export default WardenDashboard;

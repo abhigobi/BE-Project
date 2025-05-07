@@ -1,11 +1,10 @@
-import { Bell, User, Menu, FileText, Mail } from "lucide-react";
+import { FileText } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../store/AuthContext";
-import { FaClipboardCheck, FaListAlt } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import StudentDashboardSidebar from "../../components/StudentDashboardSidebar";
+
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 const StudentDashboard = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [compliances, setCompliances] = useState([]);
   const [showAll, setShowAll] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -109,40 +108,8 @@ const StudentDashboard = () => {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside
-        className={`${
-          isSidebarOpen ? "w-auto" : "w-28"
-        } bg-[#1A2A4F] text-white transition-all duration-300 flex flex-col`}
-      >
-        {/* Sidebar Header */}
-        <div className="flex items-center justify-between p-4">
-          {isSidebarOpen && (
-            <h1 className="text-2xl font-bold">Student Portal</h1>
-          )}
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-2"
-          >
-            <Menu className="w-8 h-8" />
-          </button>
-        </div>
-
-        {/* Navigation */}
-        <nav className="flex flex-col gap-4 px-4">
-          <NavItem
-            icon={<FaClipboardCheck className="w-6 h-6" />}
-            label={<span className="text-lg">My Compliances</span>}
-            isSidebarOpen={isSidebarOpen}
-          />
-          <NavItem
-            icon={<FaListAlt className="w-6 h-6" />}
-            label={<span className="text-lg">Summarize Compliances</span>}
-            isSidebarOpen={isSidebarOpen}
-            to="/student-dashboard/summarize-compliances"
-          />
-        </nav>
-      </aside>
+      {/* Studen Sidebar Component */}
+      <StudentDashboardSidebar />
 
       {/* Main Content */}
       <div className="flex flex-col flex-grow overflow-auto">
@@ -248,6 +215,10 @@ const StudentDashboard = () => {
                     {/* Compliance Name */}
                     <p className="mt-2 text-center font-medium truncate">
                       {compliance.name || "N/A"}
+                    </p>
+
+                    <p className="mt-2 text-center font-medium truncate">
+                      {compliance.submissionMode || "N/A"}
                     </p>
 
                     {/* Compliance Dates */}
@@ -391,19 +362,6 @@ const StudentDashboard = () => {
         </div>
       )}
     </div>
-  );
-};
-
-// Sidebar Navigation Item Component
-const NavItem = ({ icon, label, isSidebarOpen, to }) => {
-  return (
-    <Link
-      to={to}
-      className="flex items-center gap-3 p-3  hover:bg-gray-700 rounded-md cursor-pointer transition-all"
-    >
-      {icon}
-      {isSidebarOpen && <span>{label}</span>}
-    </Link>
   );
 };
 

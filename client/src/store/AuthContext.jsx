@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
@@ -9,13 +9,13 @@ export const AuthProvider = ({ children }) => {
   // Function to check if token is expired
   const isTokenExpired = (token) => {
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
+      const payload = JSON.parse(atob(token.split(".")[1]));
       const { exp } = payload;
-      if (!exp) throw new Error('Token missing expiration time');
-      
+      if (!exp) throw new Error("Token missing expiration time");
+
       return exp < Date.now() / 1000; // Return true if expired
     } catch (error) {
-      console.error('Error decoding token:', error);
+      console.error("Error decoding token:", error);
       return true; // Assume expired if error occurs
     }
   };
@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
   // Function to extract user role from token
   const getUserRoleFromToken = (token) => {
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
+      const payload = JSON.parse(atob(token.split(".")[1]));
       return payload.role || null;
     } catch {
       return null;
@@ -32,8 +32,8 @@ export const AuthProvider = ({ children }) => {
 
   // Function to validate token
   const validateToken = () => {
-    const token = localStorage.getItem('token');
-    
+    const token = localStorage.getItem("token");
+
     if (!token || isTokenExpired(token)) {
       logout(); // Log out if invalid or expired
       return;
@@ -47,11 +47,11 @@ export const AuthProvider = ({ children }) => {
   // Login function
   const login = (token) => {
     if (!token || isTokenExpired(token)) {
-      console.error('Invalid or expired token');
+      console.error("Invalid or expired token");
       return false;
     }
 
-    localStorage.setItem('token', token);
+    localStorage.setItem("token", token);
     setUserRole(getUserRoleFromToken(token));
     setIsLoggedIn(true);
     return true;
@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }) => {
 
   // Logout function
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     setIsLoggedIn(false);
     setUserRole(null);
   };
@@ -68,9 +68,9 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     validateToken();
     const handleStorageChange = () => validateToken();
-    window.addEventListener('storage', handleStorageChange);
-    
-    return () => window.removeEventListener('storage', handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   // Periodic token validation (every 5 minutes)
@@ -80,34 +80,50 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Function to get current token
-  const getToken = () => localStorage.getItem('token');
+  const getToken = () => localStorage.getItem("token");
 
   // Function to get user ID safely
   const getUserID = () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) return null;
-      
-      const payload = JSON.parse(atob(token.split('.')[1]));
+
+      const payload = JSON.parse(atob(token.split(".")[1]));
 
       return payload.id || null;
     } catch (error) {
-      console.error('Error getting user ID:', error);
+      console.error("Error getting user ID:", error);
+      return null;
+    }
+  };
+  const getUserName = () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return null;
+
+      const payload = JSON.parse(atob(token.split(".")[1]));
+
+      return payload.name || null;
+    } catch (error) {
+      console.error("Error getting user name:", error);
       return null;
     }
   };
 
-  
-const userID = getUserID();
+  const userID = getUserID();
+  const userName = getUserName(); // Fix: Added userName
   return (
-    <AuthContext.Provider value={{ 
-      isLoggedIn,
-      userRole,
-      login,
-      logout,
-      getToken,
-      userID
-    }}>
+    <AuthContext.Provider
+      value={{
+        isLoggedIn,
+        userRole,
+        login,
+        logout,
+        getToken,
+        userID,
+        userName,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -121,6 +137,6 @@ export const useProtectedRoute = (allowedUserTypes = []) => {
 
   if (!isLoggedIn) return false;
   if (allowedUserTypes.length === 0) return true;
-  
+
   return allowedUserTypes.includes(userRole);
 };

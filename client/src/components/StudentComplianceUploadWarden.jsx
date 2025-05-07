@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../store/AuthContext";
 import { Menu, UploadCloud } from "lucide-react";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaClipboardList, FaClipboardCheck } from "react-icons/fa";
+import WardenDashboardSidebar from "./WardenDashboardSidebar";
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
 const StudentComplianceUploadWarden = () => {
@@ -20,9 +20,14 @@ const StudentComplianceUploadWarden = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [showUploadForm, setShowUploadForm] = useState(false);
+  const { userID, userName } = useAuth();
+  const [wardenName, setWardenName] = useState("");
+  const [wardenID, setWardenID] = useState(null);
 
   useEffect(() => {
     fetchFiles();
+    setWardenName(userName);
+    setWardenID(userID);
   }, [uploadedFiles]);
 
   const handleFileChange = async (event) => {
@@ -173,6 +178,8 @@ const StudentComplianceUploadWarden = () => {
           body: JSON.stringify({
             complianceId: selectedComplianceId,
             due_date: formattedDate,
+            wardenName: wardenName,
+            wardenID: wardenID,
           }),
         }
       );
@@ -212,39 +219,8 @@ const StudentComplianceUploadWarden = () => {
 
   return (
     <div className="flex min-h-screen overflow-auto">
-      {/* Sidebar */}
-
-      <aside
-        className={`${
-          sidebarOpen ? "w-64" : "w-20"
-        } bg-[#1A2A4F] text-white  transition-all duration-300 flex flex-col`}
-      >
-        {/* Sidebar Header */}
-        <div className="flex items-center justify-between p-4">
-          {sidebarOpen && (
-            <h1 className="text-xl font-bold">Warden Dashboard</h1>
-          )}
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2">
-            <Menu className="w-6 h-6" />
-          </button>
-        </div>
-
-        {/* Navigation Links */}
-        <nav className="flex flex-col gap-3 px-3">
-          <NavItem
-            icon={<FaClipboardCheck className="w-5 h-5" />}
-            label="My Compliance"
-            to="/warden-dashboard"
-            isSidebarOpen={sidebarOpen}
-          />
-          <NavItem
-            icon={<FaClipboardList className="w-5 h-5" />}
-            label="Students Compliances Status"
-            to="/warden-dashboard/student-compliances"
-            isSidebarOpen={sidebarOpen}
-          />
-        </nav>
-      </aside>
+      {/* Warden Sidebar Component */}
+      <WardenDashboardSidebar />
 
       {/* Main Content */}
       <div className="flex-1 p-6">
@@ -551,18 +527,6 @@ const StudentComplianceUploadWarden = () => {
         <ToastContainer />
       </div>
     </div>
-  );
-};
-
-const NavItem = ({ icon, label, to, isSidebarOpen }) => {
-  return (
-    <Link
-      to={to}
-      className="flex items-center gap-3 p-3 hover:bg-gray-700 rounded-md cursor-pointer transition-all"
-    >
-      {icon}
-      {isSidebarOpen && <span>{label}</span>}
-    </Link>
   );
 };
 

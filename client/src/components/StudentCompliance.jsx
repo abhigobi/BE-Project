@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 import {
   FaUserShield,
   FaFileUpload,
   FaChalkboardTeacher,
+  FaUserGraduate,
+  FaClipboardCheck,
 } from "react-icons/fa";
 import axios from "axios";
 
-
 const StudentCompliance = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [studentCompliance, setStudentCompliance] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -56,42 +57,46 @@ const StudentCompliance = () => {
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
       <aside
-        className={`bg-[#1A2A4F] text-white w-64 p-4 space-y-6 transition-transform duration-300 fixed md:relative z-20 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0`}
+        className={`${
+          isSidebarOpen ? "w-auto" : "w-28"
+        } bg-[#1A2A4F] text-white transition-all duration-300 flex flex-col`}
       >
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold">Admin Dashboard</h2>
+        <div className="flex items-center justify-between p-4">
+          {isSidebarOpen && (
+            <h1 className="text-2xl font-bold">Admin Portal</h1>
+          )}
           <button
-            className="md:hidden text-white focus:outline-none"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="p-2 hover:bg-[#2C3E6D] rounded transition-colors"
           >
-            {sidebarOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
+            <Menu className="w-6 h-6" />
           </button>
         </div>
-        <nav className="space-y-2">
-          <Link
+        <nav className="flex flex-col gap-3 px-3">
+          <NavItem
+            icon={<FaFileUpload className="w-5 h-5" />}
+            label={<span className="text-lg">File Upload</span>}
+            isSidebarOpen={isSidebarOpen}
             to="/admin-dashboard"
-            className="flex items-center gap-2 hover:bg-[#2C3E6D] p-2 rounded transition-colors duration-200"
-          >
-            <FaFileUpload className="w-5 h-5" /> Upload File
-          </Link>
-          <Link
-            to="/admin-dashboard/warden-compliance"
-            className="flex items-center gap-2 hover:bg-[#2C3E6D] p-2 rounded transition-colors duration-200"
-          >
-            <FaUserShield className="w-5 h-5" /> Warden Compliances
-          </Link>
-          <Link
+          />
+          <NavItem
+            icon={<FaChalkboardTeacher className="w-5 h-5" />}
+            label={<span className="text-lg">Teachers Compliances</span>}
+            isSidebarOpen={isSidebarOpen}
             to="/admin-dashboard/teacher-compliance"
-            className="flex items-center gap-2 hover:bg-[#2C3E6D] p-2 rounded transition-colors duration-200"
-          >
-            <FaChalkboardTeacher className="w-5 h-5" /> Teacher Compliances
-          </Link>
+          />
+          <NavItem
+            icon={<FaUserShield className="w-5 h-5" />}
+            label={<span className="text-lg">Wardens Compliances</span>}
+            isSidebarOpen={isSidebarOpen}
+            to="/admin-dashboard/warden-compliance"
+          />
+          <NavItem
+            icon={<FaUserGraduate className="w-5 h-5" />}
+            label={<span className="text-lg">Students Compliances</span>}
+            isSidebarOpen={isSidebarOpen}
+            to="/admin-dashboard/student-compliance"
+          />
         </nav>
       </aside>
 
@@ -169,6 +174,42 @@ const StudentCompliance = () => {
         </div>
       </div>
     </div>
+  );
+};
+const NavItem = ({ icon, label, to, isSidebarOpen }) => {
+  return (
+    <NavLink
+      to={to}
+      end
+      className={({ isActive }) =>
+        `flex items-center gap-3 p-3 rounded-lg transition-all duration-200 ${
+          isActive
+            ? "bg-gray-800 text-white dark:bg-gray-700 font-medium"
+            : "text-gray-600 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-800"
+        }`
+      }
+    >
+      {({ isActive }) => (
+        <>
+          <span
+            className={`flex-shrink-0 ${
+              isActive ? "text-white" : "text-gray-500 dark:text-gray-400"
+            }`}
+          >
+            {icon}
+          </span>
+          {isSidebarOpen && (
+            <span
+              className={`${
+                isActive ? "text-white" : "text-gray-700 dark:text-gray-300"
+              }`}
+            >
+              {label}
+            </span>
+          )}
+        </>
+      )}
+    </NavLink>
   );
 };
 
