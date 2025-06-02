@@ -241,7 +241,7 @@ const createCompliance = async (req, res) => {
             return res.status(500).json({ error: "No valid student emails found." });
         }
 
-
+        console.log(complianceId, due_date, emailSubject, emailText, wardenName, wardenId, submissionMode);
         // Initialize status for all students
         await StudentComplianceStatus.initializeStatusForAllStudents(
             complianceId,

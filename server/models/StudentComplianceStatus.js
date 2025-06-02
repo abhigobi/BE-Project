@@ -66,7 +66,8 @@ getStatusByStudent: async (studentId) => {
   }
 
   const [rows] = await db.execute(
-    `SELECT 
+    `SELECT
+      s.student_id AS studentId,
       c.id AS compliance_id,
       c.name,
       c.url,
