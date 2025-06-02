@@ -1,5 +1,6 @@
 const db = require('../config/db');
 const bcrypt = require('bcrypt');
+const { sendWelcomeEmailToStudent } = require('../services/emailService'); // Import the email service
 
 class Student {
     static async ensureTableExists() {
@@ -26,25 +27,41 @@ class Student {
             'INSERT INTO Student (name, email, password) VALUES (?, ?, ?)',
             [name, email, hashedPassword]
         );
+        await sendWelcomeEmailToStudent(email, name, password);
         return result.insertId;
     }
-
     static async bulkCreate(students) {
         await this.ensureTableExists();
-        const query = 'INSERT INTO Student (name, email, password) VALUES ?';
 
-        // Hash passwords for all students
+        // Prepare student data with hashed passwords
         const hashedStudents = await Promise.all(
-            students.map(async (student) => {
+            students.map(async ({ name, email, password }) => {
                 const saltRounds = 10;
-                const hashedPassword = await bcrypt.hash(student.password, saltRounds);
-                return [student.name, student.email, hashedPassword];
+                const hashedPassword = await bcrypt.hash(password, saltRounds);
+                return [name, email, hashedPassword];
             })
         );
 
-        // Insert all students with hashed passwords
-        const [result] = await db.query(query, [hashedStudents]);
-        return result.affectedRows;
+        const query = 'INSERT INTO Student (name, email, password) VALUES ?';
+
+        try {
+            const [result] = await db.query(query, [hashedStudents]);
+
+            // Send emails after successful insert
+            await Promise.allSettled(
+                students.map(({ name, email, password }) =>
+                    sendWelcomeEmailToStudent(email, name, password)
+                        .then(() => console.log(`Email sent to ${email}`))
+                        .catch((err) => console.error(`Email failed for ${email}`, err))
+                )
+            );
+
+            return result.affectedRows;
+
+        } catch (err) {
+            console.error('Bulk insert failed:', err.message);
+            throw err; // rethrow so calling code can handle it
+        }
     }
 
     // New method: Find a student by email
@@ -60,6 +77,12 @@ class Student {
     static async getAllStudentIds() {
         const [rows] = await db.query('SELECT id FROM Student');
         return rows.map((row) => row.id);
+    }
+
+    static async deleteStudent(id) {
+        await this.ensureTableExists();
+        const [result] = await db.query('DELETE FROM Student WHERE id = ?', [id]);
+        return result.affectedRows > 0; // Return true if a student was deleted
     }
 }
 

@@ -71,4 +71,23 @@ const getStudent = async (req, res) => {
         res.status(500).json({ error: "Failed to fetch students" });
     }
 }
+
+const deleteStudent = async (req, res) => {
+    const { studentId } = req.params;
+
+    try {
+        // Check if the student exists
+        const [student] = await Student.deleteStudent(studentId);
+        if (student.length === 0) {
+            return res.status(404).json({ success: false, message: "Student not found" });
+        }
+        // Delete the student
+        await Student.deleteStudent(studentId);
+        res.status(200).json({ success: true, message: "Student deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting student:", error);
+        res.status(500).json({ success: false, message: "Failed to delete student" });
+    }
+}
+
 module.exports = { getAllFiles, toggleFileStatus, getStudent, getStudentComplianceByStudentId };

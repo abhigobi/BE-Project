@@ -31,17 +31,17 @@ createTable();
 // Student Compliance Status (Individual tracking)
 module.exports = {
   // Initialize status for all students when a new compliance is added
-  initializeStatusForAllStudents: async (complianceId, studentIds, urlOfCompliance, name, due_date, warden_id) => {
-    if (!complianceId || !studentIds || !urlOfCompliance || !name || !due_date || !warden_id) {
+  initializeStatusForAllStudents: async (complianceId, studentIds, urlOfCompliance, name, due_date, warden_id,submissionMode) => {
+    if (!complianceId || !studentIds || !urlOfCompliance || !name || !due_date || !warden_id || !submissionMode) {
       throw new Error("All parameters are required.");
     }
     if (studentIds.length === 0) {
       console.log("No students to initialize.");
       return;
     }
-    const values = studentIds.map((studentId) => [studentId, complianceId, urlOfCompliance, name, due_date, warden_id]);
+    const values = studentIds.map((studentId) => [studentId, complianceId, urlOfCompliance, name, due_date, warden_id, submissionMode]);
     await db.query(
-      'INSERT INTO StudentComplianceStatus (student_id, compliance_id, urlOfCompliance, name, due_date, warden_id) VALUES ?',
+      'INSERT INTO StudentComplianceStatus (student_id, compliance_id, urlOfCompliance, name, due_date, warden_id,submissionMode) VALUES ?',
       [values]
     );
   },
@@ -96,7 +96,8 @@ module.exports = {
         s.created_at,
         st.name AS student_name,
         st.email AS student_email,
-        w.name AS warden_name
+        w.name AS warden_name,
+        s.submissionMode
       FROM StudentComplianceStatus s
       LEFT JOIN Student st ON s.student_id = st.id
       LEFT JOIN Warden w ON s.warden_id = w.id
@@ -173,6 +174,16 @@ module.exports = {
       return result;
     } catch (error) {
       console.error('Error in deleteByComplianceId:', error);
+      throw error;
+    }
+  },
+  deleteByStudentId: async (studentId) => {
+    try {
+      const query = 'DELETE FROM StudentComplianceStatus WHERE student_id = ?';
+      const [result] = await db.execute(query, [studentId]);
+      return result;
+    } catch (error) {
+      console.error('Error in deleteByStudentId:', error);
       throw error;
     }
   }
