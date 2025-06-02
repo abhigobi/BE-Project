@@ -90,25 +90,63 @@ module.exports = {
       [id]
     );
   },
-  getAllSubmissionsWithStudentAndWardenName: async () => {
-    const [rows] = await db.execute(
-      `SELECT
-         SSC.id,
-         SSC.complianceName,
-         SSC.compliance_pdf_url,
-         SSC.status,
-         SSC.created_at,
-         SSC.completed_at,
-         S.name AS studentName,
-         S.email AS studentEmail,
-         W.name AS wardenName
-       FROM StudentSubmittedCompliance SSC
-       JOIN Student S ON SSC.student_id = S.id
-       LEFT JOIN Warden W ON SSC.warden_id = W.id
-       ORDER BY SSC.created_at DESC`
-    );
-    return rows;
-  },
+getAllSubmissionsWithStudentAndWardenName: async () => {
+  const [rows] = await db.execute(
+    `SELECT
+       S.id AS studentId,
+       SSC.id,
+       SSC.complianceName,
+       SSC.compliance_pdf_url,
+       SSC.status,
+       SSC.created_at,
+       SSC.completed_at,
+       S.name AS studentName,
+       S.email AS studentEmail,
+       W.name AS wardenName
+     FROM StudentSubmittedCompliance SSC
+     JOIN Student S ON SSC.student_id = S.id
+     LEFT JOIN Warden W ON SSC.warden_id = W.id
+     ORDER BY SSC.created_at DESC`
+  );
+
+  const studentMap = new Map();
+
+  for (const entry of rows) {
+    const {
+      studentId,
+      studentName,
+      studentEmail,
+      id,
+      complianceName,
+      compliance_pdf_url,
+      status,
+      created_at,
+      completed_at,
+      wardenName
+    } = entry;
+
+    if (!studentMap.has(studentId)) {
+      studentMap.set(studentId, {
+        studentId,
+        studentName,
+        studentEmail,
+        compliances: []
+      });
+    }
+
+    studentMap.get(studentId).compliances.push({
+      id,
+      complianceName,
+      compliance_pdf_url,
+      status,
+      created_at,
+      completed_at,
+      wardenName
+    });
+  }
+
+  return Array.from(studentMap.values());
+},
   deleteStudentSubmissions: async (studentId) => {
     if (!studentId) {
       throw new Error("Student ID is required.");

@@ -60,28 +60,33 @@ module.exports = {
   },
 
   // Get compliance status for a student
-  getStatusByStudent: async (studentId) => {
-    if (!studentId) {
-      throw new Error("Student ID is required.");
-    }
-    const [rows] = await db.execute(
-      `SELECT 
-        c.id AS compliance_id,
-        c.name,
-        c.url,
-        s.status,
-        s.completed_at,
-        s.due_date,
-        s.created_at,
-        s.submissionMode,
-      FROM StudentComplianceStatus s
-      INNER JOIN CommonCompliancePdfForStudent c 
-        ON c.id = s.compliance_id
-      WHERE s.student_id = ?`,
-      [studentId]
-    );
-    return rows;
-  },
+getStatusByStudent: async (studentId) => {
+  if (!studentId) {
+    throw new Error("Student ID is required.");
+  }
+
+  const [rows] = await db.execute(
+    `SELECT 
+      c.id AS compliance_id,
+      c.name,
+      c.url,
+      s.status,
+      s.completed_at,
+      s.due_date,
+      s.created_at,
+      s.submissionMode,
+      w.name AS warden_name
+    FROM StudentComplianceStatus s
+    INNER JOIN CommonCompliancePdfForStudent c 
+      ON c.id = s.compliance_id
+    LEFT JOIN Warden w 
+      ON s.warden_id = w.id
+    WHERE s.student_id = ?`,
+    [studentId]
+  );
+
+  return rows;
+},
   getAllStudentCompliances: async () => {
     const [rows] = await db.execute(
       `SELECT 
