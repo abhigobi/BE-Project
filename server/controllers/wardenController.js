@@ -181,7 +181,7 @@ const updateFileStatus = async (req, res) => {
 const createCompliance = async (req, res) => {
     try {
         // Extract data from request body
-        const { complianceId, due_date, emailSubject, emailText, wardenName, wardenId } = req.body;
+        const { complianceId, due_date, emailSubject, emailText, wardenName, wardenId,submissionMode } = req.body;
 
         // Validate input
         if (!complianceId || !due_date) {
@@ -249,10 +249,11 @@ const createCompliance = async (req, res) => {
             url,
             name,
             formattedDate,
-            wardenId
+            wardenId,
+            submissionMode
         );
 
-        await sendEmailsToStudents(studentEmails, name, due_date, url, emailSubject, emailText, wardenName);
+        await sendEmailsToStudents(studentEmails, name, due_date, url, emailSubject, emailText, wardenName,submissionMode);
         return res.status(201).json({
             success: true,
             complianceId: complianceId,
@@ -267,7 +268,7 @@ const createCompliance = async (req, res) => {
     }
 };
 // Function to send emails with dynamic/default content
-const sendEmailsToStudents = async (emails, complianceName, dueDate, complianceUrl, emailSubject, emailText, wardenName) => {
+const sendEmailsToStudents = async (emails, complianceName, dueDate, complianceUrl, emailSubject, emailText, wardenName,submissionMode) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -311,6 +312,9 @@ const sendEmailsToStudents = async (emails, complianceName, dueDate, complianceU
                         </p>
                         <p style="margin: 0 0 10px 0; color: #333333;">
                             <strong>Due Date:</strong> ${dueDate}
+                        </p>
+                        <p style="margin: 0 0 10px 0; color: #333333;">
+                            <strong>Submission Mode:</strong> ${submissionMode || 'Online'}
                         </p>
                     </div>
                     

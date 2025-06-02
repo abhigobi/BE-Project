@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-const { rejectionEmailTemplate, completionEmailTemplate } = require('../utils/emailTemplates');
+const { rejectionEmailTemplate, completionEmailTemplate,welcomeStudentEmailTemplate } = require('../utils/emailTemplates');
 
 // Configure transporter
 const transporter = nodemailer.createTransport({
@@ -36,7 +36,19 @@ const sendCompletionEmail = async (studentEmail, complianceName) => {
   return await transporter.sendMail(mailOptions);
 };
 
+// Function to send welcome email
+const sendWelcomeEmailToStudent = async (studentEmail, studentName,password) => {
+  const mailOptions = {
+    from: `"I2IT Admin" <${process.env.EMAIL_USER}>`,
+    to: studentEmail,
+    subject: 'Welcome to I2IT College!',
+    html: welcomeStudentEmailTemplate(studentName,studentEmail,password)
+  };
+
+  return await transporter.sendMail(mailOptions);
+};
 module.exports = {
   sendRejectionEmail,
-  sendCompletionEmail
+  sendCompletionEmail,
+  sendWelcomeEmailToStudent
 };

@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const { deleteStudent } = require("./Student");
 
 // Create table if not exists
 const createTable = async () => {
@@ -107,5 +108,18 @@ module.exports = {
        ORDER BY SSC.created_at DESC`
     );
     return rows;
-  },  
+  },
+  deleteStudentSubmissions: async (studentId) => {
+    if (!studentId) {
+      throw new Error("Student ID is required.");
+    }
+    // Delete all submissions for the student
+    await db.execute(
+      `DELETE FROM StudentSubmittedCompliance WHERE student_id = ?`,
+      [studentId]
+    );
+    
+    // Optionally, delete the student record itself
+    await deleteStudent(studentId);
+  }  
 };
