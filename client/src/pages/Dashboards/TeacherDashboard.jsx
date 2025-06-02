@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom"; // Ensure Link is imported
 import { Bell, User, FileText, Menu, Mail } from "lucide-react";
-import { FaClipboardList, FaClipboardCheck } from "react-icons/fa";
+import { FaClipboardList, FaClipboardCheck, FaListAlt } from "react-icons/fa";
+import TeacherDashboardSidebar from "../../components/Sidebars/TeacherDashboardSidebar";
 const TeacherDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [showAll, setShowAll] = useState(false);
@@ -48,7 +49,7 @@ const TeacherDashboard = () => {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside
+      {/* <aside
         className={`${
           isSidebarOpen ? "w-64" : "w-20"
         } bg-[#1A2A4F] text-white transition-all duration-300 flex flex-col`}
@@ -83,8 +84,15 @@ const TeacherDashboard = () => {
             to="/teacher-dashboard/student-list"
             isSidebarOpen={isSidebarOpen}
           />
+          <NavItem
+            icon={<FaListAlt className="w-6 h-6" />}
+            label={<span className="text-lg">Summarize Compliances</span>}
+            isSidebarOpen={isSidebarOpen}
+            to="/teacher-dashboard/summarize-compliances"
+          />
         </nav>
-      </aside>
+      </aside> */}
+      <TeacherDashboardSidebar />
 
       {/* Main Content */}
       <div className="flex flex-col flex-grow overflow-y-auto">
@@ -227,41 +235,41 @@ const TeacherDashboard = () => {
 };
 
 // Sidebar Navigation Item Component
-const NavItem = ({ icon, label, to, isSidebarOpen }) => {
-  return (
-    <NavLink
-      to={to}
-      end
-      className={({ isActive }) =>
-        `flex items-center gap-3 p-3 rounded-lg transition-all duration-200 ${
-          isActive
-            ? "bg-gray-800 text-white dark:bg-gray-700 font-medium"
-            : "text-gray-600 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-800"
-        }`
-      }
-    >
-      {({ isActive }) => (
-        <>
-          <span
-            className={`flex-shrink-0 ${
-              isActive ? "text-white" : "text-gray-500 dark:text-gray-400"
-            }`}
-          >
-            {icon}
-          </span>
-          {isSidebarOpen && (
-            <span
-              className={`${
-                isActive ? "text-white" : "text-gray-700 dark:text-gray-300"
-              }`}
-            >
-              {label}
-            </span>
-          )}
-        </>
-      )}
-    </NavLink>
-  );
-};
+// const NavItem = ({ icon, label, to, isSidebarOpen }) => {
+//   return (
+//     <NavLink
+//       to={to}
+//       end
+//       className={({ isActive }) =>
+//         `flex items-center gap-3 p-3 rounded-lg transition-all duration-200 ${
+//           isActive
+//             ? "bg-gray-800 text-white dark:bg-gray-700 font-medium"
+//             : "text-gray-600 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-800"
+//         }`
+//       }
+//     >
+//       {({ isActive }) => (
+//         <>
+//           <span
+//             className={`flex-shrink-0 ${
+//               isActive ? "text-white" : "text-gray-500 dark:text-gray-400"
+//             }`}
+//           >
+//             {icon}
+//           </span>
+//           {isSidebarOpen && (
+//             <span
+//               className={`${
+//                 isActive ? "text-white" : "text-gray-700 dark:text-gray-300"
+//               }`}
+//             >
+//               {label}
+//             </span>
+//           )}
+//         </>
+//       )}
+//     </NavLink>
+//   );
+// };
 
 export default TeacherDashboard;

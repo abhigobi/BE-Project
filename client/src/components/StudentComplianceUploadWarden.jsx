@@ -4,7 +4,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../store/AuthContext";
 import { Menu, UploadCloud } from "lucide-react";
 import { motion } from "framer-motion";
-import WardenDashboardSidebar from "./WardenDashboardSidebar";
+import WardenDashboardSidebar from "./Sidebars/WardenDashboardSidebar";
+
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
 const StudentComplianceUploadWarden = () => {
@@ -23,6 +24,7 @@ const StudentComplianceUploadWarden = () => {
   const { userID, userName } = useAuth();
   const [wardenName, setWardenName] = useState("");
   const [wardenID, setWardenID] = useState(null);
+  const [submissionMode, setSubmissionMode] = useState("Offline"); // default value
 
   useEffect(() => {
     fetchFiles();
@@ -155,10 +157,10 @@ const StudentComplianceUploadWarden = () => {
       setIsLoadingDelete(false);
     }
   };
-
+ 
   const handleSendCompliance = async () => {
-    if (!selectedComplianceId || !dueDate) {
-      toast.error("Please select a file and due date", {
+    if (!selectedComplianceId || !dueDate || !submissionMode) {
+      toast.error("Please select a file, due date, and submission mode", {
         position: "top-right",
         autoClose: 3000,
       });
@@ -178,8 +180,10 @@ const StudentComplianceUploadWarden = () => {
           body: JSON.stringify({
             complianceId: selectedComplianceId,
             due_date: formattedDate,
+            wardenId: wardenID,
             wardenName: wardenName,
-            wardenID: wardenID,
+            sublimationMode: submissionMode,
+            
           }),
         }
       );
@@ -195,8 +199,10 @@ const StudentComplianceUploadWarden = () => {
         autoClose: 3000,
       });
 
+      // Reset states
       setSelectedComplianceId(null);
       setDueDate("");
+      setSubmissionMode("Online");
       setShowPopup(false);
       setShowUploadForm(false);
       fetchFiles(); // Refresh the file list
@@ -344,181 +350,91 @@ const StudentComplianceUploadWarden = () => {
               </div>
 
               {!showUploadForm ? (
-                <div className="space-y-6">
-                  <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-                    <div className="bg-blue-100 p-2 rounded-full">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 text-blue-600"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </div>
-                    <p className="text-sm text-gray-600">
-                      Select an action for this file
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <motion.button
-                      whileHover={{ y: -2 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => setShowUploadForm(true)}
-                      className="flex flex-col items-center justify-center p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all duration-200"
-                    >
-                      <div className="bg-blue-100 p-3 rounded-full mb-2">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-6 w-6 text-blue-600"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                          />
-                        </svg>
-                      </div>
-                      <span className="font-medium text-gray-700">
-                        Upload Compliance
-                      </span>
-                    </motion.button>
-
-                    <motion.button
-                      whileHover={{ y: -2 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={handleDeleteCompliance}
-                      disabled={isLoadingDelete}
-                      className={`flex flex-col items-center justify-center p-4 bg-white border border-gray-200 rounded-lg transition-all duration-200 ${
-                        isLoadingDelete
-                          ? "opacity-70 cursor-not-allowed"
-                          : "hover:border-red-300 hover:bg-red-50"
-                      }`}
-                    >
-                      <div className="bg-red-100 p-3 rounded-full mb-2">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-6 w-6 text-red-600"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                          />
-                        </svg>
-                      </div>
-                      <span className="font-medium text-gray-700">
-                        {isLoadingDelete ? "Deleting..." : "Delete Compliance"}
-                      </span>
-                    </motion.button>
-                  </div>
-
+                <div className="flex justify-end gap-4 mb-4">
                   <button
                     onClick={handleClosePopup}
-                    className="w-full mt-4 px-4 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors"
+                    className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition-colors"
+                    disabled={isLoading}
                   >
                     Cancel
                   </button>
+                  <button
+                    onClick={handleDeleteCompliance}
+                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                    disabled={isLoadingDelete}
+                  >
+                    {isLoadingDelete ? "Deleting..." : "Delete Compliance"}
+                  </button>
+                  <button
+                    onClick={() => setShowUploadForm(true)}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                    disabled={isLoadingUpload}
+                  >
+                    Upload Compliance
+                  </button>
                 </div>
               ) : (
-                <motion.div
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 }}
-                  className="space-y-5"
-                >
+                <div className="space-y-4">
+                  {/* Due Date Picker */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Due Date
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Select Due Date:
                     </label>
-                    <div className="relative">
-                      <input
-                        type="date"
-                        value={dueDate}
-                        onChange={(e) => setDueDate(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                        min={new Date().toISOString().split("T")[0]}
-                      />
-                      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5 text-gray-400"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                          />
-                        </svg>
-                      </div>
+                    <input
+                      type="date"
+                      value={dueDate}
+                      onChange={(e) => setDueDate(e.target.value)}
+                      className="border border-gray-300 p-2 rounded-lg w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      min={new Date().toISOString().split("T")[0]}
+                    />
+                  </div>
+
+                  {/* Submission Mode Selection */}
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Select Submission Mode:
+                    </label>
+                    <div className="flex gap-6">
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          value="Online"
+                          checked={submissionMode === "Online"}
+                          onChange={(e) => setSubmissionMode(e.target.value)}
+                          className="form-radio text-blue-600"
+                        />
+                        <span>Online</span>
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          value="Offline"
+                          checked={submissionMode === "Offline"}
+                          onChange={(e) => setSubmissionMode(e.target.value)}
+                          className="form-radio text-blue-600"
+                        />
+                        <span>Offline</span>
+                      </label>
                     </div>
                   </div>
 
-                  <div className="flex justify-end gap-3 pt-2">
-                    <motion.button
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                      onClick={() => setShowUploadForm(false)}
-                      className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors"
+                  {/* Action Buttons */}
+                  <div className="flex justify-end gap-4">
+                    <button
+                      onClick={handleClosePopup}
+                      className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition-colors"
                     >
-                      Back
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
+                      Cancel
+                    </button>
+                    <button
                       onClick={handleSendCompliance}
+                      className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       disabled={isLoadingUpload}
-                      className={`px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-lg shadow-sm hover:shadow-md transition-all ${
-                        isLoadingUpload ? "opacity-70 cursor-not-allowed" : ""
-                      }`}
                     >
-                      {isLoadingUpload ? (
-                        <span className="flex items-center justify-center">
-                          <svg
-                            className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            ></circle>
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            ></path>
-                          </svg>
-                          Sending...
-                        </span>
-                      ) : (
-                        "Send Compliance"
-                      )}
-                    </motion.button>
+                      {isLoadingUpload ? "Sending..." : "Send Compliance"}
+                    </button>
                   </div>
-                </motion.div>
+                </div>
               )}
             </motion.div>
           </motion.div>

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import StudentDashboardSidebar from "./StudentDashboardSidebar";
+import StudentDashboardSidebar from "../components/Sidebars/StudentDashboardSidebar";
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
-const SummarizeCompliance = () => {
+const SummarizeComplianceStudent = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [summary, setSummary] = useState("");
   const [pdfName, setPdfName] = useState("");
@@ -101,4 +101,4 @@ const SummarizeCompliance = () => {
   );
 };
 
-export default SummarizeCompliance;
+export default SummarizeComplianceStudent;

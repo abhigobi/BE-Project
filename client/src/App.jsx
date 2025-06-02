@@ -14,10 +14,12 @@ import "react-toastify/dist/ReactToastify.css";
 import StudentComplianceUploadWarden from "./components/StudentComplianceUploadWarden";
 import StudentComplianceUploadTeacher from "./components/StudentComplianceUploadTeacher";
 import StudentCompliance from "./components/StudentCompliance";
-import SummarizeCompliance from "./components/SummarizeCompliance";
 import StudentListWarden from "./components/StudentListWarden";
 import StudentListTeacher from "./components/StudentListTeacher";
 import LandingPage from "./pages/LandingPage";
+import SummarizeComplianceStudent from "./summaryCompliances/SummarizeComplianceStudent";
+import SummarizeComplianceTeacher from "./summaryCompliances/SummarizeComplianceTeacher";
+import SummarizeComplianceWarden from "./summaryCompliances/SummarizeComplianceWarden";
 const App = () => {
   return (
     <Router>
@@ -29,7 +31,7 @@ const App = () => {
         Student dashboard
         <Route
           path="/student-dashboard/summarize-compliances"
-          element={<SummarizeCompliance />}
+          element={<SummarizeComplianceStudent />}
         />
         <Route path="/warden-dashboard" element={<WardenDashboard />} /> //
         warden dashboard
@@ -45,6 +47,10 @@ const App = () => {
           path="/warden-dashboard/student-list"
           element={<StudentListWarden />}
         />
+        <Route
+          path="/warden-dashboard/summarize-compliances"
+          element={<SummarizeComplianceWarden />}
+        />
         <Route path="/teacher-dashboard" element={<TeacherDashboard />} /> //
         teacher dashboard
         <Route
@@ -58,6 +64,10 @@ const App = () => {
         <Route
           path="/teacher-dashboard/student-list"
           element={<StudentListTeacher />}
+        />
+        <Route
+          path="/teacher-dashboard/summarize-compliances"
+          element={<SummarizeComplianceTeacher />}
         />
         <Route path="/admin-dashboard" element={<AdminDashboard />} /> // admin
         dashboard

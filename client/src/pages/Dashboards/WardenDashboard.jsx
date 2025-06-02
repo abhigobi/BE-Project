@@ -1,6 +1,6 @@
 import { useState } from "react";
-import WardenDashboardSidebar from "../../components/WardenDashboardSidebar";
-import { Mail, Bell, User, FileText, Menu } from "lucide-react";
+import WardenDashboardSidebar from "../../components/Sidebars/WardenDashboardSidebar";
+import {FileText } from "lucide-react";
 
 // import { toast } from "react-toastify";
 
@@ -186,6 +186,5 @@ const WardenDashboard = () => {
     </div>
   );
 };
-
 
 export default WardenDashboard;

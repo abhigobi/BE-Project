@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import AdminDashboardSidebar from "../../components/AdminDashboardSidebar";
+import AdminDashboardSidebar from "../../components/Sidebars/AdminDashboardSidebar";
 import {
   Bell,
   User,

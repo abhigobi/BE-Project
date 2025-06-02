@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { toast } from "react-toastify";
-import WardenDashboardSidebar from "./WardenDashboardSidebar";
+import WardenDashboardSidebar from "./Sidebars/WardenDashboardSidebar"; 
 import axios from "axios";
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 

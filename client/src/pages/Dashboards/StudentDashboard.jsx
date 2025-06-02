@@ -1,9 +1,10 @@
 import { FileText } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../store/AuthContext";
-import StudentDashboardSidebar from "../../components/StudentDashboardSidebar";
+import StudentDashboardSidebar from "../../components/Sidebars/StudentDashboardSidebar";
 
 const serverUrl = import.meta.env.VITE_SERVER_URL;
+
 const StudentDashboard = () => {
   const [compliances, setCompliances] = useState([]);
   const [showAll, setShowAll] = useState(false);

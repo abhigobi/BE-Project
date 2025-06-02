@@ -6,6 +6,7 @@ import {
   FaClipboardList,
   FaClipboardCheck,
   FaFileUpload,
+  FaListAlt,
 } from "react-icons/fa";
 
 const WardenDashboardSidebar = () => {
@@ -51,6 +52,12 @@ const WardenDashboardSidebar = () => {
             label={<span className="text-lg">Students List</span>}
             to="/warden-dashboard/student-list"
             isSidebarOpen={sidebarOpen}
+          />
+          <NavItem
+            icon={<FaListAlt className="w-6 h-6" />}
+            label={<span className="text-lg">Summarize Compliances</span>}
+            isSidebarOpen={sidebarOpen}
+            to="/warden-dashboard/summarize-compliances"
           />
         </nav>
       </aside>

@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { FaClipboardList, FaClipboardCheck ,FaFileUpload} from "react-icons/fa";
 import axios from "axios";
-import WardenDashboardSidebar from "./WardenDashboardSidebar";
+import WardenDashboardSidebar from "./Sidebars/WardenDashboardSidebar";
 import { toast } from "react-toastify";
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 const StudentListWarden = () => {
