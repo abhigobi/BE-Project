@@ -171,7 +171,6 @@ const StudentComplianceUploadWarden = () => {
     try {
       const [year, month, day] = dueDate.split("-");
       const formattedDate = `${day}-${month}-${year}`;
-
       const response = await fetch(
         `${serverUrl}/api/warden/create-compliance`,
         {
@@ -182,11 +181,11 @@ const StudentComplianceUploadWarden = () => {
             due_date: formattedDate,
             wardenId: wardenID,
             wardenName: wardenName,
-            sublimationMode: submissionMode,
-            
+            submissionMode: submissionMode,
           }),
         }
       );
+
 
       const result = await response.json();
 
