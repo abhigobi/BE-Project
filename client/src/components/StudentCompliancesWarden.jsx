@@ -27,8 +27,9 @@ const StudentCompliancesWarden = () => {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [selectedCompliance, setSelectedCompliance] = useState(null);
   const { userID } = useAuth();
+  // console.log("User ID: warden id", userID);
   // const [wardenName, setWardenName] = useState("");
-  const [wardenID, setWardenID] = useState(null);
+  // const [wardenID, setWardenID] = useState(null);
   useEffect(() => {
     const getAllStudentsCompliances = async () => {
       try {
@@ -125,6 +126,7 @@ const StudentCompliancesWarden = () => {
             compliance_id: selectedComplianceId,
             complianceName: selectedComplianceName,
             studentEmail: selectedStudentEmail,
+            wardenId: userID,
             note: note,
           }),
         }
