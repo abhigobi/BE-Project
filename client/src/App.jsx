@@ -20,6 +20,7 @@ import LandingPage from "./pages/LandingPage";
 import SummarizeComplianceStudent from "./summaryCompliances/SummarizeComplianceStudent";
 import SummarizeComplianceTeacher from "./summaryCompliances/SummarizeComplianceTeacher";
 import SummarizeComplianceWarden from "./summaryCompliances/SummarizeComplianceWarden";
+import StudentUploadedCompliances from "./components/StudentUploadedCompliances";
 const App = () => {
   return (
     <Router>
@@ -38,6 +39,10 @@ const App = () => {
         <Route
           path="/warden-dashboard/student-compliances"
           element={<StudentCompliancesWarden />}
+        />
+        <Route
+          path="/warden-dashboard/student-uploaded-compliances"
+          element={<StudentUploadedCompliances />}
         />
         <Route
           path="/warden-dashboard/upload-student-compliances"

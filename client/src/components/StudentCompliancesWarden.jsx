@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { toast } from "react-toastify";
-import WardenDashboardSidebar from "./Sidebars/WardenDashboardSidebar"; 
+import WardenDashboardSidebar from "./Sidebars/WardenDashboardSidebar";
 import axios from "axios";
 const serverUrl = import.meta.env.VITE_SERVER_URL;
+import { useAuth } from "../store/AuthContext";
 
 const StudentCompliancesWarden = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -25,7 +26,9 @@ const StudentCompliancesWarden = () => {
   // Added state to store the entire selected student record
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [selectedCompliance, setSelectedCompliance] = useState(null);
-
+  const { userID } = useAuth();
+  // const [wardenName, setWardenName] = useState("");
+  const [wardenID, setWardenID] = useState(null);
   useEffect(() => {
     const getAllStudentsCompliances = async () => {
       try {
@@ -186,8 +189,11 @@ const StudentCompliancesWarden = () => {
               <tr className="bg-gray-200 border-x-2 border-y-2">
                 <th className="py-3 px-2 border-b text-center">Student ID</th>
                 <th className="py-3 px-4 border-b text-center">Student Name</th>
-                <th className="py-3 px-4 border-b text-center">Email</th>
+                <th className="py-3 px-2 border-b text-center">Email</th>
                 <th className="py-3 px-4 border-b text-center">Compliance</th>
+                <th className="py-3 px-4 border-b text-center">
+                  Submission Mode
+                </th>
                 <th className="py-3 px-4 border-b text-center">Created</th>
                 <th className="py-3 px-4 border-b text-center">Due</th>
                 <th className="py-3 px-4 border-b text-center">Complete</th>
@@ -218,7 +224,7 @@ const StudentCompliancesWarden = () => {
                           {student.student_name}
                         </td>
                         <td
-                          className="py-3 px-4 border-b text-center border-x-2 border-y-2"
+                          className="py-3 px-2 border-b text-center border-x-2 border-y-2"
                           rowSpan={student.compliances.length}
                         >
                           {student.student_email}
@@ -240,7 +246,12 @@ const StudentCompliancesWarden = () => {
                         {compliance.compliance_name}
                       </a>
                     </td>
-
+                    <td
+                      className="py-3 px-4 border-b text-center border-x-2 border-y-2"
+                      // rowSpan={student.compliances.length}
+                    >
+                      {compliance.submissionMode}
+                    </td>
                     <td className="py-3 px-2 border-b text-center border-x-2 border-y-2">
                       {new Date(compliance.created_at).toLocaleString("en-IN", {
                         day: "2-digit",
@@ -418,7 +429,5 @@ const StudentCompliancesWarden = () => {
     </div>
   );
 };
-
-
 
 export default StudentCompliancesWarden;
