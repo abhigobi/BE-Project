@@ -48,12 +48,12 @@ const AdminDashboardSidebar = () => {
             isSidebarOpen={isSidebarOpen}
             to="/admin-dashboard/warden-compliance"
           /> */}
-          <NavItem
+          {/* <NavItem
             icon={<FaUserGraduate className="w-5 h-5" />}
             label={<span className="text-lg">Students Compliances</span>}
             isSidebarOpen={isSidebarOpen}
             to="/admin-dashboard/student-compliance"
-          />
+          /> */}
         </nav>
       </aside>
     </div>

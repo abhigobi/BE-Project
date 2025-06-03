@@ -25,7 +25,6 @@ import { toast } from "react-toastify";
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
 const AdminDashboard = () => {
-  
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("students");
@@ -52,7 +51,7 @@ const AdminDashboard = () => {
   const getApiEndpoints = {
     student: `${serverUrl}/api/student/getStudent`,
     teacher: `${serverUrl}/api/admin/get-all-teachers`,
-    // warden: "http://localhost:3000/api/warden/getWarden",
+    warden: `${serverUrl}/api/admin/get-all-warden`,
   };
 
   // Fetch data based on selected role
@@ -72,13 +71,15 @@ const AdminDashboard = () => {
       }
 
       const response = await axios.get(endpoint);
+      console.log(response.data);
+      
 
       if (selectedRoleList === "student") {
         setData(response.data.students || []); // Extract students array
       } else if (selectedRoleList === "teacher") {
         setData(response.data.teachers || []); // Extract teachers array
       } else if (selectedRoleList === "warden") {
-        setData(response.data.wardens || []); // Extract wardens array
+        setData(response.data.warden || []); // Extract wardens array
       } else {
         setData([]); // Handle unexpected cases
       }
@@ -553,7 +554,12 @@ const AdminDashboard = () => {
                 //   icon: FaChalkboardTeacher,
                 //   color: "from-yellow-500 to-yellow-600",
                 // },
-                // { role: "warden", label: "Wardens", icon: FaUserShield, color: "from-red-500 to-red-600" }
+                {
+                  role: "warden",
+                  label: "Wardens",
+                  icon: FaUserShield,
+                  color: "from-red-500 to-red-600",
+                },
               ].map((item) => (
                 <motion.div
                   key={item.role}
