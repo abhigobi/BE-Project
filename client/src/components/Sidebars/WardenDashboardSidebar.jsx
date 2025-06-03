@@ -29,12 +29,12 @@ const WardenDashboardSidebar = () => {
 
         {/* Navigation Links */}
         <nav className="flex flex-col gap-3 px-3">
-          <NavItem
+          {/* <NavItem
             icon={<FaClipboardCheck className="w-5 h-5" />}
             label={<span className="text-lg">My Compliances</span>}
             to="/warden-dashboard"
             isSidebarOpen={sidebarOpen}
-          />
+          /> */}
           <NavItem
             icon={<FaFileUpload className="w-5 h-5" />}
             label={<span className="text-lg">Upload Compliances</span>}

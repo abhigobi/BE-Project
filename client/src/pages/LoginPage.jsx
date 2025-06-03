@@ -45,7 +45,8 @@ const LoginPage = () => {
             navigate("/student-dashboard");
             break;
           case "Warden":
-            navigate("/warden-dashboard");
+            // navigate("/warden-dashboard");
+            navigate("/warden-dashboard/upload-student-compliances");
             break;
           case "Admin":
             navigate("/admin-dashboard");
