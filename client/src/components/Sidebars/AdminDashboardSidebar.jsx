@@ -16,7 +16,7 @@ const AdminDashboardSidebar = () => {
       <aside
         className={`${
           isSidebarOpen ? "w-auto" : "w-28"
-        } bg-[#1A2A4F] text-white transition-all duration-300 flex flex-col`}
+        } bg-[#1A2A4F] h-auto text-white transition-all duration-300 flex flex-col`}
       >
         <div className="flex items-center justify-between p-4">
           {isSidebarOpen && (
@@ -36,7 +36,7 @@ const AdminDashboardSidebar = () => {
             isSidebarOpen={isSidebarOpen}
             to="/admin-dashboard"
           />
-          <NavItem
+          {/* <NavItem
             icon={<FaChalkboardTeacher className="w-5 h-5" />}
             label={<span className="text-lg">Teachers Compliances</span>}
             isSidebarOpen={isSidebarOpen}
@@ -47,7 +47,7 @@ const AdminDashboardSidebar = () => {
             label={<span className="text-lg">Wardens Compliances</span>}
             isSidebarOpen={isSidebarOpen}
             to="/admin-dashboard/warden-compliance"
-          />
+          /> */}
           <NavItem
             icon={<FaUserGraduate className="w-5 h-5" />}
             label={<span className="text-lg">Students Compliances</span>}

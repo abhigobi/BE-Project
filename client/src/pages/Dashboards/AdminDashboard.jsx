@@ -547,12 +547,12 @@ const AdminDashboard = () => {
                   icon: FaUserGraduate,
                   color: "from-blue-500 to-blue-600",
                 },
-                {
-                  role: "teacher",
-                  label: "Teachers",
-                  icon: FaChalkboardTeacher,
-                  color: "from-yellow-500 to-yellow-600",
-                },
+                // {
+                //   role: "teacher",
+                //   label: "Teachers",
+                //   icon: FaChalkboardTeacher,
+                //   color: "from-yellow-500 to-yellow-600",
+                // },
                 // { role: "warden", label: "Wardens", icon: FaUserShield, color: "from-red-500 to-red-600" }
               ].map((item) => (
                 <motion.div

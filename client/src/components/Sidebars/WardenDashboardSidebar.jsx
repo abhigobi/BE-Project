@@ -49,6 +49,12 @@ const WardenDashboardSidebar = () => {
           />
           <NavItem
             icon={<FaClipboardList className="w-5 h-5" />}
+            label={<span className="text-lg">Students Uploaded Compliance</span>}
+            to="/warden-dashboard/student-uploaded-compliances"
+            isSidebarOpen={sidebarOpen}
+          />
+          <NavItem
+            icon={<FaClipboardList className="w-5 h-5" />}
             label={<span className="text-lg">Students List</span>}
             to="/warden-dashboard/student-list"
             isSidebarOpen={sidebarOpen}

@@ -1,7 +1,16 @@
-import { FileText } from "lucide-react";
+import {
+  FileText,
+  Upload,
+  X,
+  AlertCircle,
+  CheckCircle,
+  Loader2,
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../store/AuthContext";
 import StudentDashboardSidebar from "../../components/Sidebars/StudentDashboardSidebar";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
@@ -13,7 +22,17 @@ const StudentDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCompliance, setSelectedCompliance] = useState(null);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [file, setFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
   const { userID } = useAuth();
+  const [studentId, setStudentId] = useState(null);
+
+  useEffect(() => {
+    if (userID) {
+      setStudentId(userID);
+    }
+  }, [userID]);
 
   // Fetch compliance data
   useEffect(() => {
@@ -43,6 +62,95 @@ const StudentDashboard = () => {
 
     fetchData();
   }, [userID]);
+
+  const handleSubmitUpload = async () => {
+    if (!file) {
+      toast.error("Please select a PDF file to upload", {
+        position: "top-right",
+        icon: <AlertCircle className="text-red-500" />,
+      });
+      return;
+    }
+
+    if (file.type !== "application/pdf") {
+      toast.error("Only PDF files are allowed", {
+        position: "top-right",
+        icon: <AlertCircle className="text-red-500" />,
+      });
+      return;
+    }
+
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error("File size should not exceed 5MB", {
+        position: "top-right",
+        icon: <AlertCircle className="text-red-500" />,
+      });
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("studentId", studentId);
+      formData.append("complianceId", selectedCompliance.compliance_id);
+      formData.append("complianceName", selectedCompliance.name);
+      formData.append("file", file);
+      formData.append("fileName", file.name);
+      formData.append("uploadDate", new Date().toISOString());
+
+      const response = await axios.post(
+        `${serverUrl}/api/student/uploadFile`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          timeout: 30000,
+        }
+      );
+
+      toast.success("PDF uploaded successfully!", {
+        position: "top-right",
+        icon: <CheckCircle className="text-green-500" />,
+      });
+
+      // Refresh compliance data
+      const refreshResponse = await fetch(
+        `${serverUrl}/api/student/getStudentComplianceByStudentId/${userID}`
+      );
+      const refreshData = await refreshResponse.json();
+      setCompliances(refreshData.compliances);
+
+      // Reset form
+      setFile(null);
+      setIsUploadModalOpen(false);
+    } catch (error) {
+      let errorMessage = "Upload failed";
+
+      if (error.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      } else if (error.message.includes("timeout")) {
+        errorMessage = "Upload timed out. Please try again.";
+      } else if (!error.response) {
+        errorMessage = "Server not responding";
+      }
+
+      toast.error(errorMessage, {
+        position: "top-right",
+        icon: <AlertCircle className="text-red-500" />,
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleUploadCompliance = (compliance) => {
+    setSelectedCompliance(compliance);
+    setIsUploadModalOpen(true);
+  };
 
   // Toggle status of a compliance
   const toggleStatus = async (complianceId) => {
@@ -109,7 +217,7 @@ const StudentDashboard = () => {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Studen Sidebar Component */}
+      {/* Student Sidebar Component */}
       <StudentDashboardSidebar />
 
       {/* Main Content */}
@@ -213,11 +321,13 @@ const StudentDashboard = () => {
                       <FileText className="w-12 h-12 text-gray-400" />
                     </div>
 
-                    {/* Compliance Name */}
+                    {/* Compliance Info */}
                     <p className="mt-2 text-center font-medium truncate">
                       {compliance.name || "N/A"}
                     </p>
-
+                    <p className="mt-2 text-center font-medium truncate">
+                      Uploaded By: {compliance.warden_name || "N/A"}
+                    </p>
                     <p className="mt-2 text-center font-medium truncate">
                       {compliance.submissionMode || "N/A"}
                     </p>
@@ -227,37 +337,13 @@ const StudentDashboard = () => {
                       <p>
                         <span className="font-medium">Created:</span>{" "}
                         {compliance.created_at
-                          ? new Date(compliance.created_at).toLocaleString(
-                              "en-IN",
-                              {
-                                timeZone: "Asia/Kolkata",
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                second: "2-digit",
-                                hour12: true, // Ensures AM/PM format
-                              }
-                            )
+                          ? new Date(compliance.created_at).toLocaleString()
                           : "N/A"}
                       </p>
                       <p>
                         <span className="font-medium">Due:</span>{" "}
                         {compliance.due_date
-                          ? new Date(compliance.due_date).toLocaleString(
-                              "en-IN",
-                              {
-                                timeZone: "Asia/Kolkata",
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                second: "2-digit",
-                                hour12: true, // Ensures AM/PM format
-                              }
-                            )
+                          ? new Date(compliance.due_date).toLocaleString()
                           : "N/A"}
                       </p>
                       <p>
@@ -273,12 +359,12 @@ const StudentDashboard = () => {
                       <span
                         className={`px-2 py-1 rounded-full text-lg font-bold ${
                           compliance.status === "Pending"
-                            ? " text-yellow-500"
+                            ? "text-yellow-500"
                             : compliance.status === "Waiting For Approve"
-                            ? " text-blue-500"
+                            ? "text-blue-500"
                             : compliance.status === "Completed"
-                            ? " text-green-500"
-                            : " text-red-500"
+                            ? "text-green-500"
+                            : "text-red-500"
                         }`}
                       >
                         {compliance.status || "N/A"}
@@ -311,6 +397,18 @@ const StudentDashboard = () => {
                         </button>
                       </div>
                     )}
+
+                    {/* Upload Compliance Button */}
+                    {compliance.submissionMode === "Online" && (
+                      <div className="mt-2 text-center">
+                        <button
+                          onClick={() => handleUploadCompliance(compliance)}
+                          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
+                        >
+                          Upload Compliance
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -320,7 +418,7 @@ const StudentDashboard = () => {
                 <div className="flex justify-center mt-6">
                   <button
                     onClick={() => setShowAll(!showAll)}
-                    className=" text-black  hover:text-blue-600  hover:underline"
+                    className="text-black hover:text-blue-600 hover:underline"
                   >
                     {showAll ? "Show Less" : "View More"}
                   </button>
@@ -330,6 +428,106 @@ const StudentDashboard = () => {
           )}
         </div>
       </div>
+
+      {/* Upload Modal */}
+      {isUploadModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 backdrop-blur-sm">
+          <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-800">
+                Upload Compliance PDF
+              </h2>
+              <button
+                onClick={() => {
+                  setIsUploadModalOpen(false);
+                  setFile(null);
+                }}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                <input
+                  type="file"
+                  id="pdf-upload"
+                  accept=".pdf"
+                  onChange={(e) => setFile(e.target.files?.[0] || null)}
+                  className="hidden"
+                  disabled={isUploading}
+                />
+                <label
+                  htmlFor="pdf-upload"
+                  className={`flex flex-col items-center justify-center cursor-pointer ${
+                    isUploading ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  <Upload className="w-10 h-10 text-blue-500 mb-3" />
+                  <p className="text-gray-700 font-medium">
+                    {file ? file.name : "Choose a PDF file"}
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">Max 5MB</p>
+                </label>
+              </div>
+
+              {file && (
+                <div className="flex items-center justify-between bg-blue-50 p-3 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-blue-600" />
+                    <span className="font-medium text-blue-800">
+                      {file.name}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {(file.size / 1024 / 1024).toFixed(2)}MB
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => setFile(null)}
+                    className="text-red-500 hover:text-red-700"
+                    disabled={isUploading}
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              )}
+
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  onClick={() => {
+                    setIsUploadModalOpen(false);
+                    setFile(null);
+                  }}
+                  className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+                  disabled={isUploading}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSubmitUpload}
+                  disabled={!file || isUploading}
+                  className={`px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 ${
+                    !file || isUploading ? "opacity-70 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {isUploading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-4 h-4" />
+                      Upload
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Confirmation Modal */}
       {isModalOpen && selectedCompliance && (

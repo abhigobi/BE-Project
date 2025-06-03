@@ -10,6 +10,7 @@ import {
   FaClipboardCheck,
 } from "react-icons/fa";
 import axios from "axios";
+import AdminDashboardSidebar from "./Sidebars/AdminDashboardSidebar";
 
 const StudentCompliance = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -56,7 +57,8 @@ const StudentCompliance = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside
+      <AdminDashboardSidebar />
+      {/* <aside
         className={`${
           isSidebarOpen ? "w-auto" : "w-28"
         } bg-[#1A2A4F] text-white transition-all duration-300 flex flex-col`}
@@ -98,7 +100,7 @@ const StudentCompliance = () => {
             to="/admin-dashboard/student-compliance"
           />
         </nav>
-      </aside>
+      </aside> */}
 
       {/* Main Content */}
       <div className="flex-1 p-6 overflow-x-auto">
@@ -176,41 +178,41 @@ const StudentCompliance = () => {
     </div>
   );
 };
-const NavItem = ({ icon, label, to, isSidebarOpen }) => {
-  return (
-    <NavLink
-      to={to}
-      end
-      className={({ isActive }) =>
-        `flex items-center gap-3 p-3 rounded-lg transition-all duration-200 ${
-          isActive
-            ? "bg-gray-800 text-white dark:bg-gray-700 font-medium"
-            : "text-gray-600 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-800"
-        }`
-      }
-    >
-      {({ isActive }) => (
-        <>
-          <span
-            className={`flex-shrink-0 ${
-              isActive ? "text-white" : "text-gray-500 dark:text-gray-400"
-            }`}
-          >
-            {icon}
-          </span>
-          {isSidebarOpen && (
-            <span
-              className={`${
-                isActive ? "text-white" : "text-gray-700 dark:text-gray-300"
-              }`}
-            >
-              {label}
-            </span>
-          )}
-        </>
-      )}
-    </NavLink>
-  );
-};
+// const NavItem = ({ icon, label, to, isSidebarOpen }) => {
+//   return (
+//     <NavLink
+//       to={to}
+//       end
+//       className={({ isActive }) =>
+//         `flex items-center gap-3 p-3 rounded-lg transition-all duration-200 ${
+//           isActive
+//             ? "bg-gray-800 text-white dark:bg-gray-700 font-medium"
+//             : "text-gray-600 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-800"
+//         }`
+//       }
+//     >
+//       {({ isActive }) => (
+//         <>
+//           <span
+//             className={`flex-shrink-0 ${
+//               isActive ? "text-white" : "text-gray-500 dark:text-gray-400"
+//             }`}
+//           >
+//             {icon}
+//           </span>
+//           {isSidebarOpen && (
+//             <span
+//               className={`${
+//                 isActive ? "text-white" : "text-gray-700 dark:text-gray-300"
+//               }`}
+//             >
+//               {label}
+//             </span>
+//           )}
+//         </>
+//       )}
+//     </NavLink>
+//   );
+// };
 
 export default StudentCompliance;
