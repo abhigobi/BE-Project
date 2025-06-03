@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 
 // handling cors polices
 const corsOptions = {
-    origin: ["http://localhost:5173", "http://192.168.0.101:5173",process.env.CLIENT_URL],
+    origin: ["http://localhost:5173", "http://192.168.0.101:5173","https://beprojecti2it.netlify.app"],
     methods: "GET,POST,DELETE,PUT,PATCH,HEAD",
     credentials: true
 };
