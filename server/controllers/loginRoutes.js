@@ -28,7 +28,13 @@ const loginUser = async (req, res) => {
         } else if (warden && (await bcrypt.compare(password, warden.password))) {
             user = warden;
             table = 'Warden';
-        } else {
+        // } else if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
+        } else if (email === "admin@gmail.com" && password === "password") {
+            // user = { id: 1, name: 'Admin', email: process.env.ADMIN_EMAIL }; // Mock admin user
+            user = { id: 1, name: 'Jasprit Bumrah', email: "admin@gmail.com" };
+            table = 'Admin';
+        }
+         else {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
 
