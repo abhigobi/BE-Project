@@ -399,16 +399,17 @@ const StudentDashboard = () => {
                     )}
 
                     {/* Upload Compliance Button */}
-                    {compliance.submissionMode === "Online" && (
-                      <div className="mt-2 text-center">
-                        <button
-                          onClick={() => handleUploadCompliance(compliance)}
-                          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
-                        >
-                          Upload Compliance
-                        </button>
-                      </div>
-                    )}
+                    {compliance.submissionMode === "Online" &&
+                      compliance.status !== "Completed" && (
+                        <div className="mt-2 text-center">
+                          <button
+                            onClick={() => handleUploadCompliance(compliance)}
+                            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
+                          >
+                            Upload Compliance
+                          </button>
+                        </div>
+                      )}
                   </div>
                 ))}
               </div>
@@ -468,7 +469,7 @@ const StudentDashboard = () => {
                   <p className="text-gray-700 font-medium">
                     {file ? file.name : "Choose a PDF file"}
                   </p>
-                  <p className="text-sm text-gray-500 mt-1">Max 5MB</p>
+                  {/* <p className="text-sm text-gray-500 mt-1">Max 5MB</p> */}
                 </label>
               </div>
 

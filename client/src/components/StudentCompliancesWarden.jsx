@@ -26,10 +26,9 @@ const StudentCompliancesWarden = () => {
   // Added state to store the entire selected student record
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [selectedCompliance, setSelectedCompliance] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false); // Add this in your
   const { userID } = useAuth();
-  // console.log("User ID: warden id", userID);
-  // const [wardenName, setWardenName] = useState("");
-  // const [wardenID, setWardenID] = useState(null);
+
   useEffect(() => {
     const getAllStudentsCompliances = async () => {
       try {
@@ -176,14 +175,12 @@ const StudentCompliancesWarden = () => {
           </button>
           <h1 className="text-2xl font-bold mb-2">Student Compliances</h1>
         </nav>
-
         {/* Error Message */}
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             {error}
           </div>
         )}
-
         {/* Table */}
         <div className="overflow-x-auto bg-white shadow-lg rounded-lg p-4">
           <table className="min-w-full border border-gray-300 rounded-lg">
@@ -322,7 +319,6 @@ const StudentCompliancesWarden = () => {
             </tbody>
           </table>
         </div>
-
         {/* Main Status Update Popup */}
         {showPopup && (
           <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
@@ -349,20 +345,27 @@ const StudentCompliancesWarden = () => {
                 <button
                   onClick={() => setShowPopup(false)}
                   className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
+                  disabled={isUpdating}
                 >
                   Cancel
                 </button>
                 <button
-                  onClick={handleStatusChange}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  onClick={async () => {
+                    setIsUpdating(true); // Start loader
+                    await handleStatusChange(); // Await your update function
+                    setIsUpdating(false); // End loader
+                  }}
+                  className={`px-4 py-2 rounded-lg text-white ${
+                    isUpdating ? "bg-blue-300" : "bg-blue-500 hover:bg-blue-600"
+                  }`}
+                  disabled={isUpdating}
                 >
-                  Update
+                  {isUpdating ? "Updating..." : "Update"}
                 </button>
               </div>
             </div>
           </div>
         )}
-
         {/* Enhanced Rejection Note Popup with Student Details */}
         {showRejectionNotePopup && (
           <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
