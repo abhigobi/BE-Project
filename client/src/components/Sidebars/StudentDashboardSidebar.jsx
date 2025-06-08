@@ -5,7 +5,6 @@ import { NavLink } from "react-router-dom";
 import { Menu } from "lucide-react";
 const StudentDashboardSidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
@@ -17,7 +16,7 @@ const StudentDashboardSidebar = () => {
         {/* Sidebar Header */}
         <div className="flex items-center justify-between p-4">
           {isSidebarOpen && (
-            <h1 className="text-2xl font-bold">Student Portal</h1>
+            <span className="text-2xl font-bold">Student Portal</span>
           )}
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}

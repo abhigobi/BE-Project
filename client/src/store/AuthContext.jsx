@@ -5,113 +5,85 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState(null);
+  const [userID, setUserID] = useState(null);
+  const [userName, setUserName] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
 
-  // Function to check if token is expired
-  const isTokenExpired = (token) => {
+  // Decode JWT token
+  const decodeToken = (token) => {
     try {
       const payload = JSON.parse(atob(token.split(".")[1]));
-      const { exp } = payload;
-      if (!exp) throw new Error("Token missing expiration time");
-
-      return exp < Date.now() / 1000; // Return true if expired
+      return payload;
     } catch (error) {
-      console.error("Error decoding token:", error);
-      return true; // Assume expired if error occurs
-    }
-  };
-
-  // Function to extract user role from token
-  const getUserRoleFromToken = (token) => {
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      return payload.role || null;
-    } catch {
+      console.error("Invalid token:", error);
       return null;
     }
   };
+  const isTokenExpired = (token) => {
+    const payload = decodeToken(token);
+    if (!payload?.exp) return true;
+    return payload.exp < Date.now() / 1000;
+  };
 
-  // Function to validate token
   const validateToken = () => {
     const token = localStorage.getItem("token");
 
     if (!token || isTokenExpired(token)) {
-      logout(); // Log out if invalid or expired
+      logout();
+      setIsLoading(false); // Done loading
       return;
     }
 
-    const role = getUserRoleFromToken(token);
-    setUserRole(role);
+    const payload = decodeToken(token);
+    setUserRole(payload?.role || null);
+    setUserID(payload?.id || null);
+    setUserName(payload?.name || null);
     setIsLoggedIn(true);
+    setIsLoading(false); // Done loading
   };
 
-  // Login function
   const login = (token) => {
     if (!token || isTokenExpired(token)) {
       console.error("Invalid or expired token");
+      setIsLoading(false);
       return false;
     }
 
     localStorage.setItem("token", token);
-    setUserRole(getUserRoleFromToken(token));
-    setIsLoggedIn(true);
+    validateToken(); // Set state based on valid token
     return true;
   };
 
-  // Logout function
   const logout = () => {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
     setUserRole(null);
+    setUserID(null);
+    setUserName(null);
+    setIsLoading(false);
   };
 
-  // Check token on mount & listen for changes
   useEffect(() => {
+    setIsLoading(true); // Start loading
     validateToken();
-    const handleStorageChange = () => validateToken();
+    const handleStorageChange = () => {
+      setIsLoading(true); // Start loading on storage change
+      validateToken();
+    };
     window.addEventListener("storage", handleStorageChange);
-
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  // Periodic token validation (every 5 minutes)
   useEffect(() => {
-    const interval = setInterval(validateToken, 5 * 60 * 1000);
+    const interval = setInterval(() => {
+      setIsLoading(true); // Start loading for periodic check
+      validateToken();
+    }, 5 * 60 * 1000); // every 5 min
     return () => clearInterval(interval);
   }, []);
 
-  // Function to get current token
   const getToken = () => localStorage.getItem("token");
 
-  // Function to get user ID safely
-  const getUserID = () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) return null;
-
-      const payload = JSON.parse(atob(token.split(".")[1]));
-
-      return payload.id || null;
-    } catch (error) {
-      console.error("Error getting user ID:", error);
-      return null;
-    }
-  };
-  const getUserName = () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) return null;
-
-      const payload = JSON.parse(atob(token.split(".")[1]));
-
-      return payload.name || null;
-    } catch (error) {
-      console.error("Error getting user name:", error);
-      return null;
-    }
-  };
-
-  const userID = getUserID();
-  const userName = getUserName(); // Fix: Added userName
   return (
     <AuthContext.Provider
       value={{
@@ -122,6 +94,7 @@ export const AuthProvider = ({ children }) => {
         getToken,
         userID,
         userName,
+        isLoading, // Expose isLoading
       }}
     >
       {children}
@@ -131,12 +104,12 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuth = () => useContext(AuthContext);
 
-// Custom hook for protected routes
-export const useProtectedRoute = (allowedUserTypes = []) => {
-  const { isLoggedIn, userRole } = useAuth(); // Fix: Use userRole
+// Optional: Helper hook for protected components
+export const useProtectedRoute = (allowedRoles = []) => {
+  const { isLoggedIn, userRole } = useAuth();
 
   if (!isLoggedIn) return false;
-  if (allowedUserTypes.length === 0) return true;
+  if (allowedRoles.length === 0) return true;
 
-  return allowedUserTypes.includes(userRole);
+  return allowedRoles.includes(userRole);
 };

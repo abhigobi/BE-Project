@@ -1,6 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { LogOut } from "lucide-react";
 import AdminDashboardSidebar from "../../components/Sidebars/AdminDashboardSidebar";
 import {
   Bell,
@@ -23,8 +25,11 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 const serverUrl = import.meta.env.VITE_SERVER_URL;
+import { useAuth } from "../../store/AuthContext";
 
 const AdminDashboard = () => {
+const { logout } = useAuth();
+  const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("students");
@@ -72,7 +77,7 @@ const AdminDashboard = () => {
 
       const response = await axios.get(endpoint);
       console.log(response.data);
-      
+
 
       if (selectedRoleList === "student") {
         setData(response.data.students || []); // Extract students array
@@ -266,6 +271,15 @@ const AdminDashboard = () => {
           <h1 className="text-xl font-semibold text-gray-800">
             Admin Compliance Overview
           </h1>
+          <button
+            className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-lg shadow-md hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50 active:scale-95 transition-all duration-200"
+            onClick={() => {
+              logout() // Clear authentication tokens or session data
+              navigate("/login-page"); // Redirect to login page
+            }}
+          >
+            <LogOut className="w-5 h-5" />
+          </button>
         </nav>
 
         {/* Main Content */}
@@ -515,11 +529,10 @@ const AdminDashboard = () => {
                   <button
                     onClick={handleUpload}
                     disabled={isUploading}
-                    className={`w-full mt-4 px-4 py-2.5 rounded-lg text-white transition-colors ${
-                      isUploading
+                    className={`w-full mt-4 px-4 py-2.5 rounded-lg text-white transition-colors ${isUploading
                         ? "bg-gray-400 cursor-not-allowed"
                         : "bg-blue-500 hover:bg-blue-600"
-                    }`}
+                      }`}
                   >
                     {isUploading ? (
                       <div className="flex items-center justify-center gap-2">
@@ -564,11 +577,10 @@ const AdminDashboard = () => {
                 <motion.div
                   key={item.role}
                   whileHover={{ y: -5 }}
-                  className={`cursor-pointer p-6 rounded-xl shadow-md flex flex-col items-center justify-center gap-3 w-32 h-32 transition-all ${
-                    selectedRoleList === item.role
+                  className={`cursor-pointer p-6 rounded-xl shadow-md flex flex-col items-center justify-center gap-3 w-32 h-32 transition-all ${selectedRoleList === item.role
                       ? `bg-gradient-to-r ${item.color} text-white`
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
+                    }`}
                   onClick={() => setSelectedRoleList(item.role)}
                 >
                   <item.icon className="w-8 h-8" />
@@ -591,21 +603,20 @@ const AdminDashboard = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleDownload}
-                  className={`bg-gradient-to-r text-white px-6 py-3 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all ${
-                    selectedRoleList === "student"
+                  className={`bg-gradient-to-r text-white px-6 py-3 rounded-lg flex items-center gap-2 shadow-md hover:shadow-lg transition-all ${selectedRoleList === "student"
                       ? "from-blue-500 to-blue-600"
                       : selectedRoleList === "teacher"
-                      ? "from-yellow-500 to-yellow-600"
-                      : "from-red-500 to-red-600"
-                  }`}
+                        ? "from-yellow-500 to-yellow-600"
+                        : "from-red-500 to-red-600"
+                    }`}
                 >
                   <Download className="w-5 h-5" />
                   Download{" "}
                   {selectedRoleList === "student"
                     ? "Students"
                     : selectedRoleList === "teacher"
-                    ? "Teachers"
-                    : "Wardens"}{" "}
+                      ? "Teachers"
+                      : "Wardens"}{" "}
                   Data
                 </motion.button>
               </div>

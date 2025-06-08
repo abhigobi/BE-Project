@@ -5,16 +5,20 @@ import {
   AlertCircle,
   CheckCircle,
   Loader2,
+  LogOut
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../store/AuthContext";
 import StudentDashboardSidebar from "../../components/Sidebars/StudentDashboardSidebar";
 import axios from "axios";
 import { toast } from "react-toastify";
-
+import { useNavigate } from "react-router-dom";
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
 const StudentDashboard = () => {
+  const {userName} = useAuth();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const [compliances, setCompliances] = useState([]);
   const [showAll, setShowAll] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -224,7 +228,16 @@ const StudentDashboard = () => {
       <div className="flex flex-col flex-grow overflow-auto">
         {/* Navbar */}
         <nav className="bg-white px-6 py-4 shadow-md flex justify-between items-center">
-          <h1 className="text-xl font-semibold">I2IT Student Dashboard</h1>
+          <h1 className="text-xl font-semibold">Welcome {userName}</h1>
+          <button
+            className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-lg shadow-md hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50 active:scale-95 transition-all duration-200"
+            onClick={() => {
+              logout() // Clear authentication tokens or session data
+              navigate("/login-page"); // Redirect to login page
+            }}
+          >
+            <LogOut className="w-5 h-5" />
+          </button>
         </nav>
 
         {/* Stats Cards */}

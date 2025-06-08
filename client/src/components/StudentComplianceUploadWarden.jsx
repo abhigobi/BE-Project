@@ -2,13 +2,15 @@ import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../store/AuthContext";
-import { Menu, UploadCloud } from "lucide-react";
+import { Menu, UploadCloud ,LogOut} from "lucide-react";
 import { motion } from "framer-motion";
 import WardenDashboardSidebar from "./Sidebars/WardenDashboardSidebar";
-
 const serverUrl = import.meta.env.VITE_SERVER_URL;
+import { useNavigate } from "react-router-dom";
 
 const StudentComplianceUploadWarden = () => {
+    const { logout } = useAuth();
+  const navigate = useNavigate();
   // const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingUpload, setIsLoadingUpload] = useState(false);
@@ -81,7 +83,7 @@ const StudentComplianceUploadWarden = () => {
       setIsLoading(false);
     }
   };
-
+const userName1 = useAuth().userName;
   const fetchFiles = async () => {
     try {
       const response = await fetch(
@@ -236,8 +238,17 @@ const StudentComplianceUploadWarden = () => {
           >
             ☰
           </button>
-        </nav>
         <h1 className="text-2xl font-bold mb-4">Upload Student Compliance</h1>
+         <button
+            className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-lg shadow-md hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50 active:scale-95 transition-all duration-200"
+            onClick={() => {
+              logout() // Clear authentication tokens or session data
+              navigate("/login-page"); // Redirect to login page
+            }}
+          >
+            <LogOut className="w-5 h-5" />
+          </button>
+        </nav>
         {/* Upload Section */}
         <div className="flex justify-center p-6">
           <div className="flex flex-col md:flex-row items-center gap-4">

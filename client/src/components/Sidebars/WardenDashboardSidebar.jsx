@@ -8,8 +8,9 @@ import {
   FaFileUpload,
   FaListAlt,
 } from "react-icons/fa";
-
+import { useAuth } from "../../store/AuthContext";
 const WardenDashboardSidebar = () => {
+  const userName1 = useAuth().userName;
   const [sidebarOpen, setSidebarOpen] = useState(true);
   return (
     <div className="flex h-screen bg-gray-100">
@@ -21,7 +22,7 @@ const WardenDashboardSidebar = () => {
       >
         {/* Sidebar Header */}
         <div className="flex items-center justify-between p-4">
-          {sidebarOpen && <h1 className="text-2xl font-bold">Warden Portal</h1>}
+          {sidebarOpen && <h1 className="text-2xl font-bold">Welcome {userName1}</h1>}
           <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2">
             <Menu className="w-6 h-6" />
           </button>
